@@ -4,6 +4,7 @@ import FormularioPartidos from "./FormularioPartidos";
 import { useNavigate, NavLink } from "react-router-dom";
 
 const Partidos = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [partidos, setPartidos] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedPartido, setSelectedPartido] = useState(null);
@@ -13,7 +14,7 @@ const Partidos = () => {
   // Fetch inicial de partidos
   const fetchPartidos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/partido");
+      const response = await fetch(`${apiUrl}/partido`);
       const data = await response.json();
       setPartidos(data);
     } catch (error) {
@@ -31,8 +32,8 @@ const Partidos = () => {
     try {
       const method = selectedPartido ? "PUT" : "POST";
       const endpoint = selectedPartido
-        ? `http://localhost:3000/partido/${selectedPartido.id}`
-        : "http://localhost:3000/partido";
+        ? `${apiUrl}/partido/${selectedPartido.id}`
+        : `${apiUrl}/partido`;
 
       const bodyData = {
         equipoVisitanteId: partido.equipoVisitanteId,
@@ -69,7 +70,7 @@ const Partidos = () => {
 
   const deletePartido = async (id) => {
     try {
-      await fetch(`http://localhost:3000/partido/${id}`, { method: "DELETE" });
+      await fetch(`apiUrl/partido/${id}`, { method: "DELETE" });
       fetchPartidos();
     } catch (error) {
       console.error("Error deleting partido:", error);

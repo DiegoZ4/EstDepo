@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
-  const apiUrl = "http://localhost:3000";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     fecha: "",
     date: "",
@@ -20,19 +20,19 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
     const fetchData = async () => {
       try {
         const fetchEquipos = async () => {
-          const response = await fetch("http://localhost:3000/equipo");
+          const response = await fetch(`${apiUrl}/equipo`);
           const data = await response.json();
           setEquipos(data);
         };
 
         const fetchTorneos = async () => {
-          const response = await fetch("http://localhost:3000/torneo");
+          const response = await fetch(`${apiUrl}/torneo`);
           const data = await response.json();
           setTorneos(data);
         };
 
         const fetchCategorias = async () => {
-          const response = await fetch("http://localhost:3000/categories");
+          const response = await fetch(`${apiUrl}/categories`);
           const data = await response.json();
           setCategorias(data);
         };

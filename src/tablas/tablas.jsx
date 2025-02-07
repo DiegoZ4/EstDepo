@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 
 
 const Tablas = () => {
-  const apiUrl = "http://localhost:3000"
+  const apiUrl = import.meta.env.VITE_API_URL
   const [Items, setItems] = useState([]);
 
   useEffect(() => {

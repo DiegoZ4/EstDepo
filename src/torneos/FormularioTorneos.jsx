@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 
+
 const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -13,7 +15,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
     const fetchPaises = async () => {
       try {
         const [paisesRes] = await Promise.all([
-          fetch("http://localhost:3000/pais"),
+          fetch(`${apiUrl}/pais`),
         ]);
         setPaises(await paisesRes.json());
       } catch (error) {

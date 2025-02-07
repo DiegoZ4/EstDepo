@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import FormularioCategorias from "./FormularioCategorias";
 import ListaCategorias from "./ListaCategorias";
 
+
+const apiUrl = import.meta.env.VITE_API_URL;
 const Categoria = () => {
   const [categorias, setCategorias] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const fetchCategorias = async () => {
-    const response = await fetch("http://localhost:3000/categories");
+    const response = await fetch(`${apiUrl}/categories`);
     const data = await response.json();
     setCategorias(data);
   };
@@ -17,8 +19,8 @@ const Categoria = () => {
     console.log(categoria)
     const method = selectedCategory ? "PUT" : "POST";
     const endpoint = selectedCategory
-      ? `http://localhost:3000/categories/${selectedCategory.id}`
-      : "http://localhost:3000/categories";
+      ? `${apiUrl}/categories/${selectedCategory.id}`
+      : `${apiUrl}/categories`;
 
     await fetch(endpoint, {
       method,
@@ -32,7 +34,7 @@ const Categoria = () => {
   };
 
   const deleteCategoria = async (id) => {
-    await fetch(`http://localhost:3000/categories/${id}`, { method: "DELETE" });
+    await fetch(`${apiUrl}/categories/${id}`, { method: "DELETE" });
     fetchCategorias();
   };
 

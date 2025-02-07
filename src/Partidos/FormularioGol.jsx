@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const FormularioGol = ({ onSubmit, onClose, torneoId,equipoId,partidoId }) => {
-  const apiUrl = "http://localhost:3000";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     partidoId: partidoId,
     equipoId: equipoId,

@@ -18,7 +18,7 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
   useEffect(() => {
     const fetchPaises = async () => {
       try {
-        const response = await fetch("http://localhost:3000/pais");
+        const response = await fetch(`${apiUrl}/pais`);
         const data = await response.json();
         setPaises(data);
       } catch (error) {

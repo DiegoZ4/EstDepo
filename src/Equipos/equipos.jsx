@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ListaEquipos from "./ListaEquipos";
 import FormularioEquipo from "./FormularioEquipo";
 
+const apiUrl = import.meta.env.VITE_API_URL
 const Equipos = () => {
   const [equipos, setEquipos] = useState([]);
   const [creator, setCreator] = useState(false);
@@ -9,7 +10,7 @@ const Equipos = () => {
   
   const fetchEquipos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/equipo");
+      const response = await fetch(`${apiUrl}/equipo`);
       const data = await response.json();
       setEquipos(data);
     } catch (error) {
@@ -26,8 +27,8 @@ const Equipos = () => {
     try {
       const method = selectedEquipo ? "PUT" : "POST";
       const endpoint = selectedEquipo
-        ? `http://localhost:3000/equipo/${selectedEquipo.id}`
-        : "http://localhost:3000/equipo";
+        ? `${apiUrl}/equipo/${selectedEquipo.id}`
+        : `${apiUrl}/equipo`;
 
       const response = await fetch(endpoint, {
         method,
@@ -49,7 +50,7 @@ const Equipos = () => {
 
   const deleteEquipo = async (id) => {
     try {
-      await fetch(`http://localhost:3000/equipo/${id}`, { method: "DELETE" });
+      await fetch(`${apiUrl}/equipo/${id}`, { method: "DELETE" });
       fetchEquipos();
     } catch (error) {
       console.error("Error deleting equipo:", error);

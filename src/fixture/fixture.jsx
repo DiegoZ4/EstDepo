@@ -5,7 +5,7 @@ const Fixture = () => {
 
   const [partidos, setPartidos] = useState([]);
   
-  const apiUrl = 'http://localhost:3000';
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     fetch(`${apiUrl}/partido`)

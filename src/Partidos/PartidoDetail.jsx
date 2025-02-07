@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import GolForm from "./FormularioGol";
 
 const PartidoDetail = () => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const [partido, setPartido] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ const PartidoDetail = () => {
 
   const fetchPartido = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/partido/${id}`);
+      const response = await fetch(`${apiUrl}/partido/${id}`);
       if (!response.ok) throw new Error("Error al obtener el partido");
       const data = await response.json();
       setPartido(data);

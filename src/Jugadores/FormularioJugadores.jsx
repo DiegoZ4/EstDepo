@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [formData, setFormData] = useState({
     name: "",
     image: "",
@@ -28,9 +31,9 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     const fetchDatos = async () => {
       try {
         const [equiposRes, paisesRes, categoriasRes] = await Promise.all([
-          fetch("http://localhost:3000/equipo"),
-          fetch("http://localhost:3000/pais"),
-          fetch("http://localhost:3000/categories"),
+          fetch(`${apiUrl}/equipo`),
+          fetch(`${apiUrl}/pais`),
+          fetch(`${apiUrl}/categories`),
         ]);
         setEquipos(await equiposRes.json());
         setPaises(await paisesRes.json());

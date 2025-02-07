@@ -4,6 +4,9 @@ import FormularioJugadores from "./FormularioJugadores";
 
 
 const Jugadores = () => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [jugadores, setJugadores] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedJugador, setSelectedJugador] = useState(null);
@@ -27,7 +30,7 @@ const Jugadores = () => {
   
   const fetchJugadores = async () => {
     try {
-      const response = await fetch("http://localhost:3000/jugador");
+      const response = await fetch(`${apiUrl}/jugador`);
       const data = await response.json();
       setJugadores(data);
     } catch (error) {
@@ -46,8 +49,8 @@ const Jugadores = () => {
     try {
       const method = selectedJugador ? "PUT" : "POST";
       const endpoint = selectedJugador
-        ? `http://localhost:3000/jugador/${selectedJugador.id}`
-        : "http://localhost:3000/jugador";
+        ? `${apiUrl}/jugador/${selectedJugador.id}`
+        : `${apiUrl}/jugador`;
   
       const bodyData = {
         name: jugador.name,
@@ -89,7 +92,7 @@ const Jugadores = () => {
 
   const deleteJugador = async (id) => {
     try {
-      await fetch(`http://localhost:3000/jugador/${id}`, { method: "DELETE" });
+      await fetch(`${apiUrl}/jugador/${id}`, { method: "DELETE" });
       fetchJugadores();
     } catch (error) {
       console.error("Error deleting jugador:", error);

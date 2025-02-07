@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const Goleadores = () => {
-  const apiUrl = "http://localhost:3000";
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [goleadores, setGoleadores] = useState([]);
 
   console.log(goleadores);

@@ -3,13 +3,16 @@ import ListaPais from "./ListaPais";
 import FormularioPais from "./FormularioPais";
 
 const Pais = () => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [pais, setPais] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedPais, setSelectedPais] = useState(null);
   
   const fetchPais = async () => {
     try {
-      const response = await fetch("http://localhost:3000/pais");
+      const response = await fetch(`${apiUrl}/pais`);
       const data = await response.json();
       setPais(data);
     } catch (error) {
@@ -26,8 +29,8 @@ const Pais = () => {
     try {
       const method = selectedPais ? "PUT" : "POST";
       const endpoint = selectedPais
-        ? `http://localhost:3000/pais/${selectedPais.id}`
-        : "http://localhost:3000/pais";
+        ? `${apiUrl}/pais/${selectedPais.id}`
+        : `${apiUrl}/pais`;
 
       const response = await fetch(endpoint, {
         method,
@@ -49,7 +52,7 @@ const Pais = () => {
 
   const deletePais = async (id) => {
     try {
-      await fetch(`http://localhost:3000/pais/${id}`, { method: "DELETE" });
+      await fetch(`${apiUrl}/pais/${id}`, { method: "DELETE" });
       fetchPais();
     } catch (error) {
       console.error("Error deleting pais:", error);

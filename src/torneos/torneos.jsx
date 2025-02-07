@@ -3,6 +3,7 @@ import ListaTorneos from "./ListaTorneos";
 import FormularioTorneos from "./FormularioTorneos";
 
 const Torneos = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [torneos, setTorneos] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedTorneo, setSelectedTorneo] = useState(null);
@@ -11,7 +12,7 @@ const Torneos = () => {
   // Fetch inicial de torneos
   const fetchTorneos = async () => {
     try {
-      const response = await fetch("http://localhost:3000/torneo");
+      const response = await fetch(`${apiUrl}/torneo`);
       const data = await response.json();
       setTorneos(data);
     } catch (error) {
@@ -27,8 +28,8 @@ const Torneos = () => {
   const saveTorneo = async (torneo) => {
     const method = editId ? "PUT" : "POST";
     const endpoint = editId
-    ? `http://localhost:3000/torneo/${editId}`
-      : "http://localhost:3000/torneo";
+    ? `${apiUrl}/torneo/${editId}`
+      : `${apiUrl}/torneo`;
     
     console.log(endpoint, method, torneo, editId);
 
@@ -48,7 +49,7 @@ const Torneos = () => {
   
   const deleteTorneo = async (id) => {
     try {
-      await fetch(`http://localhost:3000/torneo/${id}`, { method: "DELETE" });
+      await fetch(`apiUrl/torneo/${id}`, { method: "DELETE" });
       fetchTorneos();
     } catch (error) {
       console.error("Error deleting torneo:", error);
