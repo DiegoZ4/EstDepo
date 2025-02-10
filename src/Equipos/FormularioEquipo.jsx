@@ -10,6 +10,8 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
   });
   const [paises, setPaises] = useState([]);
 
+  const apiUrl = import.meta.env.VITE_API_URL
+
 
   const close = () => {
     setCreator(false);
