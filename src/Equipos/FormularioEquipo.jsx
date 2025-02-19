@@ -12,7 +12,12 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
   const [paises, setPaises] = useState([]);
   const [uploading, setUploading] = useState(false);
 
+<<<<<<< HEAD
   const dropzoneRef = useRef(null); // Para referir la zona de drop
+=======
+  const apiUrl = import.meta.env.VITE_API_URL
+
+>>>>>>> 8c82ecb (Remove files that should be ignored)
 
   const close = () => {
     setCreator(false);
