@@ -11,10 +11,20 @@ const Partidos = () => {
   const [editId, setEditId] = useState(null);
   const [detailsId, setDetailsId] = useState(null);
 
-  // Fetch inicial de partidos
   const fetchPartidos = async () => {
+    const token = localStorage.getItem("access_token");
     try {
-      const response = await fetch(`${apiUrl}/partido`);
+      const response = await fetch(`${apiUrl}/partido`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      if (!response.ok) {
+        console.error("Error fetching partidos:", await response.text());
+        return;
+      }
       const data = await response.json();
       setPartidos(data);
     } catch (error) {
@@ -22,13 +32,14 @@ const Partidos = () => {
     }
   };
 
-  console.log(partidos);
   const handleEdit = (partido) => {
     setSelectedPartido(partido);
     setEditId(partido.id);
     setCreator(true);
   };
+
   const savePartido = async (partido) => {
+    const token = localStorage.getItem("access_token");
     try {
       const method = selectedPartido ? "PUT" : "POST";
       const endpoint = selectedPartido
@@ -47,7 +58,10 @@ const Partidos = () => {
 
       const response = await fetch(endpoint, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
         body: JSON.stringify(bodyData),
       });
 
@@ -69,14 +83,20 @@ const Partidos = () => {
   };
 
   const deletePartido = async (id) => {
+    const token = localStorage.getItem("access_token");
     try {
-      await fetch(`apiUrl/partido/${id}`, { method: "DELETE" });
+      await fetch(`${apiUrl}/partido/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
       fetchPartidos();
     } catch (error) {
       console.error("Error deleting partido:", error);
     }
   };
-
 
   useEffect(() => {
     fetchPartidos();
@@ -87,7 +107,7 @@ const Partidos = () => {
       <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase tracking-wide">
         Gestión de Partidos
       </h1>
-  
+
       <div className="flex justify-end mb-4">
         <button
           onClick={() => {
@@ -95,19 +115,19 @@ const Partidos = () => {
             setSelectedPartido(null);
             setEditId(null);
           }}
-          className="bg-[#a0f000] text-black px-4 py-2 rounded font-bold hover:bg-[#8cd000] transition"
+          className="bg-[#a0f000] text-black px-4 py-2 rounded font-bold hover:bg-[#8cd600] transition"
         >
           Crear Partido
         </button>
       </div>
-  
+
       <ListaPartidos
         partidos={partidos}
         onEdit={handleEdit}
         onDelete={deletePartido}
         onDetails={handleShowDetails}
       />
-  
+
       {creator && (
         <FormularioPartidos
           setCreator={setCreator}
@@ -118,7 +138,6 @@ const Partidos = () => {
       )}
     </div>
   );
-  
 };
 
 export default Partidos;

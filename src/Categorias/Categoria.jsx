@@ -3,6 +3,7 @@ import FormularioCategorias from "./FormularioCategorias";
 import ListaCategorias from "./ListaCategorias";
 
 
+
 const apiUrl = import.meta.env.VITE_API_URL;
 const Categoria = () => {
   const [categorias, setCategorias] = useState([]);
@@ -10,7 +11,13 @@ const Categoria = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const fetchCategorias = async () => {
-    const response = await fetch(`${apiUrl}/categories`);
+    const token = localStorage.getItem("access_token");
+    const response = await fetch(`${apiUrl}/categories`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
     const data = await response.json();
     setCategorias(data);
   };
@@ -22,9 +29,11 @@ const Categoria = () => {
       ? `${apiUrl}/categories/${selectedCategory.id}`
       : `${apiUrl}/categories`;
 
+    const token = localStorage.getItem("access_token");
     await fetch(endpoint, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, },
       body: JSON.stringify(categoria),
     });
 
@@ -34,7 +43,14 @@ const Categoria = () => {
   };
 
   const deleteCategoria = async (id) => {
-    await fetch(`${apiUrl}/categories/${id}`, { method: "DELETE" });
+    const token = localStorage.getItem("access_token");
+    await fetch(`${apiUrl}/categories/${id}`, { 
+      method: "DELETE",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, 
+      }
+    });
     fetchCategorias();
   };
 

@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import GolForm from "./FormularioGol";
 
 const PartidoDetail = () => {
-
   const apiUrl = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const [partido, setPartido] = useState(null);
@@ -14,9 +13,18 @@ const PartidoDetail = () => {
   const [selectedTorneo, setSelectedTorneo] = useState(null);
 
   const fetchPartido = async () => {
+    const token = localStorage.getItem("access_token");
     try {
-      const response = await fetch(`${apiUrl}/partido/${id}`);
-      if (!response.ok) throw new Error("Error al obtener el partido");
+      const response = await fetch(`${apiUrl}/partido/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Error al obtener el partido");
+      }
       const data = await response.json();
       setPartido(data);
     } catch (error) {
@@ -28,7 +36,7 @@ const PartidoDetail = () => {
 
   useEffect(() => {
     fetchPartido();
-  }, []);
+  }, [id, apiUrl]);
 
   const handleAddGol = (teamId) => {
     setSelectedTeamId(teamId);
@@ -41,8 +49,12 @@ const PartidoDetail = () => {
     fetchPartido();
   };
 
-  if (loading) return <div className="text-center text-white">Cargando...</div>;
-  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
+  if (loading)
+    return <div className="text-center text-white">Cargando...</div>;
+  if (error)
+    return (
+      <div className="text-center text-red-500">Error: {error}</div>
+    );
 
   return (
     <div className="max-w-4xl mx-auto p-4 text-white">
@@ -68,7 +80,9 @@ const PartidoDetail = () => {
             <h2 className="text-sm text-[#a0f000]">Estado</h2>
             <p
               className={`font-bold ${
-                partido.estado === "Finalizado" ? "text-green-500" : "text-yellow-400"
+                partido.estado === "Finalizado"
+                  ? "text-green-500"
+                  : "text-yellow-400"
               }`}
             >
               {partido.estado}
@@ -78,9 +92,15 @@ const PartidoDetail = () => {
 
         <div className="flex justify-between items-center mt-6">
           <div className="w-1/2 text-center border-r border-[#003c3c] pr-4">
-            <h3 className="text-lg font-bold text-[#a0f000]">Equipo Local</h3>
-            <p className="text-xl font-semibold">{partido.equipoLocal?.name}</p>
-            <p className="text-4xl font-bold my-2">{partido.golesLocal?.length}</p>
+            <h3 className="text-lg font-bold text-[#a0f000]">
+              Equipo Local
+            </h3>
+            <p className="text-xl font-semibold">
+              {partido.equipoLocal?.name}
+            </p>
+            <p className="text-4xl font-bold my-2">
+              {partido.golesLocal?.length}
+            </p>
             <button
               onClick={() => handleAddGol(partido.equipoLocal.id)}
               className="bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded transition"
@@ -90,9 +110,15 @@ const PartidoDetail = () => {
           </div>
 
           <div className="w-1/2 text-center pl-4">
-            <h3 className="text-lg font-bold text-[#a0f000]">Equipo Visitante</h3>
-            <p className="text-xl font-semibold">{partido.equipoVisitante?.name}</p>
-            <p className="text-4xl font-bold my-2">{partido.golesVisitante?.length}</p>
+            <h3 className="text-lg font-bold text-[#a0f000]">
+              Equipo Visitante
+            </h3>
+            <p className="text-xl font-semibold">
+              {partido.equipoVisitante?.name}
+            </p>
+            <p className="text-4xl font-bold my-2">
+              {partido.golesVisitante?.length}
+            </p>
             <button
               onClick={() => handleAddGol(partido.equipoVisitante.id)}
               className="bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded transition"

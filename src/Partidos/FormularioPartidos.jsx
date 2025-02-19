@@ -1,91 +1,127 @@
 import React, { useState, useEffect } from "react";
 
-const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
+const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     fecha: "",
     date: "",
-    equipoLocal: "",
-    equipoVisitante: "",
-    torneo: "",
-    category: "",
+    equipoLocalId: "",
+    equipoVisitanteId: "",
+    torneoId: "",
+    categoriaId: "",
     estado: "Pendiente",
   });
 
   const [equipos, setEquipos] = useState([]);
   const [torneos, setTorneos] = useState([]);
   const [categorias, setCategorias] = useState([]);
+
+  // Fetch de equipos, torneos y categorías con token en los headers
   useEffect(() => {
-    // Fetch equipos, torneos y categorías
     const fetchData = async () => {
+      const token = localStorage.getItem("access_token");
       try {
-        const fetchEquipos = async () => {
-          const response = await fetch(`${apiUrl}/equipo`);
-          const data = await response.json();
-          setEquipos(data);
-        };
+        // Equipos
+        const equiposResponse = await fetch(`${apiUrl}/equipo`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (!equiposResponse.ok) {
+          console.error("Error fetching equipos:", await equiposResponse.text());
+        } else {
+          const equiposData = await equiposResponse.json();
+          setEquipos(equiposData);
+        }
 
-        const fetchTorneos = async () => {
-          const response = await fetch(`${apiUrl}/torneo`);
-          const data = await response.json();
-          setTorneos(data);
-        };
+        // Torneos
+        const torneosResponse = await fetch(`${apiUrl}/torneo`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (!torneosResponse.ok) {
+          console.error("Error fetching torneos:", await torneosResponse.text());
+        } else {
+          const torneosData = await torneosResponse.json();
+          setTorneos(torneosData);
+        }
 
-        const fetchCategorias = async () => {
-          const response = await fetch(`${apiUrl}/categories`);
-          const data = await response.json();
-          setCategorias(data);
-        };
-
-        fetchTorneos();
-        fetchCategorias();
-        fetchEquipos();
+        // Categorías
+        const categoriasResponse = await fetch(`${apiUrl}/categories`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (!categoriasResponse.ok) {
+          console.error("Error fetching categorías:", await categoriasResponse.text());
+        } else {
+          const categoriasData = await categoriasResponse.json();
+          setCategorias(categoriasData);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
-  }, [setCreator]);
+  }, [apiUrl]);
 
+  // Fetch de datos del partido para edición (si existe)
   useEffect(() => {
-
     const fetchPartido = async () => {
       if (selectedPartido) {
+        const token = localStorage.getItem("access_token");
         try {
-          const response = await fetch(`${apiUrl}/partido/${selectedPartido.id}`);
-          const data = await response.json();
-          console.log(data);
-          setFormData({
-            fecha: data.fecha || "",
-            date: data.date?.slice(0, 16) || "",
-            equipoLocalId: data.equipoLocal.id || "",  
-            equipoVisitanteId: data.equipoVisitante.id || "",  
-            torneoId: data.torneo.id || "",  
-            categoriaId : data.category.id || "",  
-            estado: data.estado || "Pendiente",
+          const response = await fetch(`${apiUrl}/partido/${selectedPartido.id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token ? `Bearer ${token}` : "",
+            },
           });
+          if (!response.ok) {
+            console.error("Error fetching partido:", await response.text());
+          } else {
+            const data = await response.json();
+            console.log(data);
+            setFormData({
+              fecha: data.fecha || "",
+              date: data.date?.slice(0, 16) || "",
+              equipoLocalId: data.equipoLocal.id || "",
+              equipoVisitanteId: data.equipoVisitante.id || "",
+              torneoId: data.torneo.id || "",
+              categoriaId: data.category.id || "",
+              estado: data.estado || "Pendiente",
+            });
+          }
         } catch (error) {
           console.error("Error fetching partido:", error);
         }
       }
     };
     fetchPartido();
-  }, [selectedPartido]);
-  
-  
+  }, [selectedPartido, apiUrl]);
+
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  
+
+  // Función para alternar el estado entre "Pendiente" y "Finalizado"
   const toggleEstado = () => {
     const nuevoEstado = formData.estado === "Pendiente" ? "Finalizado" : "Pendiente";
     handleInputChange({ target: { name: "estado", value: nuevoEstado } });
   };
-  
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData); // Pasa los datos al componente padre
+    onSave(formData);
   };
 
   return (
@@ -97,7 +133,7 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
         <h2 className="text-2xl font-bold text-center text-[#a0f000] uppercase tracking-wide mb-4">
           {selectedPartido ? "Editar Partido" : "Crear Partido"}
         </h2>
-  
+
         {/* Fecha */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Fecha:</label>
@@ -110,7 +146,7 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             required
           />
         </div>
-  
+
         {/* Fecha y Hora */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Fecha y Hora:</label>
@@ -123,8 +159,8 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             required
           />
         </div>
-  
-        {/* Equipos */}
+
+        {/* Equipo Local */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Equipo Local:</label>
           <select
@@ -144,7 +180,8 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             ))}
           </select>
         </div>
-  
+
+        {/* Equipo Visitante */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Equipo Visitante:</label>
           <select
@@ -164,7 +201,7 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             ))}
           </select>
         </div>
-  
+
         {/* Torneo */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Torneo:</label>
@@ -185,7 +222,7 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             ))}
           </select>
         </div>
-  
+
         {/* Categoría */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">Categoría:</label>
@@ -206,10 +243,12 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             ))}
           </select>
         </div>
-  
+
         {/* Switch de Estado */}
-        <div className="flex items-center justify-between bg-[#1f1f1f] p-2 rounded-md border border-[#003c3c] cursor-pointer transition"
-          onClick={toggleEstado}>
+        <div
+          className="flex items-center justify-between bg-[#1f1f1f] p-2 rounded-md border border-[#003c3c] cursor-pointer transition"
+          onClick={toggleEstado}
+        >
           <span className="font-semibold text-[#a0f000]">
             {formData.estado === "Finalizado" ? "Finalizado" : "Pendiente"}
           </span>
@@ -221,7 +260,7 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
             />
           </div>
         </div>
-  
+
         {/* Botones */}
         <div className="flex justify-end space-x-4 pt-4">
           <button
@@ -241,7 +280,6 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave  }) => {
       </form>
     </div>
   );
-  
 };
 
 export default FormularioPartido;
