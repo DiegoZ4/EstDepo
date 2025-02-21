@@ -20,7 +20,7 @@ export default function Home() {
       {/* Contenido */}
       <main className="flex flex-col items-center justify-start flex-1 p-8">
         <h1 className="text-4xl font-bold mb-6 text-[#a0f000] uppercase tracking-wide">
-          Futbol Stats
+          Futbol Stat
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
 
