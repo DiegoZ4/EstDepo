@@ -12,8 +12,9 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
   const [paises, setPaises] = useState([]);
   const [uploading, setUploading] = useState(false);
 
+  // Agrega la referencia para la dropzone
+  const dropzoneRef = useRef(null);
 
- 
 
   const close = () => {
     setCreator(false);
