@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+// Login.jsx
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import * as jwtDecode from "jwt-decode"; // Importa todoimport { GoogleLogin } from "@react-oauth/google";
-import { useContext } from "react";
+import * as jwtDecode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
-import { AuthContext } from "../auth/auth.context"; // Ajusta la ruta según tu estructura
+import { AuthContext } from "../auth/auth.context";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -19,10 +18,10 @@ const Login = ({ onLoginSuccess }) => {
     e.preventDefault();
     setError("");
     try {
-      const response = await fetch(`${apiUrl}/login`, {
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password }),
       });
       if (!response.ok) {
         const errorMessage = await response.text();
@@ -33,7 +32,6 @@ const Login = ({ onLoginSuccess }) => {
       const { access_token } = data;
       try {
         const decoded = jwtDecode(access_token);
-        console.log("Token decodificado:", decoded);
         if (decoded.exp * 1000 < Date.now()) {
           setError("El token ha expirado.");
           return;
@@ -41,7 +39,7 @@ const Login = ({ onLoginSuccess }) => {
       } catch (err) {
         console.error("Error decodificando el token", err);
       }
-      // Actualiza el contexto
+      // Actualiza el contexto de autenticación
       login(access_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       navigate("/");
@@ -65,7 +63,7 @@ const Login = ({ onLoginSuccess }) => {
         return;
       }
       const data = await response.json();
-      const { access_token } = data; // Ajusta según tu backend
+      const { access_token } = data;
       login(access_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       navigate("/");
@@ -84,17 +82,6 @@ const Login = ({ onLoginSuccess }) => {
       <h2 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block mb-1">Nombre:</label>
-          <input
-            id="name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
         <div>
           <label htmlFor="email" className="block mb-1">Email:</label>
           <input
@@ -117,7 +104,10 @@ const Login = ({ onLoginSuccess }) => {
             required
           />
         </div>
-        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 rounded">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 rounded"
+        >
           Ingresar
         </button>
       </form>
@@ -128,9 +118,9 @@ const Login = ({ onLoginSuccess }) => {
         />
       </div>
       <p className="mt-4 text-center">
-        ¿Ya tienes una cuenta?{" "}
-        <Link to="/login" className="text-blue-400 hover:underline">
-          Inicia sesión
+        ¿No tienes cuenta?{" "}
+        <Link to="/register" className="text-blue-400 hover:underline">
+          Regístrate
         </Link>
       </p>
     </div>

@@ -1,3 +1,4 @@
+// Register.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
@@ -10,7 +11,7 @@ const Register = () => {
     email: "",
     name: "",
     password: "",
-    rol: "freeUser", // Valor por defecto
+    rol: "freeUser",
     bornDate: "",
   });
   const [error, setError] = useState("");
@@ -29,13 +30,11 @@ const Register = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       if (!response.ok) {
         const errorMessage = await response.text();
         setError(errorMessage);
         return;
       }
-
       // Registro exitoso: redirige a la página de login
       navigate("/login");
     } catch (err) {
@@ -44,11 +43,9 @@ const Register = () => {
     }
   };
 
-  // Función para manejar el registro con Google
   const handleGoogleRegisterSuccess = async (credentialResponse) => {
     setError("");
     try {
-      // Envía el token de Google a tu backend
       const response = await fetch(`${apiUrl}/auth/google/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,14 +56,13 @@ const Register = () => {
         setError(errorMsg);
         return;
       }
-      // Registro con Google exitoso, redirige a login o directamente al home
+      // Registro con Google exitoso, redirige a login o al home según tu lógica
       navigate("/login");
     } catch (err) {
       console.error("Error en registro con Google:", err);
       setError("Error al registrarse con Google");
     }
   };
-  
 
   const handleGoogleRegisterError = () => {
     setError("Error al registrarse con Google");
@@ -129,7 +125,9 @@ const Register = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="nacimiento" className="block mb-1">Fecha de Nacimiento:</label>
+          <label htmlFor="nacimiento" className="block mb-1">
+            Fecha de Nacimiento:
+          </label>
           <input
             type="date"
             id="nacimiento"
@@ -148,11 +146,10 @@ const Register = () => {
       </form>
 
       <div className="mt-4">
-      <GoogleLogin
-  onSuccess={handleGoogleRegisterSuccess}
-  onError={handleGoogleRegisterError}
-/>
-
+        <GoogleLogin
+          onSuccess={handleGoogleRegisterSuccess}
+          onError={handleGoogleRegisterError}
+        />
       </div>
 
       <p className="mt-4 text-center">

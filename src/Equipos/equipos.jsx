@@ -9,6 +9,7 @@ const Equipos = () => {
   const [creator, setCreator] = useState(false);
   const [selectedEquipo, setSelectedEquipo] = useState(null);
   
+  
   const fetchEquipos = async () => {
     const token = localStorage.getItem("access_token");
     try {
