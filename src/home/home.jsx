@@ -20,10 +20,11 @@ export default function Home() {
       {/* Contenido */}
       <main className="flex flex-col items-center justify-start flex-1 p-8">
         <h1 className="text-4xl font-bold mb-6 text-[#a0f000] uppercase tracking-wide">
-          Novedades
+          Futbol Stats
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-          {instagramPosts.map((post) => (
+
+          {/* {instagramPosts.map((post) => (
             <Card
               key={post.id}
               className="rounded-lg overflow-hidden shadow-lg bg-[#003c3c] border-2 border-[#a0f000] hover:scale-105 transition-transform duration-300"
@@ -38,7 +39,7 @@ export default function Home() {
                 <p className="text-lg font-semibold text-[#ffffff]">{post.caption}</p>
               </CardContent>
             </Card>
-          ))}
+          ))} */}
         </div>
       </main>
     </div>
