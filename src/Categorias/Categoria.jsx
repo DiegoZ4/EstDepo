@@ -18,6 +18,12 @@ const Categoria = () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error("Error fetching categorias:", errorMessage);
+      setCategorias([]);
+      return;
+    }
     const data = await response.json();
     setCategorias(data);
   };
@@ -64,21 +70,9 @@ const Categoria = () => {
   }, []);
 
   return (
-<div className="p-4 bg-[#141414] min-h-screen text-white">
-  <button
-    onClick={() => {
-      setCreator(true);
-      setSelectedCategory(null);
-    }}
-    className="bg-[#a0f000] text-black font-bold py-2 px-4 rounded shadow-md hover:bg-[#003c3c] hover:text-white transition duration-300 mb-4 flex items-center gap-2"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-</svg>
+<div className="max-w-4xl mx-auto p-6 bg-[#141414] text-white min-h-screen">
 
-    Crear Categoría
-  </button>
-
+  
   {creator && (
     <FormularioCategorias
       setCreator={setCreator}
@@ -92,6 +86,19 @@ const Categoria = () => {
     onEdit={handleEdit}
     onDelete={deleteCategoria}
   />
+  <button
+    onClick={() => {
+      setCreator(true);
+      setSelectedCategory(null);
+    }}
+    className="bg-[#a0f000] text-black font-bold py-2 mt-2 px-4 rounded shadow-md hover:bg-[#003c3c] hover:text-white transition duration-300 mb-4 flex items-center gap-2"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+</svg>
+
+    Crear Categoría
+  </button>
 </div>
   );
 };

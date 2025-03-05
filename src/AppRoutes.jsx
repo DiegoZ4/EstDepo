@@ -70,7 +70,7 @@ const AppRoutes = () => {
     { path: "/goleadores", element: <Goleadores /> },
     // Rutas protegidas para ABM de usuarios
     {
-      path: "/usuarios",
+      path: "/usuarios/*",
       element: <ProtectedRoute />,
       children: [
         { path: "", element: <Usuarios /> },

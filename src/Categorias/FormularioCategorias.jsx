@@ -20,7 +20,7 @@ const FormularioCategorias = ({ setCreator, selectedCategory, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData, selectedCategory.id);
+    onSave(formData);
   };
 
   const cancel = () => setCreator(false);
