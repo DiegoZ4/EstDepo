@@ -4,14 +4,15 @@ import React, { useState, useEffect } from "react";
 
 
 
-const Tablas = () => {
+const Tablas = ( {torneoId, categoriaId}) => {
+  
   const apiUrl = import.meta.env.VITE_API_URL
   const [Items, setItems] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${apiUrl}/torneo/tabla-general`)
+        const response = await fetch(`${apiUrl}/torneo/${torneoId}/tabla/${categoriaId}`)
         console.log(response)
         const data = await response.json()
         setItems(data)

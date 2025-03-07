@@ -1,7 +1,7 @@
 // Login.jsx
 import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import * as jwtDecode from "jwt-decode";
+import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "../auth/auth.context";
 
@@ -31,7 +31,7 @@ const Login = ({ onLoginSuccess }) => {
       const data = await response.json();
       const { access_token } = data;
       try {
-        const decoded = jwtDecode(access_token);
+        const decoded = jwt_decode(access_token);
         if (decoded.exp * 1000 < Date.now()) {
           setError("El token ha expirado.");
           return;

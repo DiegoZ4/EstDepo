@@ -27,13 +27,34 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
 
   const posiciones = ["Portero", "Defensor", "Centrocampista", "Delantero"];
 
+  
+
   useEffect(() => {
     const fetchDatos = async () => {
+      const token = localStorage.getItem("access_token");
       try {
         const [equiposRes, paisesRes, categoriasRes] = await Promise.all([
-          fetch(`${apiUrl}/equipo`),
-          fetch(`${apiUrl}/pais`),
-          fetch(`${apiUrl}/categories`),
+          fetch(`${apiUrl}/equipo`,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+          }),
+          fetch(`${apiUrl}/pais`,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+          }),
+          fetch(`${apiUrl}/categories`,{
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token ? `Bearer ${token}` : "",
+            },
+          }),
         ]);
         setEquipos(await equiposRes.json());
         setPaises(await paisesRes.json());
@@ -139,6 +160,42 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
           required
           className="w-full p-2 bg-[#003c3c] border border-[#a0f000] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
         />
+      </div>
+
+      <div>
+        <label className="block font-semibold mb-1 text-[#a0f000]">Equipo:</label>
+        <select
+          name="equipoId"
+          value={formData.equipoId}
+          onChange={handleInputChange}
+          required
+          className="w-full p-2 bg-[#003c3c] border border-[#a0f000] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+        >
+          <option value="">Selecciona un equipo</option>
+          {equipos.map((equipo) => (
+            <option key={equipo.id} value={equipo.id}>
+              {equipo.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block font-semibold mb-1 text-[#a0f000]">Pais:</label>
+        <select
+          name="paisId"
+          value={formData.paisId}
+          onChange={handleInputChange}
+          required
+          className="w-full p-2 bg-[#003c3c] border border-[#a0f000] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+        >
+          <option value="">Selecciona un país</option>
+          {paises.map((pais) => (
+            <option key={pais.id} value={pais.id}>
+              {pais.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import FormularioJugadores from "../Jugadores/FormularioJugadores";
 
 const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -9,64 +10,34 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
     minuto: "",
     torneoId: torneoId,
   });
-
-  const [partidos, setPartidos] = useState([]);
-  const [equipos, setEquipos] = useState([]);
   const [jugadores, setJugadores] = useState([]);
-  const [torneos, setTorneos] = useState([]);
+  const [creator, setCreator] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchJugadores = async () => {
       const token = localStorage.getItem("access_token");
       try {
-        const partidosResponse = await fetch(`${apiUrl}/partido`, {
+        const response = await fetch(`${apiUrl}/jugador?equipo=${equipoId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
           },
         });
-        const partidosData = await partidosResponse.json();
-        setPartidos(partidosData);
-
-        const equiposResponse = await fetch(`${apiUrl}/equipo`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        const equiposData = await equiposResponse.json();
-        setEquipos(equiposData);
-
-        const jugadoresResponse = await fetch(`${apiUrl}/jugador?equipo=${equipoId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        const jugadoresData = await jugadoresResponse.json();
-        setJugadores(jugadoresData);
-
-        const torneosResponse = await fetch(`${apiUrl}/torneo`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        const torneosData = await torneosResponse.json();
-        setTorneos(torneosData);
+        const data = await response.json();
+        setJugadores(data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching jugadores:", error);
       }
     };
-
-    fetchData();
+    fetchJugadores();
   }, [apiUrl, equipoId]);
 
   const handleInputChange = (e) => {
+    if (e.target.name === "jugadorId" && e.target.value === "crear") {
+      setCreator(true);
+      return;
+    }
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -92,26 +63,36 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
     }
   };
 
+  // Callback para cuando se crea un jugador
+  const handleJugadorCreado = (nuevoJugador) => {
+    // Agrega el nuevo jugador a la lista de jugadores
+    setJugadores((prev) => [...prev, nuevoJugador]);
+    // Selecciona el nuevo jugador en el formulario
+    setFormData({ ...formData, jugadorId: nuevoJugador.id });
+    // Cierra el formulario de jugador
+    setCreator(false);
+  };
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-gray-900 text-white p-6 rounded-xl shadow-xl w-80 sm:w-96 space-y-4 border border-[#a0f000]"
+        className="bg-[#141414] border border-[#003c3c] p-6 rounded-lg shadow-2xl w-full max-w-md mx-4 space-y-4 text-white"
       >
-        <h2 className="text-2xl font-bold text-center text-[#a0f000] mb-4 uppercase">
+        <h2 className="text-2xl font-bold text-center text-[#a0f000] uppercase tracking-wide mb-4">
           Registrar Gol
         </h2>
 
-        {/* Jugador */}
+        {/* Selección de Jugador */}
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-1">
+          <label className="block text-sm font-semibold text-[#a0f000] mb-1">
             Jugador:
           </label>
           <select
             name="jugadorId"
             value={formData.jugadorId}
             onChange={handleInputChange}
-            className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] transition"
+            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
             required
           >
             <option value="">Seleccione un jugador</option>
@@ -120,12 +101,13 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
                 {jugador.name}
               </option>
             ))}
+            <option value="crear">Crear un jugador</option>
           </select>
         </div>
 
         {/* Minuto */}
         <div>
-          <label className="block text-sm font-semibold text-gray-300 mb-1">
+          <label className="block text-sm font-semibold text-[#a0f000] mb-1">
             Minuto:
           </label>
           <input
@@ -133,9 +115,9 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
             name="minuto"
             value={formData.minuto}
             onChange={handleInputChange}
-            className="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] transition"
             placeholder="Ej: 45"
             required
+            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
           />
         </div>
 
@@ -156,6 +138,15 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
           </button>
         </div>
       </form>
+
+      {/* Modal para crear jugador */}
+      {creator && (
+        <FormularioJugadores
+          setCreator={setCreator}
+          selectedJugador={null}
+          onSave={handleJugadorCreado}
+        />
+      )}
     </div>
   );
 };

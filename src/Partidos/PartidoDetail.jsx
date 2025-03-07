@@ -33,7 +33,7 @@ const PartidoDetail = () => {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
     fetchPartido();
   }, [id, apiUrl]);
@@ -65,8 +65,8 @@ const PartidoDetail = () => {
       <div className="bg-[#1f1f1f] p-6 rounded-lg shadow-md border border-[#003c3c] space-y-4">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
           <div>
-            <h2 className="text-sm text-[#a0f000]">ID del Partido</h2>
-            <p className="font-semibold">{partido.id}</p>
+            <h2 className="text-sm text-[#a0f000]">Categoria</h2>
+            <p className="font-semibold">{partido.category.name}</p>
           </div>
           <div>
             <h2 className="text-sm text-[#a0f000]">Fecha</h2>

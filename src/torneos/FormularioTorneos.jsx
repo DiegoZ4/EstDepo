@@ -7,9 +7,13 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
     description: "",
     image: "",
     paisId: "",
+    fechas: "", // Inicializamos fechas como cadena vacía (o puedes usar 0)
+    categoriesIds: [] // Se usa categoriesIds en lugar de categories
   });
   const [paises, setPaises] = useState([]);
+  const [availableCategories, setAvailableCategories] = useState([]); // Lista de categorías disponibles
 
+  // Cargar países
   useEffect(() => {
     const fetchPaises = async () => {
       const token = localStorage.getItem("access_token");
@@ -34,24 +38,71 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
     fetchPaises();
   }, [apiUrl]);
 
+  // Cargar categorías disponibles
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const token = localStorage.getItem("access_token");
+      try {
+        const response = await fetch(`${apiUrl}/categories`, {  // Asegúrate de que la URL es la correcta
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (!response.ok) {
+          console.error("Error fetching categories:", await response.text());
+          return;
+        }
+        const categoriesData = await response.json();
+        setAvailableCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, [apiUrl]);
+
+  // Si hay un torneo seleccionado, cargar sus datos en el formulario
   useEffect(() => {
     if (selectedTorneo) {
       setFormData({
         name: selectedTorneo.name || "",
         description: selectedTorneo.description || "",
+        fechas: selectedTorneo.fechas || "", // Se asume que viene como número o cadena
         image: selectedTorneo.image || "",
         paisId: selectedTorneo.pais?.id || "",
+        // Se asume que en el torneo ya vienen las categorías asociadas como arreglo de números o se puede mapear:
+        categoriesIds: selectedTorneo.categories ? selectedTorneo.categories.map(cat => cat.id) : [],
       });
     }
   }, [selectedTorneo]);
 
+  // Manejar los cambios en los inputs generales
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Manejar el cambio de estado de cada checkbox de categoría
+  const handleCategoryChange = (e) => {
+    const categoryId = Number(e.target.value); // Convertir a número
+    if (e.target.checked) {
+      setFormData((prev) => ({
+        ...prev,
+        categoriesIds: [...prev.categoriesIds, categoryId],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        categoriesIds: prev.categoriesIds.filter((id) => id !== categoryId),
+      }));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Aquí puedes enviar el formData directamente, ya que ahora se ajusta al DTO
     onSave(formData);
   };
 
@@ -62,6 +113,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
           Formulario de Torneo
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Nombre */}
           <div>
             <label className="block text-sm font-semibold text-[#a0f000] mb-1">
               Nombre:
@@ -75,6 +127,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
             />
           </div>
 
+          {/* Descripción */}
           <div>
             <label className="block text-sm font-semibold text-[#a0f000] mb-1">
               Descripción:
@@ -87,6 +140,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
             />
           </div>
 
+          {/* País */}
           <div>
             <label className="block text-sm font-semibold text-[#a0f000] mb-1">
               País:
@@ -96,7 +150,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
               value={formData.paisId}
               onChange={handleInputChange}
               required
-              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] focus:bg-[#1e4d4d] transition"
             >
               <option value="">Selecciona un país</option>
               {paises.map((pais) => (
@@ -105,6 +159,56 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* Fechas */}
+          <div>
+            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
+              Fechas:
+            </label>
+            <input
+              type="number"
+              name="fechas"
+              value={formData.fechas}
+              onChange={handleInputChange}
+              required
+              placeholder="Número de fechas"
+              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+            />
+          </div>
+
+          {/* Sección de categorías */}
+          <div className="">
+            <label className="block text-sm font-semibold text-[#a0f000] mb-4">
+              Categorías:
+            </label>
+            {availableCategories.length > 0 ? (
+              <div className="flex flex-wrap justify-center gap-4">
+                {availableCategories.map((category) => (
+                  <div key={category.id} className="flex items-center">
+                    {/* Ocultamos el checkbox nativo */}
+                    <input
+                      type="checkbox"
+                      name="categoriesIds"
+                      value={category.id}
+                      checked={formData.categoriesIds.includes(category.id)}
+                      onChange={handleCategoryChange}
+                      className="hidden peer"
+                      id={`category-${category.id}`}
+                    />
+                    {/* Label estilizado que actúa como checkbox */}
+                    <label
+                      htmlFor={`category-${category.id}`}
+                      className="cursor-pointer w-20 flex justify-center items-center gap-2 px-3 py-1 border border-gray-600 rounded-md transition-colors duration-200 peer-checked:bg-green-500 peer-checked:text-white hover:bg-gray-600"
+                    >
+                      {category.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No hay categorías disponibles.</p>
+            )}
           </div>
 
           <div className="flex justify-end space-x-2">

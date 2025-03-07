@@ -22,7 +22,7 @@ const Categoria = () => {
       const errorMessage = await response.text();
       console.error("Error fetching categorias:", errorMessage);
       setCategorias([]);
-      return;
+      return <Navigate to="/login" replace />;
     }
     const data = await response.json();
     setCategorias(data);

@@ -9,6 +9,7 @@ const ListaPartidos = ({ partidos, onEdit, onDelete, handleShowCreator, onDetail
           <tr>
             <th className="px-4 py-2 text-center">ID</th>
             <th className="px-4 py-2 text-center">Fecha</th>
+            <th className="px-4 py-2 text-center">Categoria</th>
             <th className="px-4 py-2 text-center">Local</th>
             <th className="px-4 py-2 text-center">Visitante</th>
             <th className="px-4 py-2 text-center">Torneo</th>
@@ -25,6 +26,7 @@ const ListaPartidos = ({ partidos, onEdit, onDelete, handleShowCreator, onDetail
             >
               <td className="px-4 py-2 text-center">{partido.id}</td>
               <td className="px-4 py-2 text-center">{partido.fecha}</td>
+              <td className="px-4 py-2 text-center">{partido.category?.name}</td>
               <td className="px-4 py-2 text-center">{partido.equipoLocal?.name}</td>
               <td className="px-4 py-2 text-center">{partido.equipoVisitante?.name}</td>
               <td className="px-4 py-2 text-center">{partido.torneo?.name}</td>
