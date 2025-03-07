@@ -35,8 +35,12 @@ function TorneoView() {
           return;
         }
         const data = await response.json();
+        // Verificamos si hay torneos (aunque el torneo viene por URL)
+        if (!data) {
+          return;
+        }
         setCategories(data.categories || []);
-        // Si no hay categoría seleccionada, se asigna la primera disponible
+        // Si no hay categoría seleccionada, asignamos la primera disponible
         if (!categoriaId && data.categories && data.categories.length > 0) {
           const firstCatId = data.categories[0].id;
           setCategoriaId(firstCatId);
@@ -65,9 +69,9 @@ function TorneoView() {
         }
         const data = await response.json();
         setTabla(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching table data:", error);
-      } finally {
         setLoading(false);
       }
     };
@@ -83,8 +87,20 @@ function TorneoView() {
     return <div>Loading...</div>;
   }
 
+  // Si no hay categorías disponibles, mostramos un mensaje al usuario
+  if (categories.length === 0) {
+    return (
+      <div className="text-center p-6">
+        <h1 className="text-2xl font-bold mb-4">Tabla de Posiciones</h1>
+        <p className="text-red-500">No hay categorías para este torneo.</p>
+      </div>
+    );
+  }
+
   // Buscamos la categoría seleccionada para mostrar su nombre en el encabezado
-  const selectedCategory = categories.find(cat => Number(cat.id) === Number(categoriaId));
+  const selectedCategory = categories.find(
+    (cat) => Number(cat.id) === Number(categoriaId)
+  );
 
   return (
     <div>
