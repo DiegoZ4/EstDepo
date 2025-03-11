@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ListaJugadores from "./ListaJugadores";
 import FormularioJugadores from "./FormularioJugadores";
+import { colores } from "../colores"; // Asegúrate de ajustar la ruta según tu estructura
 
 const Jugadores = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -19,10 +20,16 @@ const Jugadores = () => {
       if (criterio === "paisId") {
         return (a.pais?.name || "").localeCompare(b.pais?.name || "");
       }
-      if (criterio === "fechaNacimiento" || criterio === "altura" || criterio === "peso") {
+      if (
+        criterio === "fechaNacimiento" ||
+        criterio === "altura" ||
+        criterio === "peso"
+      ) {
         return (a[criterio] || 0) - (b[criterio] || 0);
       }
-      return (a[criterio] || "").toString().localeCompare((b[criterio] || "").toString());
+      return (a[criterio] || "")
+        .toString()
+        .localeCompare((b[criterio] || "").toString());
     });
   };
 
@@ -134,19 +141,33 @@ const Jugadores = () => {
   }, []);
 
   return (
-    <div className="bg-[#141414] p-6 rounded-lg shadow-xl flex flex-col items-center text-white">
-      <h1 className="text-3xl font-bold text-center mb-4 text-[#a0f000] uppercase">
+    <div
+      className="p-6 rounded-lg shadow-xl flex flex-col items-center"
+      style={{
+        backgroundColor: colores.fondoPrincipal,
+        color: colores.texto,
+      }}
+    >
+      <h1
+        className="text-3xl font-bold text-center mb-4 uppercase"
+        style={{ color: colores.acento }}
+      >
         Gestión de Jugadores
       </h1>
 
-      <div className="mb-4">
-        <label className="block text-[#a0f000] font-semibold mb-1">
+      <div className="mb-4 ">
+        <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
           Clasificar por:
         </label>
         <select
           onChange={(e) => setSortBy(e.target.value)}
           value={sortBy}
-          className="w-full p-2 bg-[#003c3c] border border-[#a0f000] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+          className="w-3/5 p-2 rounded-md focus:outline-none focus:ring-2"
+          style={{
+            backgroundColor: colores.inputBg,
+            border: `1px solid ${colores.acento}`,
+            color: colores.texto,
+          }}
         >
           <option value="name">Nombre</option>
           <option value="equipoId">Equipo</option>
@@ -169,7 +190,17 @@ const Jugadores = () => {
           setSelectedJugador(null);
           setEditId(null);
         }}
-        className="w-full bg-[#a0f000] text-black p-3 rounded-md mt-4 font-bold hover:bg-[#8bd600] transition duration-300"
+        className="w-3/5 p-3 rounded-md mt-4 font-bold transition duration-300"
+        style={{
+          backgroundColor: colores.buttonBg,
+          color: "black",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = colores.buttonHover;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = colores.buttonBg;
+        }}
       >
         Crear Jugador
       </button>

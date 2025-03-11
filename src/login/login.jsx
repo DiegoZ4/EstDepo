@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "../auth/auth.context";
+import { colores } from "../colores"; // Asegúrate de ajustar la ruta
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -78,35 +79,67 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="login-container max-w-md mx-auto p-4 bg-gray-800 text-white rounded">
-      <h2 className="text-2xl font-bold mb-4 text-center">Iniciar Sesión</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div
+      className="login-container max-w-md mx-auto p-6 rounded shadow-md"
+      style={{ backgroundColor: colores.fondoPrincipal }}
+    >
+      <h2
+        className="text-2xl font-bold mb-4 text-center uppercase tracking-wide"
+        style={{ color: colores.acento }}
+      >
+        Iniciar Sesión
+      </h2>
+      {error && <p className="mb-4" style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block mb-1">Email:</label>
+          <label htmlFor="email" className="block mb-1" style={{ color: colores.acento }}>
+            Email:
+          </label>
           <input
             id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <div>
-          <label htmlFor="password" className="block mb-1">Contraseña:</label>
+          <label htmlFor="password" className="block mb-1" style={{ color: colores.acento }}>
+            Contraseña:
+          </label>
           <input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 rounded"
+          className="w-full py-2 rounded transition"
+          style={{
+            backgroundColor: colores.buttonBg,
+            color: "black",
+          }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.backgroundColor = colores.buttonHover)
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.backgroundColor = colores.buttonBg)
+          }
         >
           Ingresar
         </button>
@@ -119,7 +152,10 @@ const Login = ({ onLoginSuccess }) => {
       </div>
       <p className="mt-4 text-center">
         ¿No tienes cuenta?{" "}
-        <Link to="/register" className="text-blue-400 hover:underline">
+        <Link
+          to="/register"
+          style={{ color: colores.link, textDecoration: "underline" }}
+        >
           Regístrate
         </Link>
       </p>

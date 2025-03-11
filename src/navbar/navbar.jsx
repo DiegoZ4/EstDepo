@@ -71,10 +71,12 @@ function Navbar() {
   }, [apiUrl]);
 
   // Función para redirigir al torneo seleccionado
-  const handleSelectTorneo = (torneoId) => {
-    navigate(`/torneo/${torneoId}`);
-    setShowTorneosMenu(false);
-  };
+// Dentro del handler del torneo en el Navbar:
+const handleSelectTorneo = (torneoId) => {
+  navigate(`/torneo/${torneoId}`);
+  setShowTorneosMenu(false);
+};
+
 
   return (
     <nav className="flex z-50 items-center justify-between bg-black text-white px-6 py-4 shadow-lg fixed w-full z-50">
@@ -143,22 +145,23 @@ function Navbar() {
         {showUserMenu && (
           <div className="absolute right-0 mt-2 w-48 bg-white text-black shadow-xl rounded-lg p-2 animate-fade-in">
             <ul>
-              <li>
-                <div className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
-                  <FiUser className="mr-2" /> {user?.name}
-                </div>
-              </li>
+              
               <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
                 <AiOutlineSetting className="mr-2" /> Configuración
               </li>
               {isAuthenticated ? (
-                <li
-                  onClick={() => logout()}
-                  className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition"
-                >
-                  <AiOutlineLogout className="mr-2" /> Cerrar Sesión
-                </li>
-              ) : (
+  <>
+    <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
+      <FiUser className="mr-2" /> {user.name}
+    </li>
+    <li
+      onClick={() => logout()}
+      className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition"
+    >
+      <AiOutlineLogout className="mr-2" /> Cerrar Sesión
+    </li>
+  </>
+) : (
                 <>
                   <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
                     <NavLink to="/login" className="flex items-center">

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import { colores } from "../colores"; // Ajusta la ruta según tu estructura
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -35,7 +36,7 @@ const Register = () => {
         setError(errorMessage);
         return;
       }
-      // Registro exitoso: redirige a la página de login
+      // Registro exitoso: redirige a login
       navigate("/login");
     } catch (err) {
       console.error("Error en el registro:", err);
@@ -56,7 +57,6 @@ const Register = () => {
         setError(errorMsg);
         return;
       }
-      // Registro con Google exitoso, redirige a login o al home según tu lógica
       navigate("/login");
     } catch (err) {
       console.error("Error en registro con Google:", err);
@@ -69,55 +69,107 @@ const Register = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-gray-800 text-white rounded">
-      <h2 className="text-2xl font-bold mb-4 text-center">Registro de Usuario</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+    <div
+      className="max-w-md mx-auto p-6 rounded shadow-md"
+      style={{ backgroundColor: colores.fondoPrincipal }}
+    >
+      <h2
+        className="text-2xl font-bold mb-4 text-center uppercase tracking-wide"
+        style={{ color: colores.acento }}
+      >
+        Registro de Usuario
+      </h2>
+      {error && <p className="mb-4" style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block mb-1">Email:</label>
+          <label
+            htmlFor="email"
+            className="block mb-1"
+            style={{ color: colores.acento }}
+          >
+            Email:
+          </label>
           <input
             type="email"
             id="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <div>
-          <label htmlFor="nombre" className="block mb-1">Nombre:</label>
+          <label
+            htmlFor="nombre"
+            className="block mb-1"
+            style={{ color: colores.acento }}
+          >
+            Nombre:
+          </label>
           <input
             type="text"
             id="nombre"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <div>
-          <label htmlFor="contraseña" className="block mb-1">Contraseña:</label>
+          <label
+            htmlFor="contraseña"
+            className="block mb-1"
+            style={{ color: colores.acento }}
+          >
+            Contraseña:
+          </label>
           <input
             type="password"
             id="contraseña"
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <div>
-          <label htmlFor="rol" className="block mb-1">Rol:</label>
+          <label
+            htmlFor="rol"
+            className="block mb-1"
+            style={{ color: colores.acento }}
+          >
+            Rol:
+          </label>
           <select
             id="rol"
             name="rol"
             value={formData.rol}
             onChange={handleInputChange}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           >
             <option value="freeUser">freeUser</option>
             <option value="SubsUser">SubsUser</option>
@@ -125,7 +177,11 @@ const Register = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="nacimiento" className="block mb-1">
+          <label
+            htmlFor="nacimiento"
+            className="block mb-1"
+            style={{ color: colores.acento }}
+          >
             Fecha de Nacimiento:
           </label>
           <input
@@ -134,27 +190,43 @@ const Register = () => {
             name="bornDate"
             value={formData.bornDate}
             onChange={handleInputChange}
-            className="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: colores.inputBg,
+              borderColor: colores.acento,
+              color: colores.texto,
+            }}
           />
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white py-2 rounded"
+          className="w-full py-2 rounded transition"
+          style={{
+            backgroundColor: colores.buttonBg,
+            color: "black",
+          }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.backgroundColor = colores.buttonHover)
+          }
+          onMouseOut={(e) =>
+            (e.currentTarget.style.backgroundColor = colores.buttonBg)
+          }
         >
           Registrarse
         </button>
       </form>
-
       <div className="mt-4">
         <GoogleLogin
           onSuccess={handleGoogleRegisterSuccess}
           onError={handleGoogleRegisterError}
         />
       </div>
-
       <p className="mt-4 text-center">
         ¿Ya tienes una cuenta?{" "}
-        <Link to="/login" className="text-blue-400 hover:underline">
+        <Link
+          to="/login"
+          style={{ color: colores.link, textDecoration: "underline" }}
+        >
           Inicia sesión
         </Link>
       </p>

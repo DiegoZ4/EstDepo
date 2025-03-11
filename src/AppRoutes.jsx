@@ -2,16 +2,11 @@
 import React, { lazy } from "react";
 import { useRoutes } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
-import { Link } from "react-router-dom";
 
-
-// Lazy load de los componentes
 const Home = lazy(() => import("./home/home"));
 const Categoria = lazy(() => import("./Categorias/Categoria"));
 const FormularioCategorias = lazy(() => import("./Categorias/FormularioCategorias"));
-const Fixture = lazy(() => import("./fixture/fixture"));
 const Admin = lazy(() => import("./admin/admin"));
-const Tablas = lazy(() => import("./tablas/tablas"));
 const Login = lazy(() => import("./login/login"));
 const Register = lazy(() => import("./register/register"));
 const Suscipcion = lazy(() => import("./suscipcion/suscipcion"));
@@ -43,9 +38,7 @@ const AppRoutes = () => {
     { path: "/", element: <Home /> },
     { path: "/categorias", element: <Categoria /> },
     { path: "/categorias/formulario", element: <FormularioCategorias /> },
-    { path: "/fixture", element: <Fixture /> },
     { path: "/admin", element: <Admin /> },
-    { path: "/tablas", element: <Tablas /> },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/suscipcion", element: <Suscipcion /> },
@@ -58,9 +51,8 @@ const AppRoutes = () => {
     { path: "/pais/lista", element: <ListaPais /> },
     { path: "/torneos", element: <Torneos /> },
     { path: "/torneos/editar/:id", element: <FormularioTorneo /> },
-    { path: "/torneo/:torneoId", element: <TorneoView /> },
-    { path: "/torneo/:torneoId/tabla/:categoriaId", element: <TorneoView /> },
     { path: "/torneos/lista", element: <ListaTorneos /> },
+    
     { path: "/partidos", element: <Partidos /> },
     { path: "/partidos/formulario", element: <FormularioPartido /> },
     { path: "/partidos/editar/:id", element: <FormularioPartido /> },
@@ -71,6 +63,18 @@ const AppRoutes = () => {
     { path: "/jugadores/editar/:id", element: <FormularioJugador /> },
     { path: "/jugadores/lista", element: <ListaJugadores /> },
     { path: "/goleadores", element: <Goleadores /> },
+    // Ruta padre para vistas del torneo
+    {
+      path: "/torneo/:torneoId",
+      element: <TorneoView />,
+      children: [
+        // Estas rutas hijas se pueden usar para las vistas específicas
+        { path: "tabla/:categoriaId/", element: <TorneoView /> },
+        { path: "fixture/:categoriaId/", element: <TorneoView /> },
+        { path: "fixture/:categoriaId/:fechas", element: <TorneoView /> },
+        { path: "goleadoras/:categoriaId", element: <TorneoView /> },
+      ],
+    },
     // Rutas protegidas para ABM de usuarios
     {
       path: "/usuarios/*",
