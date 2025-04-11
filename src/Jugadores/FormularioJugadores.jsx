@@ -163,6 +163,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
   };
 
   const handleSubmit = (e) => {
+    console.log(formData);
     e.preventDefault();
     onSave(formData);
   };

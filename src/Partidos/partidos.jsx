@@ -54,6 +54,7 @@ const Partidos = () => {
         fecha: partido.fecha,
         date: partido.date,
         estado: partido.estado,
+        group: partido.group
       };
 
       const response = await fetch(endpoint, {

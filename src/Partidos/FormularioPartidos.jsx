@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from "react";
 
-const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
+const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha, torneoInfo }) => {
+
   const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     fecha: "",
     date: "",
     equipoLocalId: "",
     equipoVisitanteId: "",
-    torneoId: "",
-    categoriaId: "",
+    torneoId: torneoInfo?.id || "",
+    categoriaId: [],
     estado: "Pendiente",
+    // Nuevo campo para guardar el grupo del partido
+    group: ""
   });
-
+  
   const [equipos, setEquipos] = useState([]);
   const [torneos, setTorneos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [maxFechas, setMaxFechas] = useState(null);
   const [errorFecha, setErrorFecha] = useState("");
-  
+  const [availableGroups, setAvailableGroups] = useState([]); // Nuevo estado para grupos del torneo
 
   // Fetch de equipos, torneos y categorías con token en los headers
   useEffect(() => {
@@ -32,11 +35,10 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
             Authorization: token ? `Bearer ${token}` : "",
           },
         });
-        if (!equiposResponse.ok) {
-          console.error("Error fetching equipos:", await equiposResponse.text());
+        if (equiposResponse.ok) {
+          setEquipos(await equiposResponse.json());
         } else {
-          const equiposData = await equiposResponse.json();
-          setEquipos(equiposData);
+          console.error("Error fetching equipos:", await equiposResponse.text());
         }
 
         // Torneos
@@ -47,26 +49,24 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
             Authorization: token ? `Bearer ${token}` : "",
           },
         });
-        if (!torneosResponse.ok) {
-          console.error("Error fetching torneos:", await torneosResponse.text());
+        if (torneosResponse.ok) {
+          setTorneos(await torneosResponse.json());
         } else {
-          const torneosData = await torneosResponse.json();
-          setTorneos(torneosData);
+          console.error("Error fetching torneos:", await torneosResponse.text());
         }
 
         // Categorías
-        const categoriasResponse = await fetch(`${apiUrl}/categories`, {
+        const categoriasResponse = await fetch(`${apiUrl}/torneo/${torneoInfo?.id}/categorias`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: token ? `Bearer ${token}` : "",
           },
         });
-        if (!categoriasResponse.ok) {
-          console.error("Error fetching categorías:", await categoriasResponse.text());
+        if (categoriasResponse.ok) {
+          setCategorias(await categoriasResponse.json());
         } else {
-          const categoriasData = await categoriasResponse.json();
-          setCategorias(categoriasData);
+          console.error("Error fetching categorías:", await categoriasResponse.text());
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -89,19 +89,22 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
               Authorization: token ? `Bearer ${token}` : "",
             },
           });
-          if (!response.ok) {
-            console.error("Error fetching partido:", await response.text());
-          } else {
+          if (response.ok) {
             const data = await response.json();
             setFormData({
-              fecha: data.fecha || "",
+              fecha: initialFecha || data.fecha || "",
               date: data.date?.slice(0, 16) || "",
               equipoLocalId: data.equipoLocal.id || "",
               equipoVisitanteId: data.equipoVisitante.id || "",
-              torneoId: data.torneo.id || "",
-              categoriaId: data.category.id || "",
+              torneoId: torneoInfo?.id || data.torneo.id || "",
+              categoriaId: data.category ? [data.category.id] : [],
               estado: data.estado || "Pendiente",
+              // Si existe un grupo en el partido, lo asignamos
+              group: data.group || ""
             });
+            console.log(data);
+          } else {
+            console.error("Error fetching partido:", await response.text());
           }
         } catch (error) {
           console.error("Error fetching partido:", error);
@@ -111,35 +114,38 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
     fetchPartido();
   }, [selectedPartido, apiUrl]);
 
-  // Cuando se selecciona un torneo, actualizamos el máximo de fechas
+  // Actualiza máximo de fechas y grupos disponibles al cambiar el torneo
   useEffect(() => {
     if (formData.torneoId && torneos.length > 0) {
-      const selectedTorneo = torneos.find(
+      const selectedTournament = torneos.find(
         (t) => t.id === Number(formData.torneoId)
       );
-      if (selectedTorneo) {
-        setMaxFechas(selectedTorneo.fechas);
+      if (selectedTournament) {
+        setMaxFechas(selectedTournament.fechas);
+        // Si el torneo tiene la propiedad groups (un array de strings), la establecemos en availableGroups
+        if (selectedTournament.groups && Array.isArray(selectedTournament.groups)) {
+          setAvailableGroups(selectedTournament.groups);
+        } else {
+          setAvailableGroups([]);
+        }
+      } else {
+        setMaxFechas(null);
+        setAvailableGroups([]);
       }
     }
   }, [formData.torneoId, torneos]);
 
+  useEffect(() => {
+    if (!selectedPartido && initialFecha) {
+      setFormData((prev) => ({ ...prev, fecha: initialFecha }));
+    }
+  }, [initialFecha]);
+  
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  
-    // Si se selecciona un torneo, actualizamos maxFechas
-    if (name === "torneoId") {
-      const selectedTournament = torneos.find(
-        (t) => t.id === Number(value)
-      );
-      if (selectedTournament) {
-        setMaxFechas(selectedTournament.fechas);
-      } else {
-        setMaxFechas(null);
-      }
-    }
-  
-    // Si se ingresa la fecha (jornada), validamos que no sea mayor que maxFechas
+    // Si se selecciona un torneo, se actualiza maxFechas y availableGroups (ya se hace en el useEffect anterior)
     if (name === "fecha") {
       const num = Number(value);
       if (maxFechas && num > maxFechas) {
@@ -149,24 +155,43 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
       }
     }
   };
-  
 
-  // Función para alternar el estado entre "Pendiente" y "Finalizado"
+  // Alternar estado entre "Pendiente" y "Finalizado"
   const toggleEstado = () => {
-    const nuevoEstado =
-      formData.estado === "Pendiente" ? "Finalizado" : "Pendiente";
+    const nuevoEstado = formData.estado === "Pendiente" ? "Finalizado" : "Pendiente";
     handleInputChange({ target: { name: "estado", value: nuevoEstado } });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Si hay un error en la fecha, no se envía el formulario
     if (errorFecha) {
       alert(errorFecha);
       return;
     }
-    onSave(formData);
+  
+    const categoriasSeleccionadas = Array.isArray(formData.categoriaId)
+      ? formData.categoriaId
+      : [formData.categoriaId];
+  
+    categoriasSeleccionadas.forEach((categoriaId) => {
+      const partido = {
+        ...formData,
+        categoriaId,
+      };
+  
+      // Si estamos editando, mandamos info completa
+      // Si estamos creando múltiples, eliminamos el id
+      if (!selectedPartido) {
+        delete partido.id; // aseguramos que no haya id
+      }
+  
+      onSave(partido, !!selectedPartido);
+    });
+  
+    setCreator(false);
   };
+  
+  
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
@@ -195,27 +220,79 @@ const FormularioPartido = ({ setCreator, selectedPartido, onSave }) => {
             ))}
           </select>
         </div>
+
+         {/* Nueva Sección para Seleccionar Grupo */}
+         {availableGroups && availableGroups.length > 0 && (
+          <div>
+            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
+              Grupo:
+            </label>
+            <select
+              name="group"
+              value={formData.group}
+              onChange={handleInputChange}
+              className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
+              required
+            >
+              <option value="">Seleccione un grupo</option>
+              {availableGroups.map((grupo, index) => (
+                <option key={index} value={grupo}>
+                  {grupo}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
         {/* Categoría */}
         <div>
           <label className="block font-semibold mb-1 text-[#a0f000]">
             Categoría:
           </label>
-          <select
-            name="categoriaId"
-            value={formData.categoriaId}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
-            required
+{/* Sección visual con checkboxes como en FormularioTorneos */}
+<div>
+  <label className="block text-sm font-semibold text-[#a0f000] mb-2">
+    Categorías:
+  </label>
+  {categorias.length > 0 ? (
+    <div className="flex flex-wrap gap-3 justify-center">
+      {categorias.map((categoria) => (
+        <div key={categoria.id} className="flex items-center">
+          <input
+            type="checkbox"
+            id={`cat-${categoria.id}`}
+            value={categoria.id}
+            checked={formData.categoriaId.includes(categoria.id)}
+            onChange={(e) => {
+              const id = Number(e.target.value);
+              if (e.target.checked) {
+                setFormData((prev) => ({
+                  ...prev,
+                  categoriaId: [...prev.categoriaId, id],
+                }));
+              } else {
+                setFormData((prev) => ({
+                  ...prev,
+                  categoriaId: prev.categoriaId.filter((catId) => catId !== id),
+                }));
+              }
+            }}
+            className="hidden peer"
+          />
+          <label
+            htmlFor={`cat-${categoria.id}`}
+            className="cursor-pointer px-4 py-1 border border-[#444] rounded-md peer-checked:bg-green-500 peer-checked:text-black text-white hover:bg-gray-600 transition"
           >
-            <option value="">
-              {selectedPartido ? "Seleccione categoría" : "Seleccione una categoría"}
-            </option>
-            {categorias.map((categoria) => (
-              <option key={categoria.id} value={categoria.id}>
-                {categoria.name}
-              </option>
-            ))}
-          </select>
+            {categoria.name}
+          </label>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p className="text-gray-400">No hay categorías disponibles.</p>
+  )}
+</div>
+
+
         </div>
 
         <div className="flex justify-around">

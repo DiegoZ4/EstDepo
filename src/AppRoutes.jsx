@@ -27,6 +27,7 @@ const FormularioJugador = lazy(() => import("./Jugadores/FormularioJugadores"));
 const ListaJugadores = lazy(() => import("./Jugadores/ListaJugadores"));
 const Goleadores = lazy(() => import("./Goleadores/goleadores"));
 const TorneoView = lazy(() => import("./torneos/TorneoView"));
+const TorneoInspect = lazy(() => import("./torneos/TorneoInspect"));
 
 // Rutas protegidas para usuarios
 const Usuarios = lazy(() => import("./users/Usuarios"));
@@ -52,6 +53,7 @@ const AppRoutes = () => {
     { path: "/torneos", element: <Torneos /> },
     { path: "/torneos/editar/:id", element: <FormularioTorneo /> },
     { path: "/torneos/lista", element: <ListaTorneos /> },
+    { path: "/torneos/inspect/:id", element: <TorneoInspect/>},
     
     { path: "/partidos", element: <Partidos /> },
     { path: "/partidos/formulario", element: <FormularioPartido /> },

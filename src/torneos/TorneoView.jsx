@@ -5,151 +5,117 @@ import Fixture from '../fixture/fixture';
 import Goleadores from '../Goleadores/goleadores';
 
 function TorneoView() {
-  const { torneoId, categoriaId: initialCategoriaId } = useParams();
+  const { torneoId, tab, categoriaId } = useParams();
   const navigate = useNavigate();
-  const [loadingTorneo, setLoadingTorneo] = useState(true);
+
   const [categories, setCategories] = useState([]);
-  // Solo nos interesa manejar la categoría seleccionada y las pestañas
-  const [categoriaId, setCategoriaId] = useState(initialCategoriaId || null);
-  const [activeTab, setActiveTab] = useState("tabla");
+  const [activeTab, setActiveTab] = useState(tab || "tabla");
+  const [selectedCategoriaId, setSelectedCategoriaId] = useState(categoriaId || null);
+  const [loadingTorneo, setLoadingTorneo] = useState(true);
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  // Cuando cambia el torneo, reiniciamos la categoría seleccionada
   useEffect(() => {
-    setCategoriaId(null);
-  }, [torneoId]);
-
-  // Fetch del torneo para obtener sus categorías (se ejecuta solo al inicio o cuando cambia torneo)
-  useEffect(() => {
-    setLoadingTorneo(true);
     const token = localStorage.getItem("access_token");
+
     const fetchTorneo = async () => {
       try {
-        const response = await fetch(`${apiUrl}/torneo/${torneoId}`, {
-          method: "GET",
+        const res = await fetch(`${apiUrl}/torneo/${torneoId}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
+            Authorization: `Bearer ${token}`
+          }
         });
-        if (!response.ok) {
-          console.error("Error fetching torneo:", await response.text());
-          return;
+
+        if (!res.ok) throw new Error("No se pudo cargar el torneo");
+        const data = await res.json();
+        const cat = data.categories || [];
+
+        setCategories(cat);
+
+        if (!categoriaId && cat.length > 0) {
+          const firstId = cat[0].id;
+          setSelectedCategoriaId(firstId);
+          navigate(`/torneo/${torneoId}/${activeTab}/${firstId}`, { replace: true });
+        } else {
+          setSelectedCategoriaId(categoriaId);
         }
-        const data = await response.json();
-        setCategories(data.categories || []);
-        // Si no hay categoría seleccionada, usamos la primera disponible
-        if (!categoriaId && data.categories && data.categories.length > 0) {
-          const firstCatId = data.categories[0].id;
-          setCategoriaId(firstCatId);
-          navigate(`/torneo/${torneoId}/${activeTab}/${firstCatId}`, { replace: true });
-        }
-      } catch (error) {
-        console.error("Error fetching torneo:", error);
+      } catch (e) {
+        console.error("Error:", e);
       } finally {
         setLoadingTorneo(false);
       }
     };
+
     fetchTorneo();
   }, [apiUrl, torneoId]);
 
   const handleCategoryClick = (catId) => {
-    setCategoriaId(catId);
-    navigate(`/torneo/${torneoId}/${activeTab}/${catId}`, { replace: true });
+    setSelectedCategoriaId(catId);
+    navigate(`/torneo/${torneoId}/${activeTab}/${catId}`);
   };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    if (categoriaId) {
-      navigate(`/torneo/${torneoId}/${tab}/${categoriaId}`, { replace: true });
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    if (selectedCategoriaId) {
+      navigate(`/torneo/${torneoId}/${newTab}/${selectedCategoriaId}`);
     }
   };
 
-  if (loadingTorneo) {
-    return <div>Loading...</div>;
-  }
-
-  if (categories.length === 0) {
-    return (
-      <div className="text-center p-6">
-        <h1 className="text-2xl font-bold mb-4">Torneo</h1>
-        <p className="text-red-500">No hay categorías para este torneo.</p>
-      </div>
-    );
-  }
-
   const selectedCategory = categories.find(
-    (cat) => Number(cat.id) === Number(categoriaId)
+    (cat) => Number(cat.id) === Number(selectedCategoriaId)
   );
+
+  if (loadingTorneo) return <div>Cargando torneo...</div>;
 
   return (
     <div>
-      {/* Título: mostramos el nombre de la categoría seleccionada o "Torneo" */}
       <h1 className="text-2xl font-bold text-center mb-4">
         {selectedCategory ? selectedCategory.name : "Torneo"}
       </h1>
 
-      {/* Selector de categorías */}
       <div className="flex justify-center mb-4 border-b border-gray-400 pb-2">
         {categories.map((cat) => (
           <button
             key={cat.id}
             onClick={() => handleCategoryClick(cat.id)}
-            className={`mx-2 px-4 py-2 text-white ${
-              Number(categoriaId) === Number(cat.id)
-                ? "bg-green-500"
-                : "bg-gray-700 hover:bg-green-500"
-            }`}
+            className={`mx-2 px-4 py-2 text-white ${Number(selectedCategoriaId) === Number(cat.id)
+              ? "bg-green-500"
+              : "bg-gray-700 hover:bg-green-500"
+              }`}
           >
             {cat.name}
           </button>
         ))}
       </div>
 
-      {/* Pestañas de navegación (sección de módulos) */}
       <div className="flex justify-center mb-4 border-b border-gray-400 pb-2">
-        <button
-          onClick={() => handleTabChange("fixture")}
-          className={`mx-2 px-4 py-2 text-white ${
-            activeTab === "fixture"
+        {["fixture", "tabla", "goleadoras"].map((tabKey) => (
+          <button
+            key={tabKey}
+            onClick={() => handleTabChange(tabKey)}
+            className={`mx-2 px-4 py-2 text-white ${activeTab === tabKey
               ? "border-b-2 border-blue-500 text-blue-500"
               : "text-gray-500 hover:text-blue-500"
-          }`}
-        >
-          Fixture
-        </button>
-        <button
-          onClick={() => handleTabChange("tabla")}
-          className={`mx-2 px-4 py-2 text-white ${
-            activeTab === "tabla"
-              ? "border-b-2 border-blue-500 text-blue-500"
-              : "text-gray-500 hover:text-blue-500"
-          }`}
-        >
-          Tabla de Posiciones
-        </button>
-        <button
-          onClick={() => handleTabChange("goleadoras")}
-          className={`mx-2 px-4 py-2 text-white ${
-            activeTab === "goleadoras"
-              ? "border-b-2 border-blue-500 text-blue-500"
-              : "text-gray-500 hover:text-blue-500"
-          }`}
-        >
-          Goleadores
-        </button>
+              }`}
+          >
+            {tabKey === "fixture"
+              ? "Fixture"
+              : tabKey === "tabla"
+                ? "Tabla de Posiciones"
+                : "Goleadores"}
+          </button>
+        ))}
       </div>
 
-      {/* Renderizado de módulos: cada módulo se encarga de su propio fetch y estado */}
-      <div style={{ display: activeTab === "fixture" ? "block" : "none" }}>
-        <Fixture torneoId={torneoId} categoriaId={categoriaId} />
-      </div>
-      <div style={{ display: activeTab === "tabla" ? "block" : "none" }}>
-        <Tablas torneoId={torneoId} categoriaId={categoriaId} />
-      </div>
-      <div style={{ display: activeTab === "goleadoras" ? "block" : "none" }}>
-        <Goleadores torneoId={torneoId} categoriaId={categoriaId} />
-      </div>
+      {activeTab === "fixture" && (
+        <Fixture torneoId={torneoId} categoriaId={selectedCategoriaId} />
+      )}
+      {activeTab === "tabla" && (
+        <Tablas torneoId={torneoId} categoriaId={selectedCategoriaId} />
+      )}
+      {activeTab === "goleadoras" && (
+        <Goleadores torneoId={torneoId} categoriaId={selectedCategoriaId} />
+      )}
     </div>
   );
 }

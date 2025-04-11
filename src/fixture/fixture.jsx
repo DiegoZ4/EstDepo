@@ -128,41 +128,40 @@ const Fixture = () => {
         <p className="text-center text-red-500 mb-4">No hay partidos para esta fecha.</p>
       )}
       
-      {/* Renderizado del fixture */}
-      <div className="grid grid-cols-1 gap-4">
-        {partidos.map((partido, index) => (
-          <div
-            key={index}
-            className="flex items-center relative justify-between bg-purple-800 text-white p-4 rounded-md shadow-lg"
-          >
-            {/* Equipo Local */}
-            
-  <div className="flex items-center space-x-2">
-    <img
-      src={partido.equipoLocal.image}
-      alt={partido.equipoLocal.name}
-      className="w-10  "
-    />
-    <span className="font-medium ml-2">{partido.equipoLocal.name}</span>
-  </div>
-
-            {/* VS */}
-            <span className="text-lg absolute left-0 right-0 justify-center text-center font-bold">
-              VS
-            </span>
-
-            {/* Equipo Visitante */}
-            <div className="flex items-center ">
-    <span className="mr-2 font-medium">{partido.equipoVisitante.name}</span>
-    <img
-      src={partido.equipoVisitante.image}
-      alt={partido.equipoVisitante.name}
-      className="w-10  "
-    />
-  </div>
+{/* Renderizado del fixture agrupado por grupos */}
+{Object.entries(
+  partidos.reduce((acc, partido) => {
+    const grupo = partido.group || "Sin grupo";
+    if (!acc[grupo]) acc[grupo] = [];
+    acc[grupo].push(partido);
+    return acc;
+  }, {})
+).map(([grupo, listaPartidos]) => (
+  <div key={grupo} className="mb-6">
+    <h3 className="text-xl font-bold text-white mb-2">Grupo {grupo}</h3>
+    <div className="grid grid-cols-1 gap-4">
+      {listaPartidos.map((partido, index) => (
+        <div
+          key={index}
+          className="flex items-center relative justify-between bg-purple-800 text-white p-4 rounded-md shadow-lg"
+        >
+          {/* Local */}
+          <div className="flex items-center space-x-2">
+            <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="w-10" />
+            <span className="font-medium ml-2">{partido.equipoLocal.name}</span>
           </div>
-        ))}
-      </div>
+          <span className="text-lg absolute left-0 right-0 justify-center text-center font-bold">VS</span>
+          {/* Visitante */}
+          <div className="flex items-center">
+            <span className="mr-2 font-medium">{partido.equipoVisitante.name}</span>
+            <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="w-10" />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+))}
+
       
       {/* Controles de navegación de fechas */}
       <div className="flex justify-center mt-6 space-x-4">

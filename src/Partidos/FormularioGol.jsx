@@ -3,75 +3,118 @@ import FormularioJugadores from "../Jugadores/FormularioJugadores";
 
 const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
+
   const [formData, setFormData] = useState({
-    partidoId: partidoId,
-    equipoId: equipoId,
+    partidoId,
+    equipoId,
     jugadorId: "",
     minuto: "",
-    torneoId: torneoId,
+    torneoId,
   });
+
   const [jugadores, setJugadores] = useState([]);
   const [creator, setCreator] = useState(false);
 
+  const fetchJugadores = async () => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`${apiUrl}/jugador?equipo=${equipoId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      const data = await res.json();
+      setJugadores(data);
+    } catch (err) {
+      console.error("Error al obtener jugadores:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchJugadores = async () => {
-      const token = localStorage.getItem("access_token");
-      try {
-        const response = await fetch(`${apiUrl}/jugador?equipo=${equipoId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        const data = await response.json();
-        setJugadores(data);
-      } catch (error) {
-        console.error("Error fetching jugadores:", error);
-      }
-    };
     fetchJugadores();
-  }, [apiUrl, equipoId]);
+  }, [equipoId]);
 
   const handleInputChange = (e) => {
-    if (e.target.name === "jugadorId" && e.target.value === "crear") {
+    const { name, value } = e.target;
+    if (name === "jugadorId" && value === "crear") {
       setCreator(true);
       return;
     }
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token");
+
+    const jugadorId = Number(formData.jugadorId);
+    const minuto = Number(formData.minuto);
+
+    if (!jugadorId || isNaN(jugadorId)) {
+      alert("Seleccioná un jugador válido.");
+      return;
+    }
+
     try {
-      const response = await fetch(`${apiUrl}/goles`, {
+      const res = await fetch(`${apiUrl}/goles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token ? `Bearer ${token}` : "",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, jugadorId, minuto }),
       });
-      if (!response.ok) {
-        console.error("Error creating gol:", await response.text());
+
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Error al crear gol:", error);
         return;
       }
+
       onSubmit();
-    } catch (error) {
-      console.error("Error creating gol:", error);
+    } catch (err) {
+      console.error("Error al crear gol:", err);
     }
   };
 
-  // Callback para cuando se crea un jugador
-  const handleJugadorCreado = (nuevoJugador) => {
-    // Agrega el nuevo jugador a la lista de jugadores
-    setJugadores((prev) => [...prev, nuevoJugador]);
-    // Selecciona el nuevo jugador en el formulario
-    setFormData({ ...formData, jugadorId: nuevoJugador.id });
-    // Cierra el formulario de jugador
-    setCreator(false);
+  const handleJugadorCreado = async (jugador) => {
+    if (!jugador) {
+      console.error("Jugador inválido:", jugador);
+      return;
+    }
+  
+    const token = localStorage.getItem("access_token");
+  
+    try {
+      const response = await fetch(`${apiUrl}/jugador`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify(jugador),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error al guardar jugador:", errorText);
+        return;
+      }
+  
+      const jugadorGuardado = await response.json();
+  
+      setJugadores((prev) => [...prev, jugadorGuardado]);
+      setFormData((prev) => ({
+        ...prev,
+        jugadorId: jugadorGuardado.id.toString(),
+      }));
+      setCreator(false);
+    } catch (error) {
+      console.error("Error en el guardado del jugador:", error);
+    }
   };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
@@ -83,63 +126,56 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId }) => 
           Registrar Gol
         </h2>
 
-        {/* Selección de Jugador */}
+        {/* Jugador */}
         <div>
-          <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-            Jugador:
-          </label>
+          <label className="block mb-1 text-sm font-semibold text-[#a0f000]">Jugador:</label>
           <select
             name="jugadorId"
             value={formData.jugadorId}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+            className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md"
             required
           >
             <option value="">Seleccione un jugador</option>
-            {jugadores.map((jugador) => (
-              <option key={jugador.id} value={jugador.id}>
-                {jugador.name}
-              </option>
+            {jugadores.map((j) => (
+              <option key={j.id} value={j.id.toString()}>{j.name}</option>
             ))}
-            <option value="crear">Crear un jugador</option>
+            <option key="crear" value="crear">Crear un jugador</option>
           </select>
         </div>
 
         {/* Minuto */}
         <div>
-          <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-            Minuto:
-          </label>
+          <label className="block mb-1 text-sm font-semibold text-[#a0f000]">Minuto:</label>
           <input
             type="number"
             name="minuto"
             value={formData.minuto}
             onChange={handleInputChange}
+            className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md"
             placeholder="Ej: 45"
             required
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
           />
         </div>
 
-        {/* Botones de acción */}
-        <div className="flex justify-end space-x-3 mt-4">
+        {/* Botones */}
+        <div className="flex justify-end gap-3">
           <button
             type="submit"
-            className="bg-green-500 hover:bg-green-400 text-black font-bold px-4 py-2 rounded-lg transition transform hover:scale-105"
+            className="bg-green-500 hover:bg-green-400 text-black font-bold px-4 py-2 rounded-lg"
           >
             Crear Gol
           </button>
           <button
             type="button"
             onClick={() => onClose(false)}
-            className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg transition transform hover:scale-105"
+            className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg"
           >
             Cancelar
           </button>
         </div>
       </form>
 
-      {/* Modal para crear jugador */}
       {creator && (
         <FormularioJugadores
           setCreator={setCreator}

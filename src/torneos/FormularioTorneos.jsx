@@ -8,9 +8,12 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
     image: "",
     paisId: "",
     fechas: "", // Inicializamos fechas como cadena vacía (o puedes usar 0)
-    categoriesIds: [] // Se usa categoriesIds en lugar de categories
+    categoriesIds: [] ,// Se usa categoriesIds en lugar de categories
+    groups: []
   });
   const [paises, setPaises] = useState([]);
+
+  const [newGroup, setNewGroup] = useState("");
   const [availableCategories, setAvailableCategories] = useState([]); // Lista de categorías disponibles
 
   // Cargar países
@@ -74,6 +77,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
         paisId: selectedTorneo.pais?.id || "",
         // Se asume que en el torneo ya vienen las categorías asociadas como arreglo de números o se puede mapear:
         categoriesIds: selectedTorneo.categories ? selectedTorneo.categories.map(cat => cat.id) : [],
+        groups: selectedTorneo.groups || []
       });
     }
   }, [selectedTorneo]);
@@ -98,6 +102,25 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
         categoriesIds: prev.categoriesIds.filter((id) => id !== categoryId),
       }));
     }
+  };
+
+  const handleAddGroup = () => {
+    if (newGroup.trim() !== "") {
+      // Agregar el grupo, asegurándote que no esté ya agregado (opcional)
+      setFormData((prev) => ({
+        ...prev,
+        groups: [...prev.groups, newGroup.trim()],
+      }));
+      setNewGroup("");
+    }
+  };
+
+  
+  const handleRemoveGroup = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      groups: prev.groups.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -210,6 +233,50 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
               <p>No hay categorías disponibles.</p>
             )}
           </div>
+
+            {/* Nueva sección para Grupos */}
+            <div>
+            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
+              Grupos:
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                name="newGroup"
+                value={newGroup}
+                onChange={(e) => setNewGroup(e.target.value)}
+                className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+                placeholder="Ingresar grupo"
+              />
+              <button
+                type="button"
+                onClick={handleAddGroup}
+                className="bg-[#a0f000] text-black px-2 py-1 rounded"
+              >
+                +
+              </button>
+            </div>
+            {formData.groups.length > 0 && (
+              <div className="mt-2 space-y-2">
+                {formData.groups.map((group, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-1 bg-gray-700 rounded"
+                  >
+                    <span>{group}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveGroup(index)}
+                      className="text-red-500 px-2"
+                    >
+                      -
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
 
           <div className="flex justify-end space-x-2">
             <button
