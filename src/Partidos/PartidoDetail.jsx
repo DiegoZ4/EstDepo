@@ -69,6 +69,33 @@ setGoles([...(data.golesLocal || []), ...(data.golesVisitante || [])]);
     }
   };
   
+  const toggleEstado = async (nuevoEstado) => {
+    if (partido.estado === nuevoEstado) return;
+  
+    const token = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`${apiUrl}/partido/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+  
+      if (!res.ok) {
+        const error = await res.text();
+        console.error("Error al actualizar estado:", error);
+        return;
+      }
+  
+      fetchPartido(); // recarga con nuevo estado
+    } catch (err) {
+      console.error("Error al cambiar el estado:", err);
+    }
+  };
+  
+  
 
   const handleSubmitGol = () => {
     setShowGolForm(false);
@@ -86,30 +113,51 @@ setGoles([...(data.golesLocal || []), ...(data.golesVisitante || [])]);
 
       <div className="bg-[#1f1f1f] p-6 rounded-lg shadow-md border border-[#003c3c] space-y-4">
         {/* Info general */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-          <div>
-            <h2 className="text-sm text-[#a0f000]">Categoria</h2>
-            <p className="font-semibold">{partido.category.name}</p>
-          </div>
-          <div>
-            <h2 className="text-sm text-[#a0f000]">Fecha</h2>
-            <p className="font-semibold">{partido.fecha}</p>
-          </div>
-          <div>
-            <h2 className="text-sm text-[#a0f000]">Torneo</h2>
-            <p className="font-semibold">{partido.torneo?.name}</p>
-          </div>
-          <div>
-            <h2 className="text-sm text-[#a0f000]">Estado</h2>
-            <p
-              className={`font-bold ${
-                partido.estado === "Finalizado" ? "text-green-500" : "text-yellow-400"
-              }`}
-            >
-              {partido.estado}
-            </p>
-          </div>
+        <div className="flex justify-center">
+  <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
+  <div className="flex flex-col items-center justify-center">
+    <h2 className="text-sm text-[#a0f000]">Categoria</h2>
+    <p className="font-semibold">{partido.category.name}</p>
+  </div>
+
+  <div className="flex flex-col items-center justify-center">
+    <h2 className="text-sm text-[#a0f000]">Fecha</h2>
+    <p className="font-semibold">{partido.fecha}</p>
+  </div>
+
+  <div className="flex flex-col items-center justify-center">
+    <h2 className="text-sm text-[#a0f000]">Torneo</h2>
+    <p className="font-semibold">{partido.torneo?.name}</p>
+  </div>
+    <div>
+      <h2 className="text-sm text-[#a0f000] mb-1">Estado</h2>
+      <div className="relative flex w-40 mx-auto border border-[#003c3c] rounded-full overflow-hidden">
+        <div
+          className={`absolute top-0 left-0 w-1/2 h-full bg-[#a0f000] transition-transform duration-300 rounded-full ${
+            partido.estado === "Finalizado" ? "translate-x-full" : "translate-x-0"
+          }`}
+        />
+        <div
+          onClick={() => toggleEstado("Pendiente")}
+          className={`w-1/2 text-center z-10 py-1 font-bold cursor-pointer transition-colors ${
+            partido.estado === "Pendiente" ? "text-black" : "text-[#a0f000]"
+          }`}
+        >
+          Pendiente
         </div>
+        <div
+          onClick={() => toggleEstado("Finalizado")}
+          className={`w-1/2 text-center z-10 py-1 font-bold cursor-pointer transition-colors ${
+            partido.estado === "Finalizado" ? "text-black" : "text-[#a0f000]"
+          }`}
+        >
+          Finalizado
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         {/* Equipos */}
         <div className="flex justify-between items-center mt-6">

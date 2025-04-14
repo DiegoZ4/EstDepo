@@ -382,24 +382,33 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
 
 
         {/* Switch de Estado */}
-        <div
-  className="flex items-center justify-between p-2 rounded-md border border-[#003c3c] cursor-pointer transition"
-  onClick={toggleEstado}
-  style={{
-    backgroundColor: formData.estado === "Finalizado" ? "#a0f000" : "#1f1f1f",
-  }}
->
-  <span className={`font-semibold ${formData.estado === "Finalizado" ? "text-[#1f1f1f]" : "text-[#a0f000]"}`}>
-    {formData.estado === "Finalizado" ? "Finalizado" : "Pendiente"}
-  </span>
-  <div className="relative w-10 h-5 bg-gray-500 rounded-full">
-    <div
-      className={`absolute w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${
-        formData.estado === "Finalizado" ? "translate-x-5" : "translate-x-0"
-      }`}
-    />
+        <div className="w-40 relative flex border border-[#003c3c] rounded-full overflow-hidden cursor-pointer text-sm">
+  {/* Fondo animado */}
+  <div
+    className={`absolute top-0 bottom-0 w-1/2 bg-[#a0f000] rounded-full transition-all duration-300 ${
+      partido.estado === "Finalizado" ? "translate-x-full" : "translate-x-0"
+    }`}
+  />
+
+  {/* Opciones */}
+  <div
+    onClick={() => toggleEstado("Pendiente")}
+    className={`w-1/2 z-10 text-center py-1 font-semibold ${
+      partido.estado === "Pendiente" ? "text-black" : "text-[#a0f000]"
+    }`}
+  >
+    Pendiente
+  </div>
+  <div
+    onClick={() => toggleEstado("Finalizado")}
+    className={`w-1/2 z-10 text-center py-1 font-semibold ${
+      partido.estado === "Finalizado" ? "text-black" : "text-[#a0f000]"
+    }`}
+  >
+    Finalizado
   </div>
 </div>
+
 
         {/* Botones */}
         <div className="flex justify-end space-x-4 pt-4">
