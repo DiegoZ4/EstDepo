@@ -12,6 +12,10 @@ const PartidoDetail = () => {
   const [showGolForm, setShowGolForm] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [selectedTorneo, setSelectedTorneo] = useState(null);
+  const [goles, setGoles] = useState([]);
+  const [editGol, setEditGol] = useState(null);
+
+
 
   const fetchPartido = async () => {
     const token = localStorage.getItem("access_token");
@@ -26,6 +30,8 @@ const PartidoDetail = () => {
       if (!response.ok) throw new Error("Error al obtener el partido");
       const data = await response.json();
       setPartido(data);
+setGoles([...(data.golesLocal || []), ...(data.golesVisitante || [])]);
+
     } catch (error) {
       setError(error.message);
     } finally {
@@ -42,6 +48,27 @@ const PartidoDetail = () => {
     setSelectedTorneo(partido.torneo);
     setShowGolForm(true);
   };
+
+  const handleDeleteGol = async (golId) => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const response = await fetch(`${apiUrl}/goles/${golId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+  
+      if (response.ok) {
+        fetchPartido(); // Actualiza goles
+      } else {
+        console.error("Error al eliminar gol:", await response.text());
+      }
+    } catch (err) {
+      console.error("Error eliminando gol:", err);
+    }
+  };
+  
 
   const handleSubmitGol = () => {
     setShowGolForm(false);
@@ -122,16 +149,67 @@ const PartidoDetail = () => {
         </div>
       </div>
 
+      {/* Lista de goles */}
+{goles.length > 0 && (
+  <div className="mt-8">
+    <h3 className="text-xl font-bold mb-2 text-center text-[#a0f000]">
+      Goles Registrados
+    </h3>
+    <div className="space-y-2">
+    {goles.map((gol) => (
+  <div
+    key={gol.id}
+    className="flex justify-between items-center bg-[#292929] p-3 rounded-md border border-[#003c3c]"
+  >
+    <div>
+      <p>
+        <strong>Jugador:</strong> {gol.jugador?.name || "Desconocido"}
+      </p>
+      <p>
+        <strong>Minuto:</strong> {gol.minuto}'
+      </p>
+    </div>
+    <div className="flex gap-2">
+      <button
+        onClick={() => setEditGol(gol)} // Setea el gol a editar
+        className="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded"
+      >
+        Editar
+      </button>
+      <button
+        onClick={() => handleDeleteGol(gol.id)}
+        className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded"
+      >
+        Eliminar
+      </button>
+    </div>
+  </div>
+))}
+
+    </div>
+  </div>
+)}
+
+
       {/* Formulario de Gol */}
-      {showGolForm && (
-        <GolForm
-          torneoId={selectedTorneo?.id}
-          equipoId={selectedTeamId}
-          partidoId={partido.id}
-          onSubmit={handleSubmitGol}
-          onClose={() => setShowGolForm(false)}
-        />
-      )}
+      {(showGolForm || editGol) && (
+  <GolForm
+    torneoId={selectedTorneo?.id}
+    equipoId={selectedTeamId || editGol?.equipo?.id}
+    partidoId={partido.id}
+    gol={editGol} // si es edición, se le pasa el gol
+    onSubmit={() => {
+      setShowGolForm(false);
+      setEditGol(null);
+      fetchPartido();
+    }}
+    onClose={() => {
+      setShowGolForm(false);
+      setEditGol(null);
+    }}
+  />
+)}
+
     </div>
   );
 };
