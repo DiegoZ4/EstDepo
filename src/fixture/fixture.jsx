@@ -156,7 +156,7 @@ const Fixture = () => {
         className="flex flex-col cursor-pointer bg-purple-800 text-white p-4 rounded-md shadow-lg"
       >
         <div className="flex justify-between items-center">
-          <div className="flex items-center h-full space-x-2">
+          <div className="flex justify-start items-center h-full w-1/4 space-x-2">
             <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="h-10" />
             <span className="font-medium">{partido.equipoLocal.name}</span>
             
@@ -172,9 +172,9 @@ const Fixture = () => {
 )}
 </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex  justify-end items-center h-full w-1/4 space-x-2">
             <span className="font-medium">{partido.equipoVisitante.name}</span>
-            <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="w-10" />
+            <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="h-10" />
           </div>
         </div>
 
