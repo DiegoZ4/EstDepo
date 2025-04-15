@@ -156,11 +156,12 @@ const Fixture = () => {
         className="flex flex-col cursor-pointer bg-purple-800 text-white p-4 rounded-md shadow-lg"
       >
         <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="w-10" />
+          <div className="flex items-center h-full space-x-2">
+            <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="h-10" />
             <span className="font-medium">{partido.equipoLocal.name}</span>
             
           </div>
+          <div className="flex w-1/2 items-center justify-center">
           {partido.estado === "Finalizado" && (
   <h1 className="font-bold mx-4 text-lg">{partido.golesLocal.length}</h1>
 )}
@@ -169,6 +170,7 @@ const Fixture = () => {
           {partido.estado === "Finalizado" && (
   <h1 className="font-bold mx-4 text-lg">{partido.golesVisitante.length}</h1>
 )}
+</div>
 
           <div className="flex items-center space-x-2">
             <span className="font-medium">{partido.equipoVisitante.name}</span>
