@@ -161,6 +161,7 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }
       setCreator(true);
     } else {
       setFormData((prev) => ({ ...prev, jugadorId: e.target.value }));
+      
     }
   }}
   className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md"

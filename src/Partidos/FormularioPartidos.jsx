@@ -382,11 +382,11 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
 
 
         {/* Switch de Estado */}
-        <div className="w-40 relative flex border border-[#003c3c] rounded-full overflow-hidden cursor-pointer text-sm">
+<div className="w-40 relative flex border border-[#003c3c] rounded-full overflow-hidden cursor-pointer text-sm">
   {/* Fondo animado */}
   <div
     className={`absolute top-0 bottom-0 w-1/2 bg-[#a0f000] rounded-full transition-all duration-300 ${
-      partido.estado === "Finalizado" ? "translate-x-full" : "translate-x-0"
+      formData.estado === "Finalizado" ? "translate-x-full" : "translate-x-0"
     }`}
   />
 
@@ -394,7 +394,7 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
   <div
     onClick={() => toggleEstado("Pendiente")}
     className={`w-1/2 z-10 text-center py-1 font-semibold ${
-      partido.estado === "Pendiente" ? "text-black" : "text-[#a0f000]"
+      formData.estado === "Pendiente" ? "text-black" : "text-[#a0f000]"
     }`}
   >
     Pendiente
@@ -402,7 +402,7 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
   <div
     onClick={() => toggleEstado("Finalizado")}
     className={`w-1/2 z-10 text-center py-1 font-semibold ${
-      partido.estado === "Finalizado" ? "text-black" : "text-[#a0f000]"
+      formData.estado === "Finalizado" ? "text-black" : "text-[#a0f000]"
     }`}
   >
     Finalizado

@@ -28,6 +28,8 @@ export const AuthProvider = ({ children }) => {
       const decoded = jwt_decode(token);
       setUser(decoded);
       setIsAuthenticated(true);
+      window.location.reload();
+
     } catch (error) {
       console.error("Error al decodificar el token:", error);
     }
@@ -37,6 +39,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("access_token");
     setUser(null);
     setIsAuthenticated(false);
+    window.location.reload();
+
   };
 
   return (

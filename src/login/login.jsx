@@ -43,7 +43,9 @@ const Login = ({ onLoginSuccess }) => {
       // Actualiza el contexto de autenticación
       login(access_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
+      
       navigate("/");
+      window.location.reload();
     } catch (err) {
       console.error("Error en el login:", err);
       setError("Error al iniciar sesión. Intenta de nuevo.");
@@ -68,6 +70,8 @@ const Login = ({ onLoginSuccess }) => {
       login(access_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       navigate("/");
+      window.location.reload();
+
     } catch (err) {
       console.error("Error en Google login:", err);
       setError("Error al iniciar sesión con Google");
