@@ -11,6 +11,10 @@ const Fixture = () => {
   const [currentFecha, setCurrentFecha] = useState(
     initialFecha ? Number(initialFecha) : 1
   );
+  
+
+  const [expandedIndex, setExpandedIndex] = useState(null); // para mostrar goles
+
   const [maxFecha, setMaxFecha] = useState(null);
   const [torneo, setTorneo] = useState(null);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -112,6 +116,7 @@ const Fixture = () => {
     return <div>Loading...</div>;
   }
 
+  
   return (
     <div className="max-w-4xl mx-auto p-4">
       {/* Título con nombre del torneo */}
@@ -119,9 +124,7 @@ const Fixture = () => {
         {torneo ? torneo.name : "Torneo"}
       </h1>
       {/* Encabezado que muestra la fecha (matchday) */}
-      <h2 className="text-lg font-medium text-center text-white mb-4">
-        Fecha {currentFecha} | Libre: G. y Esgrima LP
-      </h2>
+
       
       {/* Mensaje si no hay partidos */}
       {partidos.length === 0 && (
@@ -129,6 +132,7 @@ const Fixture = () => {
       )}
       
 {/* Renderizado del fixture agrupado por grupos */}
+
 {Object.entries(
   partidos.reduce((acc, partido) => {
     const grupo = partido.group || "Sin grupo";
@@ -140,24 +144,87 @@ const Fixture = () => {
   <div key={grupo} className="mb-6">
     <h3 className="text-xl font-bold text-white mb-2">Grupo {grupo}</h3>
     <div className="grid grid-cols-1 gap-4">
-      {listaPartidos.map((partido, index) => (
-        <div
-          key={index}
-          className="flex items-center relative justify-between bg-purple-800 text-white p-4 rounded-md shadow-lg"
-        >
-          {/* Local */}
+    {listaPartidos.map((partido, index) => {
+  const indexKey = `${grupo}-${index}`;
+  const isExpanded = expandedIndex === indexKey;
+
+  return (
+    <div key={index}>
+      {/* Bloque clickeable */}
+      <div
+        onClick={() => setExpandedIndex(isExpanded ? null : indexKey)}
+        className="flex flex-col cursor-pointer bg-purple-800 text-white p-4 rounded-md shadow-lg"
+      >
+        <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="w-10" />
-            <span className="font-medium ml-2">{partido.equipoLocal.name}</span>
+            <span className="font-medium">{partido.equipoLocal.name}</span>
+            
           </div>
-          <span className="text-lg absolute left-0 right-0 justify-center text-center font-bold">VS</span>
-          {/* Visitante */}
-          <div className="flex items-center">
-            <span className="mr-2 font-medium">{partido.equipoVisitante.name}</span>
+          {partido.estado === "Finalizado" && (
+  <h1 className="font-bold mx-4 text-lg">{partido.golesLocal.length}</h1>
+)}
+
+          <div className="text-center font-bold">VS</div>
+          {partido.estado === "Finalizado" && (
+  <h1 className="font-bold mx-4 text-lg">{partido.golesVisitante.length}</h1>
+)}
+
+          <div className="flex items-center space-x-2">
+            <span className="font-medium">{partido.equipoVisitante.name}</span>
             <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="w-10" />
           </div>
         </div>
-      ))}
+
+        {partido.estado === "Finalizado" && (
+          <div className="text-sm text-yellow-300 text-center mt-2">
+            Finalizado 
+          </div>
+        )}
+      </div>
+
+      {isExpanded && (
+  <div className="mt-4 flex justify-between gap-4">
+    {/* Goles Local */}
+    <div className="w-1/2 bg-gray-800 rounded p-2">
+      <h4 className="text-white font-bold mb-2 text-center">Goles Local</h4>
+      {partido.golesLocal?.length > 0 ? (
+        <ul className="text-white text-sm space-y-1">
+          {partido.golesLocal.map((gol, i) => (
+            <li key={i} className="flex justify-between">
+              <span>{gol.jugador?.name}</span>
+              <span>{gol.minuto}'</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-400 text-sm text-center">Sin goles</p>
+      )}
+    </div>
+
+    {/* Goles Visitante */}
+    <div className="w-1/2 bg-gray-800 rounded p-2">
+      <h4 className="text-white font-bold mb-2 text-center">Goles Visitante</h4>
+      {partido.golesVisitante?.length > 0 ? (
+        <ul className="text-white text-sm space-y-1">
+          {partido.golesVisitante.map((gol, i) => (
+            <li key={i} className="flex justify-between">
+              <span>{gol.minuto}'</span>
+              <span>{gol.jugador?.name}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-400 text-sm text-center">Sin goles</p>
+      )}
+    </div>
+  </div>
+)}
+
+    </div>
+  );
+})}
+
     </div>
   </div>
 ))}

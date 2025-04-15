@@ -3,23 +3,6 @@ import { colores } from "../colores"; // Ajusta la ruta según tu estructura
 
 const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    edad: "",
-    posicion: "Portero",
-    goles: 0,
-    asistencias: 0,
-    fechaNacimiento: "",
-    altura: "",
-    peso: "",
-    tarjetasAmarillas: 0,
-    tarjetasRojas: 0,
-    description: "",
-    equipoId: 0,
-    categoriesId: 0,
-    paisId: 0,
-  });
   const [equipos, setEquipos] = useState([]);
   const [paises, setPaises] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -27,6 +10,23 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
   const dropzoneRef = useRef(null);
 
   const posiciones = ["Portero", "Defensor", "Centrocampista", "Delantero"];
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    edad: "",
+    posicion: "Portero",
+    goles: 0,
+    asistencias: 0,
+    fechaNacimiento: "2000-01-01",
+    altura: "",
+    peso: "",
+    tarjetasAmarillas: 0,
+    tarjetasRojas: 0,
+    description: "",
+    equipoId: 0,
+    categoryId: 0,
+    paisId: 0,
+  });
 
   // Cargar datos (equipos, países, categorías)
   useEffect(() => {
@@ -84,23 +84,35 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
         description: selectedJugador.description || "",
         equipoId: selectedJugador.equipo?.id || 0,
         // Usamos selectedJugador.category?.id en lugar de selectedJugador.categoriesId
-        categoriesId: selectedJugador.category?.id || 0,
+        categoryId: selectedJugador.category?.id || 0,
         paisId: selectedJugador.pais?.id || 0,
       });
+      console.log(selectedJugador);
     }
   }, [selectedJugador]);
 
   // Manejo de inputs (con conversión a número donde corresponda)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        ["equipoId", "paisId", "categoriesId", "edad", "goles", "asistencias", "tarjetasAmarillas", "tarjetasRojas", "altura", "peso"].includes(name)
-          ? Number(value)
+    const isNumberField = ["equipoId", "paisId", "categoryId", "edad", "goles", "asistencias", "tarjetasAmarillas", "tarjetasRojas", "altura", "peso"].includes(name);
+  
+    if (name === "categoryId") {
+      const fechaEstimada = calcularFechaPorCategoria(value);
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : Number(value),
+        fechaNacimiento: fechaEstimada || prev.fechaNacimiento,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: isNumberField
+          ? value === "" ? null : Number(value)
           : value,
-    }));
+      }));
+    }
   };
+  
 
   // Función para subir archivo (imagen) mediante drag & drop o input
   const uploadFile = async (file) => {
@@ -152,6 +164,22 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     }
   };
 
+  const calcularFechaPorCategoria = (categoriaId) => {
+    const cat = categorias.find((c) => c.id === Number(categoriaId));
+    if (!cat || !cat.name) return "";
+  
+    const match = cat.name.match(/Sub\s*(\d+)/i);
+    if (!match) return "";
+  
+    const subEdad = parseInt(match[1], 10);
+    if (isNaN(subEdad)) return "";
+  
+    const currentYear = new Date().getFullYear();
+    const nacimientoEstimado = currentYear - subEdad;
+  
+    return `${nacimientoEstimado}-01-01`;
+  };
+  
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -220,7 +248,6 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 name="fechaNacimiento"
                 value={formData.fechaNacimiento}
                 onChange={handleInputChange}
-                required
                 className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: colores.inputBg,
@@ -318,7 +345,8 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 name="edad"
                 value={formData.edad}
                 onChange={handleInputChange}
-                required
+                
+
                 className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
                 style={{
                   backgroundColor: colores.inputBg,
@@ -393,23 +421,24 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 Categoría:
               </label>
               <select
-                name="categoriesId"
-                value={formData.categoriesId}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
-              >
-                <option value="">Sin categoría</option>
-                {categorias.map((categoria) => (
-                  <option key={categoria.id} value={categoria.id}>
-                    {categoria.name}
-                  </option>
-                ))}
-              </select>
+  name="categoryId"
+  value={formData.categoryId || ""}
+  onChange={handleInputChange}
+  required
+  className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
+  style={{
+    backgroundColor: colores.inputBg,
+    border: `1px solid ${colores.acento}`,
+    color: colores.texto,
+  }}
+>
+  <option value="">Sin categoría</option>
+  {categorias.map((categoria) => (
+    <option key={categoria.id} value={categoria.id}>
+      {categoria.name}
+    </option>
+  ))}
+</select>
             </div>
           </div>
           {/* Fila 6: Equipo / Posición */}
