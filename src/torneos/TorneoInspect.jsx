@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate  } from "react-router-dom";
 import FormularioPartido from "../Partidos/FormularioPartidos";
+import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 
 
 const TorneoInspect = () => {
@@ -205,25 +207,29 @@ const navigate = useNavigate();
         <td className="px-4 py-2 text-center">{partido.equipoLocal?.name}</td>
         <td className="px-4 py-2 text-center">{partido.equipoVisitante?.name}</td>
         <td className="px-4 py-2 text-center space-x-2">
-          <button
-            onClick={() => handleEdit(partido)}
-            className="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-400 transition font-semibold"
-          >
-            Editar
-          </button>
-          <button
-            onClick={() => handleDelete(partido.id, partido.fecha)}
-            className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 transition font-semibold"
-          >
-            Eliminar
-          </button>
-          <button
-            onClick={() => navigate(`/partidos/${partido.id}`)}
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 transition font-semibold"
-          >
-            Inspeccionar
-          </button>
-        </td>
+  <button
+    onClick={() => handleEdit(partido)}
+    className="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-400 transition font-semibold"
+    title="Editar"
+  >
+    <FaPencilAlt />
+  </button>
+  <button
+    onClick={() => handleDelete(partido.id, partido.fecha)}
+    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 transition font-semibold"
+    title="Eliminar"
+  >
+    <FaTrashAlt />
+  </button>
+  <button
+    onClick={() => navigate(`/partidos/${partido.id}`)}
+    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 transition font-semibold"
+    title="Inspeccionar"
+  >
+    <FaMagnifyingGlass />
+  </button>
+</td>
+
       </tr>
     ))}
     </tbody>
