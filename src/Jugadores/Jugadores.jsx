@@ -90,7 +90,7 @@ const Jugadores = () => {
         altura: jugador.altura,
         peso: jugador.peso,
         equipoId: jugador.equipoId,
-        categoryId: jugador.categoryId,
+        categoriesId: jugador.categoriesId,
         partidos: jugador.partidos,
       };
 
