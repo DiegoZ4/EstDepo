@@ -24,7 +24,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     tarjetasRojas: 0,
     description: "",
     equipoId: 0,
-    categoryId: 0,
+    categoriesId: 0,
     paisId: 0,
   });
 
@@ -84,7 +84,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
         description: selectedJugador.description || "",
         equipoId: selectedJugador.equipo?.id || 0,
         // Usamos selectedJugador.category?.id en lugar de selectedJugador.categoriesId
-        categoryId: selectedJugador.category?.id || 0,
+        categoriesId: selectedJugador.category?.id || 0,
         paisId: selectedJugador.pais?.id || 0,
       });
       console.log(selectedJugador);
@@ -94,9 +94,9 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
   // Manejo de inputs (con conversión a número donde corresponda)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const isNumberField = ["equipoId", "paisId", "categoryId", "edad", "goles", "asistencias", "tarjetasAmarillas", "tarjetasRojas", "altura", "peso"].includes(name);
+    const isNumberField = ["equipoId", "paisId", "categoriesId", "edad", "goles", "asistencias", "tarjetasAmarillas", "tarjetasRojas", "altura", "peso"].includes(name);
   
-    if (name === "categoryId") {
+    if (name === "categoriesId") {
       const fechaEstimada = calcularFechaPorCategoria(value);
       setFormData((prev) => ({
         ...prev,
@@ -421,8 +421,8 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 Categoría:
               </label>
               <select
-  name="categoryId"
-  value={formData.categoryId || ""}
+  name="categoriesId"
+  value={formData.categoriesId || ""}
   onChange={handleInputChange}
   required
   className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
