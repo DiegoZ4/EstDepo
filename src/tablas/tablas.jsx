@@ -40,9 +40,7 @@ const Tablas = ({ torneoId, categoriaId }) => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold text-center mb-4 text-white">
-        Tabla de Posiciones
-      </h1>
+
 
       {grupos.map((grupo) => (
         <div key={grupo} className="mb-6">

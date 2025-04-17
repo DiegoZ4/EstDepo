@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaPencilAlt, FaTrashAlt, FaEye } from "react-icons/fa";
 
 const ListaPartidos = ({ partidos, onEdit, onDelete, handleShowCreator, onDetails }) => {
   return (
@@ -34,21 +35,24 @@ const ListaPartidos = ({ partidos, onEdit, onDelete, handleShowCreator, onDetail
                 <button
                   onClick={() => onEdit(partido)}
                   className="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-400 transition font-semibold"
+                  title="Editar"
                 >
-                  Editar
+                  <FaPencilAlt />
                 </button>
                 <button
                   onClick={() => onDelete(partido.id)}
                   className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 transition font-semibold"
+                  title="Eliminar"
                 >
-                  Eliminar
+                  <FaTrashAlt />
                 </button>
                 <Link to={`/partidos/${partido.id}`}>
                   <button
                     onClick={() => onDetails()}
                     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 transition font-semibold"
+                    title="Inspeccionar"
                   >
-                    Inspeccionar
+                    <FaEye />
                   </button>
                 </Link>
               </td>

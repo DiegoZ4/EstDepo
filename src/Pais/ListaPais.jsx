@@ -1,6 +1,6 @@
 
 import React from "react";
-
+import { FaPencilAlt, FaTrashAlt, FaEye } from "react-icons/fa";
 const ListaPais = ({ pais, onEdit, onDelete }) => {
   return (
     <div className="w-4/5 mx-auto bg-[#141414] p-4 rounded-lg shadow-md text-white border border-[#003c3c]">
@@ -37,14 +37,16 @@ const ListaPais = ({ pais, onEdit, onDelete }) => {
           <button
               onClick={() => onEdit(pais)}
               className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition"
+              title="Editar"
             >
-              Editar
+              <FaPencilAlt />
             </button>
             <button
               onClick={() => onDelete(pais.id)}
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition"
+              title="Eliminar"
             >
-              Eliminar
+              <FaTrashAlt />
             </button>
           </td>
         </tr>

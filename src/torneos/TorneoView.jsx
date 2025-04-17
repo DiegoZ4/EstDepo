@@ -12,6 +12,7 @@ function TorneoView() {
   const [activeTab, setActiveTab] = useState(tab || "tabla");
   const [selectedCategoriaId, setSelectedCategoriaId] = useState(categoriaId || null);
   const [loadingTorneo, setLoadingTorneo] = useState(true);
+  const [torneo, setTorneo] = useState(null);
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -28,7 +29,10 @@ function TorneoView() {
 
         if (!res.ok) throw new Error("No se pudo cargar el torneo");
         const data = await res.json();
+        const torneo = data;
         const cat = data.categories || [];
+
+        setTorneo(torneo)
 
         setCategories(cat);
 
@@ -69,8 +73,8 @@ function TorneoView() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-center mb-4">
-        {selectedCategory ? selectedCategory.name : "Torneo"}
+      <h1 className="text-2xl font-bold text-center mb-5 mt-5">
+        {torneo.name}
       </h1>
 
       <div className="flex justify-center mb-4 border-b border-gray-400 pb-2">

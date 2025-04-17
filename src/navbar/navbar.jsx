@@ -105,30 +105,44 @@ const handleSelectTorneo = (torneoId) => {
           <button className="hover:text-[#a0f000] p-2 transition">
             Torneos
           </button>
+
           {showTorneosMenu && (
-            <div
-            onMouseEnter={() => setShowTorneosMenu(true)}
-          onMouseLeave={() => setShowTorneosMenu(false)}
-              ref={tournamentMenuRef}
-              className="absolute z-1 left-0 mt-2 w-48 bg-gray-900 text-white shadow-xl p-2 animate-fade-in "
+  <div
+    onMouseEnter={() => setShowTorneosMenu(true)}
+    onMouseLeave={() => setShowTorneosMenu(false)}
+    ref={tournamentMenuRef}
+    className="absolute z-1 left-0 mt-2 w-64 bg-gray-900 text-white shadow-xl p-3 animate-fade-in rounded-md"
+  >
+    {isAuthenticated ? (
+      <ul>
+        {torneos.length > 0 ? (
+          torneos.map((torneo) => (
+            <li
+              key={torneo.id}
+              className="p-2 cursor-pointer transition hover:text-green-500"
+              onClick={() => handleSelectTorneo(torneo.id)}
             >
-              <ul>
-                {torneos.length > 0 ? (
-                  torneos.map((torneo) => (
-                    <li
-                      key={torneo.id}
-                      className="p-2 cursor-pointer transition hover:text-green-500"
-                      onClick={() => handleSelectTorneo(torneo.id)}
-                    >
-                      {torneo.name}
-                    </li>
-                  ))
-                ) : (
-                  <li className="p-2">Cargando...</li>
-                )}
-              </ul>
-            </div>
-          )}
+              {torneo.name}
+            </li>
+          ))
+        ) : (
+          <li className="p-2">Cargando torneos...</li>
+        )}
+      </ul>
+    ) : (
+      <div className="text-sm text-center space-y-2">
+        <p className="text-gray-300">Registrate para ver los torneos disponibles</p>
+        <NavLink
+          to="/register"
+          className="inline-block px-3 py-1 bg-[#a0f000] text-black rounded hover:bg-[#8cd000] transition"
+        >
+          Registrarse
+        </NavLink>
+      </div>
+    )}
+  </div>
+)}
+
         </div>
       </div>
 

@@ -86,7 +86,6 @@ const Goleadores = ({ torneoId, categoriaId }) => {
               <th className="px-4 py-3 text-center">#</th>
               <th className="px-4 py-3 text-center">Jugador</th>
               <th className="px-4 py-3 text-center">Equipo</th>
-              <th className="px-4 py-3 text-center">Categoría</th>
               <th className="px-4 py-3 text-center">Goles</th>
             </tr>
           </thead>
@@ -103,7 +102,7 @@ const Goleadores = ({ torneoId, categoriaId }) => {
                 </td>
                 <td className="px-4 py-3 text-center">{goleador.jugadorname}</td>
                 <td className="px-4 py-3 text-center">{goleador.equiponame}</td>
-                <td className="px-4 py-3 text-center">{goleador.categoriajugador}</td>
+                
                 <td className="px-4 py-3 text-center font-semibold">{goleador.totalgoles}</td>
               </tr>
             ))}

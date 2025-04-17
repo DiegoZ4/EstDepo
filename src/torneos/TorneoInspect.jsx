@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate  } from "react-router-dom";
 import FormularioPartido from "../Partidos/FormularioPartidos";
-import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import { FaPencilAlt, FaTrashAlt, FaEye } from "react-icons/fa";
 
 
 const TorneoInspect = () => {
@@ -226,7 +225,7 @@ const navigate = useNavigate();
     className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 transition font-semibold"
     title="Inspeccionar"
   >
-    <FaMagnifyingGlass />
+    <FaEye />
   </button>
 </td>
 

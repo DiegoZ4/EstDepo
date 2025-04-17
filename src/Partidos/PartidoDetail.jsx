@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // <-- usamos useNavigate
 import GolForm from "./FormularioGol";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { to } from "react-spring";
 
 const PartidoDetail = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -12,8 +14,12 @@ const PartidoDetail = () => {
   const [showGolForm, setShowGolForm] = useState(false);
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [selectedTorneo, setSelectedTorneo] = useState(null);
+  const [torneoId, setTorneoId] = useState(null);
   const [goles, setGoles] = useState([]);
   const [editGol, setEditGol] = useState(null);
+  const [partidosList, setPartidosList] = useState([]);
+const [currentIndex, setCurrentIndex] = useState(null);
+
 
 
   // 👉 Solo para primera carga (con spinner)
@@ -41,10 +47,43 @@ const refreshData = async () => {
 
     if (!response.ok) throw new Error("Error al obtener el partido");
     const data = await response.json();
+    setTorneoId(data.torneo.id);
     setPartido(data);
-    setGoles([...(data.golesLocal || []), ...(data.golesVisitante || [])]);
+setGoles([...(data.golesLocal || []), ...(data.golesVisitante || [])]);
+
+if (data.torneo?.id) {
+  fetchAllPartidos(data.torneo.id);
+}
+
   } catch (error) {
     setError(error.message);
+  }
+};
+const fetchAllPartidos = async (torneoId) => {
+  const token = localStorage.getItem("access_token");
+  try {
+    // 1. Traigo los partidos de este torneo
+    const res = await fetch(`${apiUrl}/partido/torneo/${torneoId}`, {
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+    if (!res.ok) throw new Error("Error al cargar los partidos del torneo");
+
+    const raw = await res.json();
+
+    // 2. En algunos backends vienen agrupados por fecha: { "1": [ ... ], "2": [ ... ] }
+    //    Si raw es un objeto, lo aplanamos; si ya es array, lo usamos directamente.
+    const list = Array.isArray(raw) ? raw : Object.values(raw).flat();
+
+    // 3. Guardamos la lista en el state
+    setPartidosList(list);
+
+    // 4. Buscamos la posición del partido actual
+    const idx = list.findIndex((p) => p.id === Number(id));
+    setCurrentIndex(idx);
+  } catch (err) {
+    console.error(err);
   }
 };
 
@@ -205,6 +244,7 @@ const refreshData = async () => {
             Volver
           </button>
         </div>
+
       </div>
 
       {/* Lista de goles */}
@@ -243,6 +283,8 @@ const refreshData = async () => {
     </div>
   </div>
 ))}
+{/* Navegación entre partidos */}
+
 
     </div>
   </div>
@@ -267,6 +309,44 @@ const refreshData = async () => {
     }}
   />
 )}
+<div className="flex justify-between items-center mt-10">
+  {/* Flecha izquierda */}
+  <button
+    disabled={currentIndex <= 0}
+    onClick={() =>
+      navigate(`/partidos/${partidosList[currentIndex - 1]?.id}`)
+    }
+    className={`text-4xl px-4 py-2 rounded-full transition ${
+      currentIndex <= 0
+        ? "opacity-30 "
+        : "text-[#a0f000] hover:scale-125"
+    }`}
+    aria-label="Partido anterior"
+  >
+    <IoIosArrowBack />
+  </button>
+
+  {/* Flecha derecha */}
+  <button
+    disabled={
+      currentIndex === null ||
+      currentIndex >= partidosList.length - 1
+    }
+    onClick={() =>
+      navigate(`/partidos/${partidosList[currentIndex + 1]?.id}`)
+    }
+    className={`text-4xl px-4 py-2 rounded-full transition ${
+      currentIndex === null || currentIndex >= partidosList.length - 1
+        ? "opacity-30 "
+        : "text-[#a0f000]  hover:scale-125"
+    }`}
+    aria-label="Partido siguiente"
+  >
+    <IoIosArrowForward />
+  </button>
+</div>
+
+
 
     </div>
   );

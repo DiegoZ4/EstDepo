@@ -119,11 +119,7 @@ const Fixture = () => {
   
   return (
     <div className="max-w-4xl mx-auto p-4">
-      {/* Título con nombre del torneo */}
-      <h1 className="text-2xl font-bold text-center text-white mb-6">
-        {torneo ? torneo.name : "Torneo"}
-      </h1>
-      {/* Encabezado que muestra la fecha (matchday) */}
+
 
       
       {/* Mensaje si no hay partidos */}
@@ -155,28 +151,31 @@ const Fixture = () => {
         onClick={() => setExpandedIndex(isExpanded ? null : indexKey)}
         className="flex flex-col cursor-pointer bg-purple-800 text-white p-4 rounded-md shadow-lg"
       >
-        <div className="flex justify-between items-center">
-          <div className="flex justify-start items-center h-full w-1/4 space-x-2">
-            <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="h-10" />
-            <span className="font-medium">{partido.equipoLocal.name}</span>
-            
-          </div>
-          <div className="flex w-1/2 items-center justify-center">
-          {partido.estado === "Finalizado" && (
-  <h1 className="font-bold mx-4 text-lg">{partido.golesLocal.length}</h1>
-)}
+<div className="flex flex-row sm:flex-row justify-between items-center">
+  {/* Equipo Local */}
+  <div className="flex items-center space-x-2 w-1/4 sm:w-1/4 justify-center sm:justify-start mb-2 sm:mb-0">
+    <img src={partido.equipoLocal.image} alt={partido.equipoLocal.name} className="h-10 " />
+    <span className="text-sm sm:text-base font-medium">{partido.equipoLocal.name}</span>
+  </div>
 
-          <div className="text-center font-bold">VS</div>
-          {partido.estado === "Finalizado" && (
-  <h1 className="font-bold mx-4 text-lg">{partido.golesVisitante.length}</h1>
-)}
+  {/* Resultado o VS */}
+  <div className="flex items-center justify-center sm:w-1/2 mb-2 sm:mb-0">
+    {partido.estado === "Finalizado" && (
+      <h1 className="font-bold mx-2 text-lg sm:text-xl">{partido.golesLocal.length}</h1>
+    )}
+    <div className="text-center font-bold">VS</div>
+    {partido.estado === "Finalizado" && (
+      <h1 className="font-bold mx-2 text-lg sm:text-xl">{partido.golesVisitante.length}</h1>
+    )}
+  </div>
+
+  {/* Equipo Visitante */}
+  <div className="flex items-center space-x-2 w-1/4 sm:w-1/4 justify-center sm:justify-start mb-2 sm:mb-0">
+  <span className="text-sm sm:text-base font-medium">{partido.equipoVisitante.name}</span>
+    <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="h-10" />
+  </div>
 </div>
 
-          <div className="flex  justify-end items-center h-full w-1/4 space-x-2">
-            <span className="font-medium">{partido.equipoVisitante.name}</span>
-            <img src={partido.equipoVisitante.image} alt={partido.equipoVisitante.name} className="h-10" />
-          </div>
-        </div>
 
         {partido.estado === "Finalizado" && (
           <div className="text-sm text-yellow-300 text-center mt-2">
