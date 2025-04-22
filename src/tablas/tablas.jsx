@@ -24,7 +24,30 @@ const Tablas = ({ torneoId, categoriaId }) => {
   
         const tabla = await response.json();
         setItems(tabla);
-        setGrupos(Object.keys(tabla)); // claves como "Zona a", "zona b", etc.
+        // Extrae y ordena las claves en orden numérico cuando sean números,
+// o lexicográfico cuando no lo sean.
+const sortedGrupos = Object.keys(tabla).sort((a, b) => {
+  const na = parseInt(a, 10);
+  const nb = parseInt(b, 10);
+  const aEsNum = !isNaN(na);
+  const bEsNum = !isNaN(nb);
+
+  if (aEsNum && bEsNum) {
+    // Ambos son numéricos → comparo numéricamente
+    return na - nb;
+  } else if (aEsNum) {
+    // Sólo 'a' es numérico → va antes
+    return -1;
+  } else if (bEsNum) {
+    // Sólo 'b' es numérico → va antes
+    return 1;
+  } else {
+    // Ninguno es numérico → comparo como strings
+    return a.localeCompare(b, undefined, { sensitivity: 'base' });
+  }
+});
+setGrupos(sortedGrupos);
+
       } catch (err) {
         console.error("Error al cargar la tabla:", err);
       } finally {
