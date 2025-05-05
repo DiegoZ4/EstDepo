@@ -151,30 +151,8 @@ const Register = () => {
           />
         </div>
         <div>
-          <label
-            htmlFor="rol"
-            className="block mb-1"
-            style={{ color: colores.acento }}
-          >
-            Rol:
-          </label>
-          <select
-            id="rol"
-            name="rol"
-            value={formData.rol}
-            onChange={handleInputChange}
-            required
-            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: colores.inputBg,
-              borderColor: colores.acento,
-              color: colores.texto,
-            }}
-          >
-            <option value="freeUser">freeUser</option>
-            <option value="SubsUser">SubsUser</option>
-            <option value="admin">admin</option>
-          </select>
+
+
         </div>
         <div>
           <label

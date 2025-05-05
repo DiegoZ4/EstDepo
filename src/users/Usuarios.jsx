@@ -92,6 +92,7 @@ const Usuarios = () => {
       <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase">
         Gestión de Usuarios
       </h1>
+      <h2 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase">usuarios registrados  {usuarios.length}</h2>
       <ListaUsuarios 
         usuarios={usuarios} 
         onEdit={handleEdit} 
