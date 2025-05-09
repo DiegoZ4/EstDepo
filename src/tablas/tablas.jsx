@@ -92,16 +92,19 @@ setGrupos(sortedGrupos);
       key={index}
       className={index % 2 === 0 ? "bg-purple-900" : "bg-purple-800"}
     >
-      <td className="px-4 py-2">{index + 1}</td>
+      <td className="px-4 py-2 w-1">{index + 1}</td>
       
       {/* Aquí pongo la imagen y el nombre */}
       <td className="px-4 py-2 flex items-center space-x-2">
+        <div className="w-9">
         <img
           src={row.equipo.image}
           alt={row.equipo.name}
           className="h-9 object-cover"
         />
-        <span>{row.equipo.name}</span>
+
+        </div>
+        <span className="w-20">{row.equipo.name}</span>
       </td>
 
       <td className="px-4 py-2">{row.Pts}</td>
