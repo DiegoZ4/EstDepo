@@ -96,7 +96,7 @@ setGrupos(sortedGrupos);
       
       {/* Aquí pongo la imagen y el nombre */}
       <td className="px-4 py-2 flex items-center space-x-2">
-        <div className="w-9">
+        <div className="w-9 flex justify-center">
         <img
           src={row.equipo.image}
           alt={row.equipo.name}
