@@ -66,7 +66,11 @@ const handleSelectTorneo = (torneoId) => {
           Bienvenido a EstDepo
         </h1>
 
-        <img src="../../public/assets/proyeccion-logo.png" alt="proyeccion" />
+        <img
+            src="/assets/proyeccion-logo.png"
+            alt="Proyección Logo"
+            className="w-auto mr-3"
+          />
 
         <p className="text-base sm:text-lg max-w-xl">
           Esta es tu plataforma para seguir todo lo que pasa en la liga:
