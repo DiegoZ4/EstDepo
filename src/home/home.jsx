@@ -5,6 +5,8 @@ import { AuthContext } from "../auth/auth.context";
 import { FaWhatsapp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+const logo = "../../public/assets/proyeccion-logo.png";
+
 export default function Home() {
   const { isAuthenticated } = useContext(AuthContext);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -63,6 +65,8 @@ const handleSelectTorneo = (torneoId) => {
         >
           Bienvenido a EstDepo
         </h1>
+
+        <img src="../../public/assets/proyeccion-logo.png" alt="proyeccion" />
 
         <p className="text-base sm:text-lg max-w-xl">
           Esta es tu plataforma para seguir todo lo que pasa en la liga:

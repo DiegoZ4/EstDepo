@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FiMenu, FiUser, FiX } from "react-icons/fi";
-import { AiOutlineSetting, AiOutlineLogin, AiOutlineLogout, AiOutlineUserAdd } from "react-icons/ai";
+import {
+  AiOutlineSetting,
+  AiOutlineLogin,
+  AiOutlineLogout,
+  AiOutlineUserAdd,
+} from "react-icons/ai";
 import { useSpring, animated } from "react-spring";
 import { AuthContext } from "../auth/auth.context";
 
@@ -15,137 +20,99 @@ function Navbar() {
   const tournamentMenuRef = useRef(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
-
   const menuAnimation = useSpring({
     transform: showMenu ? "translateX(0)" : "translateX(-100%)",
     opacity: showMenu ? 1 : 0,
     config: { duration: 200 },
   });
 
-  // Listener para cerrar el menú de usuario al hacer click fuera
-  useEffect(() => {
-    const handleClickOutsideUser = (event) => {
-      if (!event.target.closest(".user-menu")) {
-        setShowUserMenu(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutsideUser);
-    return () => document.removeEventListener("click", handleClickOutsideUser);
-  }, []);
-
-  // Listener para cerrar el menú de torneos al hacer click fuera
-  useEffect(() => {
-    const handleClickOutsideTournament = (event) => {
-      if (tournamentMenuRef.current && !tournamentMenuRef.current.contains(event.target)) {
-        setShowTorneosMenu(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutsideTournament);
-    return () => document.removeEventListener("click", handleClickOutsideTournament);
-  }, []);
-
-  // Cargar la lista de torneos desde la API
+  // Carga torneos
   useEffect(() => {
     const fetchTorneos = async () => {
       const token = localStorage.getItem("access_token");
-      try {
-        const response = await fetch(`${apiUrl}/torneo`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        if (!response.ok) {
-          console.error("Error fetching torneos:", await response.text());
-          return;
-        }
-        const data = await response.json();
-        // Ajusta esta línea si la respuesta tiene otra estructura.
-        setTorneos(data);
-      } catch (error) {
-        console.error("Error fetching torneos:", error);
+      const res = await fetch(`${apiUrl}/torneo`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+      if (res.ok) {
+        setTorneos(await res.json());
       }
     };
     fetchTorneos();
   }, [apiUrl]);
 
-  // Función para redirigir al torneo seleccionado
-// Dentro del handler del torneo en el Navbar:
-const handleSelectTorneo = (torneoId) => {
-  navigate(`/torneo/${torneoId}`);
-  setShowTorneosMenu(false);
-};
-
+  const handleSelectTorneo = (torneoId) => {
+    navigate(`/torneo/${torneoId}`);
+    setShowTorneosMenu(false);
+  };
 
   return (
-    <nav className="flex z-50 items-center justify-between bg-black text-white px-6 py-4 shadow-lg fixed w-full z-50">
-      <div className="flex items-center justify-start">
-        {/* Botón para el menú lateral solo para admin */}
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black text-white px-6 py-4 shadow-lg">
+      <div className="flex items-center">
         {isAuthenticated && user?.rol === "admin" && (
           <button
             onClick={() => setShowMenu(!showMenu)}
-            className="text-3xl text-[#a0f000] hover:text-[#8cd000] transition mr-6"
+            className="mr-6 text-3xl text-[#a0f000] hover:text-[#8cd000] transition"
           >
             <FiMenu />
           </button>
         )}
-        {/* Botón Home con texto "EstDepo" */}
-        <NavLink 
-          to="/" 
-          className="text-2xl font-bold hover:text-[#a0f000] transition"
-        >
-          EstDepo
+
+        {/* Logo */}
+        <NavLink to="/" className="flex items-center">
+          <img
+            src="/assets/proyeccion-logo.png"
+            alt="Proyección Logo"
+            className="h-10 w-auto mr-3"
+          />
+          <span className="text-2xl font-bold hover:text-[#a0f000] transition">
+            EstDepo
+          </span>
         </NavLink>
-        {/* Botón de Torneos y menú desplegable (desplegado al hacer hover) */}
+
+        {/* Torneos */}
         <div
           className="relative ml-6"
           onMouseEnter={() => setShowTorneosMenu(true)}
         >
-          <button className="hover:text-[#a0f000] p-2 transition">
-            Torneos
-          </button>
-
+          <button className="p-2 hover:text-[#a0f000] transition">Torneos</button>
           {showTorneosMenu && (
-  <div
-    onMouseEnter={() => setShowTorneosMenu(true)}
-    onMouseLeave={() => setShowTorneosMenu(false)}
-    ref={tournamentMenuRef}
-    className="absolute z-1 left-0 mt-2 w-64 bg-gray-900 text-white shadow-xl p-3 animate-fade-in rounded-md"
-  >
-    {isAuthenticated ? (
-      <ul>
-        {torneos.length > 0 ? (
-          torneos.map((torneo) => (
-            <li
-              key={torneo.id}
-              className="p-2 cursor-pointer transition hover:text-green-500"
-              onClick={() => handleSelectTorneo(torneo.id)}
+            <div
+              ref={tournamentMenuRef}
+              onMouseLeave={() => setShowTorneosMenu(false)}
+              className="absolute left-0 mt-2 w-64 rounded-md bg-gray-900 p-3 shadow-xl"
             >
-              {torneo.name}
-            </li>
-          ))
-        ) : (
-          <li className="p-2">Cargando torneos...</li>
-        )}
-      </ul>
-    ) : (
-      <div className="text-sm text-center space-y-2">
-        <p className="text-gray-300">Registrate para ver los torneos disponibles</p>
-        <NavLink
-          to="/register"
-          className="inline-block px-3 py-1 bg-[#a0f000] text-black rounded hover:bg-[#8cd000] transition"
-        >
-          Registrarse
-        </NavLink>
-      </div>
-    )}
-  </div>
-)}
-
+              {isAuthenticated ? (
+                <ul>
+                  {torneos.map((t) => (
+                    <li
+                      key={t.id}
+                      onClick={() => handleSelectTorneo(t.id)}
+                      className="cursor-pointer py-1 px-2 hover:text-green-500"
+                    >
+                      {t.name}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="space-y-2 text-center text-gray-300 text-sm">
+                  <p>Regístrate para ver los torneos disponibles</p>
+                  <NavLink
+                    to="/register"
+                    className="inline-block rounded bg-[#a0f000] px-3 py-1 text-black hover:bg-[#8cd000] transition"
+                  >
+                    Registrarse
+                  </NavLink>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Icono usuario */}
       <div className="relative user-menu">
         <button
           onClick={(e) => {
@@ -157,32 +124,31 @@ const handleSelectTorneo = (torneoId) => {
           <FiUser />
         </button>
         {showUserMenu && (
-          <div className="absolute right-0 mt-2 w-48 bg-white text-black shadow-xl rounded-lg p-2 animate-fade-in">
+          <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white p-2 text-black shadow-xl">
             <ul>
-              
-              <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
+              <li className="flex items-center p-2 hover:bg-gray-200">
                 <AiOutlineSetting className="mr-2" /> Configuración
               </li>
               {isAuthenticated ? (
-  <>
-    <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
-      <FiUser className="mr-2" /> {user.name}
-    </li>
-    <li
-      onClick={() => logout()}
-      className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition"
-    >
-      <AiOutlineLogout className="mr-2" /> Cerrar Sesión
-    </li>
-  </>
-) : (
                 <>
-                  <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
+                  <li className="flex items-center p-2 hover:bg-gray-200">
+                    <FiUser className="mr-2" /> {user.name}
+                  </li>
+                  <li
+                    onClick={() => logout()}
+                    className="flex cursor-pointer items-center p-2 hover:bg-gray-200"
+                  >
+                    <AiOutlineLogout className="mr-2" /> Cerrar Sesión
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="flex items-center p-2 hover:bg-gray-200">
                     <NavLink to="/login" className="flex items-center">
                       <AiOutlineLogin className="mr-2" /> Iniciar Sesión
                     </NavLink>
                   </li>
-                  <li className="flex items-center p-2 hover:bg-gray-200 cursor-pointer transition">
+                  <li className="flex items-center p-2 hover:bg-gray-200">
                     <NavLink to="/register" className="flex items-center">
                       <AiOutlineUserAdd className="mr-2" /> Registrarse
                     </NavLink>
@@ -194,11 +160,11 @@ const handleSelectTorneo = (torneoId) => {
         )}
       </div>
 
-      {/* Panel lateral de administración solo para usuarios admin */}
+      {/* Menú lateral admin */}
       {isAuthenticated && user?.rol === "admin" && (
         <animated.div
           style={menuAnimation}
-          className="absolute left-0 top-0 h-screen w-64 bg-[#003c3c] text-white p-6 shadow-2xl z-50 transition-transform"
+          className="fixed left-0 top-0 z-50 flex h-full w-64 flex-col bg-[#003c3c] p-6 text-white shadow-2xl"
         >
           <button
             onClick={() => setShowMenu(false)}
@@ -207,36 +173,16 @@ const handleSelectTorneo = (torneoId) => {
             <FiX />
           </button>
           <ul className="space-y-4">
-            <li>
-              <NavLink to="/equipos" className="hover:text-[#a0f000] transition">
-                Equipos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/categorias" className="hover:text-[#a0f000] transition">
-                Categorías
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/pais" className="hover:text-[#a0f000] transition">
-                Países
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/jugadores" className="hover:text-[#a0f000] transition">
-                Jugadores
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/torneos" className="hover:text-[#a0f000] transition">
-                Torneos
-              </NavLink>
-            </li>
-            <li>
-              <NavLink to="/partidos" className="hover:text-[#a0f000] transition">
-                Partidos
-              </NavLink>
-            </li>
+            {["equipos","categorias","pais","jugadores","torneos","partidos"].map((r) => (
+              <li key={r}>
+                <NavLink
+                  to={`/${r}`}
+                  className="hover:text-[#a0f000] transition"
+                >
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </animated.div>
       )}

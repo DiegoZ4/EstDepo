@@ -30,8 +30,12 @@ function TorneoView() {
         if (!res.ok) throw new Error("No se pudo cargar el torneo");
         const data = await res.json();
         const torneo = data;
-        const cat = data.categories || [];
-
+        const cat = (data.categories || []).slice();
+        // Orden alfabético “natural” (numérico dentro de la cadena)
+        cat.sort((a, b) =>
+          a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+        );
+        
         setTorneo(torneo)
 
         setCategories(cat);
@@ -73,7 +77,7 @@ function TorneoView() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-center mb-5 mt-5">
+      <h1 className="text-2xl font-bold text-center mb-5 mt-5 ">
         {torneo.name}
       </h1>
 

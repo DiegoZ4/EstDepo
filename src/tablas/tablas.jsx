@@ -87,21 +87,34 @@ setGrupos(sortedGrupos);
                 </tr>
               </thead>
               <tbody>
-                {items[grupo].map((equipo, index) => (
-                  <tr key={index} className={index % 2 === 0 ? "bg-purple-900" : "bg-purple-800"}>
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 w-1/6 py-2">{equipo.equipo?.name}</td>
-                    <td className="px-4 py-2">{equipo.Pts}</td>
-                    <td className="px-4 py-2">{equipo.PJ}</td>
-                    <td className="px-4 py-2">{equipo.PG}</td>
-                    <td className="px-4 py-2">{equipo.PE}</td>
-                    <td className="px-4 py-2">{equipo.PP}</td>
-                    <td className="px-4 py-2">{equipo.GF}</td>
-                    <td className="px-4 py-2">{equipo.GC}</td>
-                    <td className="px-4 py-2">{equipo.DIF}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {items[grupo].map((row, index) => (
+    <tr
+      key={index}
+      className={index % 2 === 0 ? "bg-purple-900" : "bg-purple-800"}
+    >
+      <td className="px-4 py-2">{index + 1}</td>
+      
+      {/* Aquí pongo la imagen y el nombre */}
+      <td className="px-4 py-2 flex items-center space-x-2">
+        <img
+          src={row.equipo.image}
+          alt={row.equipo.name}
+          className="h-9 object-cover"
+        />
+        <span>{row.equipo.name}</span>
+      </td>
+
+      <td className="px-4 py-2">{row.Pts}</td>
+      <td className="px-4 py-2">{row.PJ}</td>
+      <td className="px-4 py-2">{row.PG}</td>
+      <td className="px-4 py-2">{row.PE}</td>
+      <td className="px-4 py-2">{row.PP}</td>
+      <td className="px-4 py-2">{row.GF}</td>
+      <td className="px-4 py-2">{row.GC}</td>
+      <td className="px-4 py-2">{row.DIF}</td>
+    </tr>
+  ))}
+</tbody>
             </table>
           </div>
         </div>
