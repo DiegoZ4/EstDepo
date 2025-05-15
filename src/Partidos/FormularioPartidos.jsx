@@ -56,18 +56,7 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
         }
 
         // Categorías
-        const categoriasResponse = await fetch(`${apiUrl}/torneo/${torneoInfo?.id}/categorias`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        });
-        if (categoriasResponse.ok) {
-          setCategorias(await categoriasResponse.json());
-        } else {
-          console.error("Error fetching categorías:", await categoriasResponse.text());
-        }
+     
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -114,6 +103,43 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
     fetchPartido();
   }, [selectedPartido, apiUrl]);
 
+  // ——— AÑADE ESTO ———
+useEffect(() => {
+  // Cuando cambie el torneo seleccionado
+  if (!formData.torneoId) {
+    // Si deselecciona torneo, limpio categorías y selección
+    setCategorias([]);
+    setFormData(prev => ({ ...prev, categoriaId: [] }));
+    return;
+  }
+
+  const token = localStorage.getItem("access_token");
+  fetch(`${apiUrl}/torneo/${formData.torneoId}/categorias`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Error al cargar categorías");
+      return res.json();
+    })
+    .then(data => {
+      setCategorias(data);
+      // Auto-marcamos todas las categorías
+      setFormData(prev => ({
+        ...prev,
+        categoriaId: data.map(cat => cat.id),
+      }));
+    })
+    .catch(err => {
+      console.error(err);
+      setCategorias([]);
+      setFormData(prev => ({ ...prev, categoriaId: [] }));
+    });
+}, [formData.torneoId, apiUrl]);
+
   // Actualiza máximo de fechas y grupos disponibles al cambiar el torneo
   useEffect(() => {
     if (formData.torneoId && torneos.length > 0) {
@@ -143,6 +169,7 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
   
 
   const handleInputChange = (e) => {
+
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Si se selecciona un torneo, se actualiza maxFechas y availableGroups (ya se hace en el useEffect anterior)
