@@ -9,7 +9,6 @@ const Partidos = () => {
   const [creator, setCreator] = useState(false);
   const [selectedPartido, setSelectedPartido] = useState(null);
   const [editId, setEditId] = useState(null);
-  const [detailsId, setDetailsId] = useState(null);
 
   const fetchPartidos = async () => {
     const token = localStorage.getItem("access_token");
@@ -25,8 +24,7 @@ const Partidos = () => {
         console.error("Error fetching partidos:", await response.text());
         return;
       }
-      const data = await response.json();
-      setPartidos(data);
+      setPartidos(await response.json());
     } catch (error) {
       console.error("Error fetching partidos:", error);
     }
@@ -40,23 +38,25 @@ const Partidos = () => {
 
   const savePartido = async (partido) => {
     const token = localStorage.getItem("access_token");
+    const method = selectedPartido ? "PUT" : "POST";
+    const endpoint = selectedPartido
+      ? `${apiUrl}/partido/${selectedPartido.id}`
+      : `${apiUrl}/partido`;
+
+    const bodyData = {
+      equipoVisitanteId: partido.equipoVisitanteId,
+      equipoLocalId: partido.equipoLocalId,
+      torneoId: partido.torneoId,
+      categoriaId: partido.categoriaId,
+      fecha: partido.fecha,
+      date: partido.date,
+      estado: partido.estado,
+      group: partido.group,
+      groupLocal: partido.groupLocal,
+      groupVisitante: partido.groupVisitante
+    };
+
     try {
-      const method = selectedPartido ? "PUT" : "POST";
-      const endpoint = selectedPartido
-        ? `${apiUrl}/partido/${selectedPartido.id}`
-        : `${apiUrl}/partido`;
-
-      const bodyData = {
-        equipoVisitanteId: partido.equipoVisitanteId,
-        equipoLocalId: partido.equipoLocalId,
-        torneoId: partido.torneoId,
-        categoriaId: partido.categoriaId,
-        fecha: partido.fecha,
-        date: partido.date,
-        estado: partido.estado,
-        group: partido.group
-      };
-
       const response = await fetch(endpoint, {
         method,
         headers: {
@@ -66,21 +66,16 @@ const Partidos = () => {
         body: JSON.stringify(bodyData),
       });
 
-      if (response.ok) {
-        fetchPartidos(); // Actualiza la lista
-        setCreator(false); // Cierra el formulario
-        setSelectedPartido(null);
-      } else {
+      if (!response.ok) {
         console.error("Error saving partido:", await response.text());
+      } else {
+        await fetchPartidos();
+        setCreator(false);
+        setSelectedPartido(null);
       }
     } catch (error) {
       console.error("Error saving partido:", error);
     }
-  };
-
-  const handleShowDetails = (id) => {
-    setDetailsId(id);
-    console.log(id);
   };
 
   const deletePartido = async (id) => {
@@ -126,7 +121,6 @@ const Partidos = () => {
         partidos={partidos}
         onEdit={handleEdit}
         onDelete={deletePartido}
-        onDetails={handleShowDetails}
       />
 
       {creator && (

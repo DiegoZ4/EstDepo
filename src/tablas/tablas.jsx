@@ -23,6 +23,7 @@ const Tablas = ({ torneoId, categoriaId }) => {
         if (!response.ok) throw new Error("No se pudo obtener la tabla");
   
         const tabla = await response.json();
+        console.log("Tabla obtenida:", tabla);
         setItems(tabla);
         // Extrae y ordena las claves en orden numérico cuando sean números,
 // o lexicográfico cuando no lo sean.

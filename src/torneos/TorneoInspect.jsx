@@ -88,6 +88,7 @@ const navigate = useNavigate();
   
 
   const handleCrearPartido = (fecha) => {
+    setSelectedPartido(null);
     setSelectedFecha(fecha);
     setShowForm(true);
   };
@@ -116,6 +117,8 @@ const navigate = useNavigate();
         date: partidoData.date,
         estado: partidoData.estado,
         group: partidoData.group, // asegurate de que este campo exista en el DTO del backend
+        groupLocal: partidoData.groupLocal,
+        groupVisitante: partidoData.groupVisitante
       };
   
       const response = await fetch(endpoint, {

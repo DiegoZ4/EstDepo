@@ -12,7 +12,10 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
     categoriaId: [],
     estado: "Pendiente",
     // Nuevo campo para guardar el grupo del partido
-    group: ""
+    group: "",
+      groupLocal: "",
+  groupVisitante: ""
+    
   });
   
   const [equipos, setEquipos] = useState([]);
@@ -21,6 +24,7 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
   const [maxFechas, setMaxFechas] = useState(null);
   const [errorFecha, setErrorFecha] = useState("");
   const [availableGroups, setAvailableGroups] = useState([]); // Nuevo estado para grupos del torneo
+  const [isInterzonal, setIsInterzonal] = useState(false);
 
   // Fetch de equipos, torneos y categorías con token en los headers
   useEffect(() => {
@@ -89,8 +93,14 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
               categoriaId: data.category ? [data.category.id] : [],
               estado: data.estado || "Pendiente",
               // Si existe un grupo en el partido, lo asignamos
-              group: data.group || ""
+                      group:           data.group           || "", 
+        groupLocal:      data.groupLocal      || "",
+        groupVisitante:  data.groupVisitante  || ""
             });
+            if(data.groupLocal || data.groupVisitante){
+              setIsInterzonal(true);
+              
+            }
             console.log(data);
           } else {
             console.error("Error fetching partido:", await response.text());
@@ -196,6 +206,7 @@ useEffect(() => {
       return;
     }
   
+    
     const categoriasSeleccionadas = Array.isArray(formData.categoriaId)
       ? formData.categoriaId
       : [formData.categoriaId];
@@ -248,27 +259,71 @@ useEffect(() => {
           </select>
         </div>
 
-         {/* Nueva Sección para Seleccionar Grupo */}
-         {availableGroups && availableGroups.length > 0 && (
-          <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              Grupo:
-            </label>
-            <select
-              name="group"
-              value={formData.group}
-              onChange={handleInputChange}
-              className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
-              required
-            >
-              <option value="">Seleccione un grupo</option>
-              {availableGroups.map((grupo, index) => (
-                <option key={index} value={grupo}>
-                  {grupo}
-                </option>
-              ))}
-            </select>
+        
+          {availableGroups.length > 0 && (
+          <div className="flex items-center space-x-2">
+  <label className="inline-flex items-center space-x-2 cursor-pointer select-none">
+    <input
+      type="checkbox"
+      checked={isInterzonal}
+      onChange={e => {
+        const chk = e.target.checked;
+        setIsInterzonal(chk);
+        if (!chk) setFormData(f => ({ ...f, groupLocal: "", groupVisitante: "" }));
+      }}
+      className="h-5 w-5 rounded border-2 border-[#a0f000] bg-transparent text-[#a0f000] focus:ring-0 transition"
+    />
+    <span className="text-white font-medium">Partido interzonal</span>
+  </label>
           </div>
+        )}
+
+        {/* Selects de grupos */}
+        {availableGroups.length > 0 && (
+          isInterzonal ? (
+            <>
+              <div>
+                <label className="block text-[#a0f000] mb-1">Grupo local</label>
+                <select
+                  name="groupLocal"
+                  value={formData.groupLocal}
+                  onChange={e => setFormData(f => ({ ...f, groupLocal: e.target.value }))}
+                  className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                  required
+                >
+                  <option value="">-- Seleccione --</option>
+                  {availableGroups.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[#a0f000] mb-1">Grupo visitante</label>
+                <select
+                  name="groupVisitante"
+                  value={formData.groupVisitante}
+                  onChange={e => setFormData(f => ({ ...f, groupVisitante: e.target.value }))}
+                  className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                  required
+                >
+                  <option value="">-- Seleccione --</option>
+                  {availableGroups.map(g => <option key={g} value={g}>{g}</option>)}
+                </select>
+              </div>
+            </>
+          ) : (
+            <div>
+              <label className="block text-[#a0f000] mb-1">Grupo</label>
+              <select
+                name="group"
+                value={formData.group}
+                onChange={e => setFormData(f => ({ ...f, group: e.target.value }))}
+                className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                required
+              >
+                <option value="">-- Seleccione --</option>
+                {availableGroups.map(g => <option key={g} value={g}>{g}</option>)}
+              </select>
+            </div>
+          )
         )}
         {/* Categoría */}
         <div>
