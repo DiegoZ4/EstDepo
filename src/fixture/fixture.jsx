@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Paginador from "./Paginador";
 import { useParams, useNavigate } from "react-router-dom";
 
 const Fixture = () => {
@@ -68,6 +69,8 @@ const Fixture = () => {
       `/torneo/${torneoId}/fixture/${categoriaId}/${currentFecha}`,
       { replace: true }
     );
+    console.log(currentFecha);
+
   }, [apiUrl, torneoId, categoriaId, currentFecha, navigate]);
 
   if (loading) return <div>Loading...</div>;
@@ -91,16 +94,25 @@ const Fixture = () => {
   });
 
   // Navegación fechas
-  const goToFirst = () => setCurrentFecha(1);
-  const goToPrev = () => currentFecha > 1 && setCurrentFecha(currentFecha - 1);
-  const goToNext = () =>
-    maxFecha && currentFecha < maxFecha && setCurrentFecha(currentFecha + 1);
-  const goToLast = () => maxFecha && setCurrentFecha(maxFecha);
+
 
   return (
+    
     <div className="max-w-4xl mx-auto p-4">
+
+            <Paginador
+        current={currentFecha}
+        max={maxFecha || 1}
+        onFirst={() => setCurrentFecha(1)}
+        onPrev={() => currentFecha > 1 && setCurrentFecha(currentFecha - 1)}
+        onSelect={(f) => setCurrentFecha(f)}
+        onNext={() =>
+          maxFecha && currentFecha < maxFecha && setCurrentFecha(currentFecha + 1)
+        }
+        onLast={() => maxFecha && setCurrentFecha(maxFecha)}
+      />
       {/* Título */}
-      <h1 className="text-2xl font-bold text-center text-white mb-6">
+      <h1 className="text-2xl pt-6 font-bold text-center text-white mb-6">
         {torneo?.name || "Torneo"}
       </h1>
 
@@ -234,38 +246,18 @@ const Fixture = () => {
         </div>
       ))}
 
-      {/* Paginación de fechas */}
-      <div className="flex justify-center mt-6 space-x-4">
-        <button
-          onClick={goToFirst}
-          disabled={currentFecha === 1}
-          className="px-3 py-2 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
-          {"<<"}
-        </button>
-        <button
-          onClick={goToPrev}
-          disabled={currentFecha === 1}
-          className="px-3 py-2 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
-          {"<"}
-        </button>
-        <span className="px-4 py-2 text-white">{currentFecha}</span>
-        <button
-          onClick={goToNext}
-          disabled={maxFecha ? currentFecha === maxFecha : false}
-          className="px-3 py-2 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
-          {">"}
-        </button>
-        <button
-          onClick={goToLast}
-          disabled={maxFecha ? currentFecha === maxFecha : false}
-          className="px-3 py-2 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
-          {">>"}
-        </button>
-      </div>
+      {/* Paginador extraído */}
+      <Paginador
+        current={currentFecha}
+        max={maxFecha || 1}
+        onFirst={() => setCurrentFecha(1)}
+        onPrev={() => currentFecha > 1 && setCurrentFecha(currentFecha - 1)}
+        onSelect={(f) => setCurrentFecha(f)}
+        onNext={() =>
+          maxFecha && currentFecha < maxFecha && setCurrentFecha(currentFecha + 1)
+        }
+        onLast={() => maxFecha && setCurrentFecha(maxFecha)}
+      />
     </div>
   );
 };
