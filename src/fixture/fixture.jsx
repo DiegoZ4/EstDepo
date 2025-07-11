@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Paginador from "./Paginador";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -98,7 +98,7 @@ const Fixture = () => {
 
   return (
     
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-2 md:p-4">
 
             <Paginador
         current={currentFecha}
@@ -112,7 +112,7 @@ const Fixture = () => {
         onLast={() => maxFecha && setCurrentFecha(maxFecha)}
       />
       {/* Título */}
-      <h1 className="text-2xl pt-6 font-bold text-center text-white mb-6">
+      <h1 className="text-xl md:text-2xl pt-4 md:pt-6 font-bold text-center text-white mb-4 md:mb-6">
         {torneo?.name || "Torneo"}
       </h1>
 
@@ -125,11 +125,11 @@ const Fixture = () => {
 
       {/* Por cada grupo */}
       {grupos.map((grupo) => (
-        <div key={grupo} className="mb-6">
-          <h3 className="text-xl font-bold text-white mb-2">
+        <div key={grupo} className="mb-4 md:mb-6">
+          <h3 className="text-lg md:text-xl font-bold text-white mb-2 px-2 md:px-0">
             Grupo {grupo}
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-2 md:space-y-4 px-2 md:px-0">
             {gruposMap[grupo].map((p, i) => {
               const key = `${grupo}-${i}`;
               const expanded = expandedIndex === key;
@@ -139,100 +139,155 @@ const Fixture = () => {
                     onClick={() =>
                       setExpandedIndex(expanded ? null : key)
                     }
-                    className="flex flex-col cursor-pointer bg-purple-800 text-white p-4 rounded shadow-lg"
+                    className="cursor-pointer bg-purple-800 text-white rounded shadow-lg overflow-hidden"
                   >
-                    {/* Flex container responsive */}
-                    <div className="flex flex-col sm:flex-row justify-between items-center">
-                      {/* Local */}
-                      <div className="flex items-center space-x-2 w-full sm:w-1/4 justify-center sm:justify-start mb-2 sm:mb-0">
-                        <img
-                          src={p.equipoLocal.image}
-                          alt={p.equipoLocal.name}
-                          className="h-10"
-                        />
-                        <span className="text-sm sm:text-base font-medium">
-                          {p.equipoLocal.name}
-                        </span>
+                    {/* Layout para móvil */}
+                    <div className="md:hidden">
+                      {/* Equipos en row para móvil */}
+                      <div className="flex justify-between items-center p-3 bg-purple-900">
+                        {/* Equipo Local */}
+                        <div className="flex items-center space-x-2 flex-1">
+                          <img
+                            src={p.equipoLocal.image}
+                            alt={p.equipoLocal.name}
+                            className="h-8 w-8 object-contain"
+                          />
+                          <span className="text-xs font-medium truncate">
+                            {p.equipoLocal.name}
+                          </span>
+                        </div>
+                        
+                        {/* Marcador */}
+                        <div className="flex items-center justify-center px-3">
+                          {p.estado === "Finalizado" ? (
+                            <div className="flex items-center space-x-2 text-lg font-bold">
+                              <span>{p.golesLocal.length}</span>
+                              <span className="text-sm">-</span>
+                              <span>{p.golesVisitante.length}</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm font-bold">VS</span>
+                          )}
+                        </div>
+                        
+                        {/* Equipo Visitante */}
+                        <div className="flex items-center space-x-2 flex-1 justify-end">
+                          <span className="text-xs font-medium truncate">
+                            {p.equipoVisitante.name}
+                          </span>
+                          <img
+                            src={p.equipoVisitante.image}
+                            alt={p.equipoVisitante.name}
+                            className="h-8 w-8 object-contain"
+                          />
+                        </div>
                       </div>
-                      {/* VS + goles */}
-                      <div className="flex items-center justify-center w-full sm:w-1/2 mb-2 sm:mb-0">
-                        {p.estado === "Finalizado" && (
-                          <h1 className="font-bold mx-2 text-lg sm:text-xl">
-                            {p.golesLocal.length}
-                          </h1>
-                        )}
-                        <div className="font-bold mx-2">VS</div>
-                        {p.estado === "Finalizado" && (
-                          <h1 className="font-bold mx-2 text-lg sm:text-xl">
-                            {p.golesVisitante.length}
-                          </h1>
-                        )}
-                      </div>
-                      {/* Visitante */}
-                      <div className="flex items-center space-x-2 w-full sm:w-1/4 justify-center sm:justify-end mb-2 sm:mb-0">
-                        <span className="text-sm sm:text-base font-medium">
-                          {p.equipoVisitante.name}
-                        </span>
-                        <img
-                          src={p.equipoVisitante.image}
-                          alt={p.equipoVisitante.name}
-                          className="h-10"
-                        />
-                      </div>
+                      
+                      {/* Estado finalizado - fuera de la caja principal */}
+                      {p.estado === "Finalizado" && (
+                        <div className="text-xs text-yellow-300 text-center py-1 bg-purple-700">
+                          Finalizado
+                        </div>
+                      )}
                     </div>
-                    {/* Estado finalizado */}
-                    {p.estado === "Finalizado" && (
-                      <div className="text-sm text-yellow-300 text-center mt-2">
-                        Finalizado
+
+                    {/* Layout para desktop */}
+                    <div className="hidden md:block p-4">
+                      <div className="flex flex-row justify-between items-center">
+                        {/* Local */}
+                        <div className="flex items-center space-x-2 w-1/4 justify-start">
+                          <img
+                            src={p.equipoLocal.image}
+                            alt={p.equipoLocal.name}
+                            className="h-10"
+                          />
+                          <span className="text-base font-medium">
+                            {p.equipoLocal.name}
+                          </span>
+                        </div>
+                        
+                        {/* VS + goles */}
+                        <div className="flex items-center justify-center w-1/2">
+                          {p.estado === "Finalizado" && (
+                            <h1 className="font-bold mx-2 text-xl">
+                              {p.golesLocal.length}
+                            </h1>
+                          )}
+                          <div className="font-bold mx-2">VS</div>
+                          {p.estado === "Finalizado" && (
+                            <h1 className="font-bold mx-2 text-xl">
+                              {p.golesVisitante.length}
+                            </h1>
+                          )}
+                        </div>
+                        
+                        {/* Visitante */}
+                        <div className="flex items-center space-x-2 w-1/4 justify-end">
+                          <span className="text-base font-medium">
+                            {p.equipoVisitante.name}
+                          </span>
+                          <img
+                            src={p.equipoVisitante.image}
+                            alt={p.equipoVisitante.name}
+                            className="h-10"
+                          />
+                        </div>
                       </div>
-                    )}
+                      
+                      {/* Estado finalizado para desktop */}
+                      {p.estado === "Finalizado" && (
+                        <div className="text-sm text-yellow-300 text-center mt-2">
+                          Finalizado
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Detalle goles */}
                   {expanded && (
-                    <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                    <div className="mt-2 md:mt-4 flex flex-col gap-2 md:gap-4 px-2 md:px-0 md:flex-row">
                       {/* Local */}
                       <div className="flex-1 bg-gray-800 rounded p-2">
-                        <h4 className="text-white font-bold mb-2 text-center">
+                        <h4 className="text-white font-bold mb-2 text-center text-sm md:text-base">
                           Goles Local
                         </h4>
                         {p.golesLocal.length ? (
-                          <ul className="text-white text-sm space-y-1">
+                          <ul className="text-white text-xs md:text-sm space-y-1">
                             {p.golesLocal.map((g, idx) => (
                               <li
                                 key={idx}
                                 className="flex justify-between"
                               >
                                 <span>{g.jugador?.name}</span>
-                                <span>{g.minuto}'</span>
+                                <span>{g.minuto}&apos;</span>
                               </li>
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-gray-400 text-center">
+                          <p className="text-gray-400 text-center text-xs md:text-sm">
                             Sin goles
                           </p>
                         )}
                       </div>
                       {/* Visitante */}
                       <div className="flex-1 bg-gray-800 rounded p-2">
-                        <h4 className="text-white font-bold mb-2 text-center">
+                        <h4 className="text-white font-bold mb-2 text-center text-sm md:text-base">
                           Goles Visitante
                         </h4>
                         {p.golesVisitante.length ? (
-                          <ul className="text-white text-sm space-y-1">
+                          <ul className="text-white text-xs md:text-sm space-y-1">
                             {p.golesVisitante.map((g, idx) => (
                               <li
                                 key={idx}
                                 className="flex justify-between"
                               >
-                                <span>{g.minuto}'</span>
+                                <span>{g.minuto}&apos;</span>
                                 <span>{g.jugador?.name}</span>
                               </li>
                             ))}
                           </ul>
                         ) : (
-                          <p className="text-gray-400 text-center">
+                          <p className="text-gray-400 text-center text-xs md:text-sm">
                             Sin goles
                           </p>
                         )}

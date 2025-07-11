@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const Goleadores = ({ torneoId, categoriaId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -92,36 +92,37 @@ const Goleadores = ({ torneoId, categoriaId }) => {
     .sort((a, b) => a.rank - b.rank);
 
   return (
-    <div className="max-w-6xl mx-auto p-4 bg-[#141414] text-white min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase tracking-wide">
+    <div className="max-w-6xl mx-auto p-2 md:p-4 bg-[#141414] text-white min-h-screen">
+      <h1 className="text-xl md:text-3xl font-bold text-center mb-4 md:mb-6 text-[#a0f000] uppercase tracking-wide px-2">
         {torneo ? torneo.titulo : "Torneo no encontrado"}
       </h1>
 
       {/* Buscador */}
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-4 px-2">
         <input
           type="text"
           placeholder="Buscar jugador..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full max-w-sm px-3 py-2 rounded bg-[#1f1f1f] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+          className="w-full max-w-sm px-3 py-2 rounded bg-[#1f1f1f] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] text-sm md:text-base"
         />
       </div>
 
-      <div className="overflow-x-auto shadow-lg rounded-lg border border-[#003c3c]">
-        <table className="w-full text-sm text-white">
+      <div className="px-2 md:px-0">
+        <div className="overflow-x-auto shadow-lg rounded-lg border border-[#003c3c]">
+        <table className="w-full text-sm text-white min-w-[300px]">
           <thead className="bg-purple-700 text-xs uppercase text-gray-100">
             <tr>
-              <th className="px-4 py-3 text-center">#</th>
-              <th className="px-4 py-3 text-left">Jugador</th>
-              <th className="px-4 py-3 text-center">Equipo</th>
-              <th className="px-4 py-3 text-center">Goles</th>
+              <th className="px-2 md:px-4 py-3 text-center w-12 md:w-16">#</th>
+              <th className="px-2 md:px-4 py-3 text-left">Jugador</th>
+              <th className="px-2 md:px-4 py-3 text-center w-12 md:w-auto">Equipo</th>
+              <th className="px-2 md:px-4 py-3 text-center w-16 md:w-20">Goles</th>
             </tr>
           </thead>
           <tbody>
             {filtered.length === 0 && (
-              <tr>
-                <td colSpan={4} className="text-center py-4 text-gray-400">
+                <tr>
+                <td colSpan={4} className="text-center py-4 text-gray-400 text-xs md:text-sm">
                   No se encontraron resultados.
                 </td>
               </tr>
@@ -136,23 +137,26 @@ const Goleadores = ({ torneoId, categoriaId }) => {
                     g.rank % 2 === 0 ? "bg-purple-900" : "bg-purple-800"
                   } hover:bg-green-500 hover:text-black transition duration-300`}
                 >
-                  <td className="px-4 py-3 text-center font-bold">{g.rank}</td>
-                  <td className="px-4 py-3 text-left">{g.jugadorname}</td>
-                  <td className="px-4 py-3 text-center flex items-center justify-center space-x-2">
-                    <div className="w-1/4"></div>
-                    <div className="flex items-center w-1/2 space-x-2">
-                    {equipo && (
-                      <img
-                        src={equipo.image}
-                        alt={equipo.name}
-                        className="h-auto w-6 object-cover"
-                      />
-                    )}
-                    <span>{equipo ? equipo.name : g.equiponame}</span>
-
+                  <td className="px-2 md:px-4 py-3 text-center font-bold text-sm md:text-base">{g.rank}</td>
+                  <td className="px-2 md:px-4 py-3 text-left">
+                    <span className="text-xs md:text-sm">{g.jugadorname}</span>
+                  </td>
+                  <td className="px-2 md:px-4 py-3">
+                    <div className="flex items-center justify-center space-x-1 md:space-x-2">
+                      {equipo && (
+                        <img
+                          src={equipo.image}
+                          alt={equipo.name}
+                          className="h-6 w-6 object-contain flex-shrink-0"
+                        />
+                      )}
+                      {/* Nombre del equipo solo en desktop */}
+                      <span className="hidden md:inline text-sm truncate">
+                        {equipo ? equipo.name : g.equiponame}
+                      </span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-center font-bold">
+                  <td className="px-2 md:px-4 py-3 text-center font-bold text-sm md:text-base">
                     {g.totalgoles}
                   </td>
                 </tr>
@@ -160,6 +164,7 @@ const Goleadores = ({ torneoId, categoriaId }) => {
             })}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
