@@ -1,5 +1,5 @@
 // Login.jsx
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
@@ -30,7 +30,8 @@ const Login = ({ onLoginSuccess }) => {
         return;
       }
       const data = await response.json();
-      const { access_token } = data;
+      const { access_token, refresh_token } = data;
+      
       try {
         const decoded = jwt_decode(access_token);
         if (decoded.exp * 1000 < Date.now()) {
@@ -40,8 +41,15 @@ const Login = ({ onLoginSuccess }) => {
       } catch (err) {
         console.error("Error decodificando el token", err);
       }
+      
+      // Guardar ambos tokens
+      localStorage.setItem("access_token", access_token);
+      if (refresh_token) {
+        localStorage.setItem("refresh_token", refresh_token);
+      }
+      
       // Actualiza el contexto de autenticación
-      login(access_token);
+      login(access_token, refresh_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       
       navigate("/");
@@ -66,8 +74,15 @@ const Login = ({ onLoginSuccess }) => {
         return;
       }
       const data = await response.json();
-      const { access_token } = data;
-      login(access_token);
+      const { access_token, refresh_token } = data;
+      
+      // Guardar ambos tokens
+      localStorage.setItem("access_token", access_token);
+      if (refresh_token) {
+        localStorage.setItem("refresh_token", refresh_token);
+      }
+      
+      login(access_token, refresh_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       navigate("/");
       window.location.reload();
