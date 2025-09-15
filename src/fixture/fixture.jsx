@@ -183,10 +183,15 @@ const Fixture = () => {
                         </div>
                       </div>
                       
-                      {/* Estado finalizado - fuera de la caja principal */}
-                      {p.estado === "Finalizado" && (
-                        <div className="text-xs text-yellow-300 text-center py-1 bg-purple-700">
-                          Finalizado
+                      {/* Estado del partido - fuera de la caja principal */}
+                      {p.estado !== "Pendiente" && (
+                        <div className={`text-xs text-center py-1 ${
+                          p.estado === "Finalizado" ? "text-yellow-300 bg-purple-700" :
+                          p.estado === "Suspendido" ? "text-red-300 bg-red-900" :
+                          p.estado === "Postergado" ? "text-orange-300 bg-orange-900" :
+                          "text-gray-300 bg-gray-700"
+                        }`}>
+                          {p.estado}
                         </div>
                       )}
                     </div>
@@ -234,10 +239,15 @@ const Fixture = () => {
                         </div>
                       </div>
                       
-                      {/* Estado finalizado para desktop */}
-                      {p.estado === "Finalizado" && (
-                        <div className="text-sm text-yellow-300 text-center mt-2">
-                          Finalizado
+                      {/* Estado del partido para desktop */}
+                      {p.estado !== "Pendiente" && (
+                        <div className={`text-sm text-center mt-2 ${
+                          p.estado === "Finalizado" ? "text-yellow-300" :
+                          p.estado === "Suspendido" ? "text-red-300" :
+                          p.estado === "Postergado" ? "text-orange-300" :
+                          "text-gray-300"
+                        }`}>
+                          {p.estado}
                         </div>
                       )}
                     </div>

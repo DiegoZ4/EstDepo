@@ -3,21 +3,12 @@ import { NavLink } from "react-router-dom";
 import { colores } from "../colores";
 import { AuthContext } from "../auth/auth.context";
 import { FaWhatsapp } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-
-const logo = "../../public/assets/proyeccion-logo.png";
+import AdBanner from "../components/AdBanner";
 
 export default function Home() {
   const { isAuthenticated } = useContext(AuthContext);
   const apiUrl = import.meta.env.VITE_API_URL;
   const [torneosRecomendados, setTorneosRecomendados] = useState([]);
-
-
-  const navigate = useNavigate();
-
-const handleSelectTorneo = (torneoId) => {
-  navigate(`/torneo/${torneoId}`);
-};
 
  useEffect(() => {
     const fetchTorneos = async () => {
@@ -58,7 +49,42 @@ const handleSelectTorneo = (torneoId) => {
       className="w-full h-full flex flex-col"
       style={{ backgroundColor: colores.fondoPrincipal, color: colores.texto }}
     >
-      <main className="flex flex-col items-center justify-center flex-1 px-4 sm:px-8 py-12 space-y-6 text-center">
+      {/* Anuncio superior para móvil */}
+      <div className="lg:hidden w-full px-4 py-2">
+        <AdBanner 
+          type="mobile-top"
+          className="w-full h-20"
+          content={
+            <div className="text-center px-4">
+              <div className="text-[#a0f000] font-bold text-sm">🏆 LIGA PREMIER</div>
+              <div className="text-gray-400 text-xs">Sigue todos los partidos en vivo</div>
+            </div>
+          }
+        />
+      </div>
+
+      {/* Layout principal con anuncios laterales para desktop */}
+      <div className="flex flex-1">
+        {/* Anuncio lateral izquierdo - Solo desktop */}
+        <div className="hidden lg:flex w-48 xl:w-60 p-4">
+          <AdBanner 
+            type="sidebar-left"
+            className="w-full h-full"
+            href="https://example.com/deportes"
+            content={
+              <div className="text-center p-4">
+                <div className="transform -rotate-90 space-y-2">
+                  <div className="text-[#a0f000] font-bold text-sm">DEPORTIVO XYZ</div>
+                  <div className="text-gray-400 text-xs">Equipamiento deportivo</div>
+                  <div className="text-gray-500 text-xs">Haz clic aquí</div>
+                </div>
+              </div>
+            }
+          />
+        </div>
+
+        {/* Contenido principal */}
+        <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 py-12 space-y-6 text-center">
         <h1
           className="text-3xl sm:text-5xl font-bold uppercase tracking-wide"
           style={{ color: colores.acento }}
@@ -136,6 +162,40 @@ const handleSelectTorneo = (torneoId) => {
 
         {/* Disclaimer con WhatsApp */}
       </main>
+
+        {/* Anuncio lateral derecho - Solo desktop */}
+        <div className="hidden lg:flex w-48 xl:w-60 p-4">
+          <AdBanner 
+            type="sidebar-right"
+            className="w-full h-full"
+            onClick={() => alert('Espacio publicitario disponible!')}
+            content={
+              <div className="text-center p-4">
+                <div className="transform -rotate-90 space-y-2">
+                  <div className="text-[#a0f000] font-bold text-sm">TU ANUNCIO</div>
+                  <div className="text-gray-400 text-xs">Aquí podría estar</div>
+                  <div className="text-gray-500 text-xs">¡Contáctanos!</div>
+                </div>
+              </div>
+            }
+          />
+        </div>
+      </div>
+
+      {/* Anuncio inferior para móvil */}
+      <div className="lg:hidden w-full px-4 py-2">
+        <AdBanner 
+          type="mobile-bottom"
+          className="w-full h-20"
+          href="https://wa.me/+5491141431616"
+          content={
+            <div className="text-center px-4">
+              <div className="text-[#a0f000] font-bold text-sm">📱 ¿QUIERES ANUNCIARTE?</div>
+              <div className="text-gray-400 text-xs">Contacta por WhatsApp - Espacios disponibles</div>
+            </div>
+          }
+        />
+      </div>
     </div>
   );
 }

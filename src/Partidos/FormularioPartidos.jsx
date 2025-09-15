@@ -193,12 +193,6 @@ useEffect(() => {
     }
   };
 
-  // Alternar estado entre "Pendiente" y "Finalizado"
-  const toggleEstado = () => {
-    const nuevoEstado = formData.estado === "Pendiente" ? "Finalizado" : "Pendiente";
-    handleInputChange({ target: { name: "estado", value: nuevoEstado } });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (errorFecha) {
@@ -463,33 +457,28 @@ useEffect(() => {
 
 
 
-        {/* Switch de Estado */}
-<div className="w-40 relative flex border border-[#003c3c] rounded-full overflow-hidden cursor-pointer text-sm">
-  {/* Fondo animado */}
-  <div
-    className={`absolute top-0 bottom-0 w-1/2 bg-[#a0f000] rounded-full transition-all duration-300 ${
-      formData.estado === "Finalizado" ? "translate-x-full" : "translate-x-0"
-    }`}
-  />
-
-  {/* Opciones */}
-  <div
-    onClick={() => toggleEstado("Pendiente")}
-    className={`w-1/2 z-10 text-center py-1 font-semibold ${
-      formData.estado === "Pendiente" ? "text-black" : "text-[#a0f000]"
-    }`}
-  >
-    Pendiente
-  </div>
-  <div
-    onClick={() => toggleEstado("Finalizado")}
-    className={`w-1/2 z-10 text-center py-1 font-semibold ${
-      formData.estado === "Finalizado" ? "text-black" : "text-[#a0f000]"
-    }`}
-  >
-    Finalizado
-  </div>
-</div>
+        {/* Selector de Estado */}
+        <div>
+          <label className="block font-semibold mb-2 text-[#a0f000]">
+            Estado del Partido:
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {["Pendiente", "Finalizado", "Suspendido", "Postergado"].map((estado) => (
+              <button
+                key={estado}
+                type="button"
+                onClick={() => handleInputChange({ target: { name: "estado", value: estado } })}
+                className={`px-3 py-2 rounded-md font-semibold text-sm transition-all duration-200 border ${
+                  formData.estado === estado
+                    ? "bg-[#a0f000] text-black border-[#a0f000]"
+                    : "bg-[#1f1f1f] text-[#a0f000] border-[#003c3c] hover:bg-[#2a2a2a]"
+                }`}
+              >
+                {estado}
+              </button>
+            ))}
+          </div>
+        </div>
 
 
         {/* Botones */}
