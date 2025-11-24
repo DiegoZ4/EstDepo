@@ -10,6 +10,8 @@ lerna-debug.log*
 .htaccess
 
 .env
+.prod.env
+*.env
 
 node_modules
 dist
