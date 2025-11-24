@@ -33,34 +33,71 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     const fetchDatos = async () => {
       const token = localStorage.getItem("access_token");
       try {
-        const [equiposRes, paisesRes, categoriasRes] = await Promise.all([
-          fetch(`${apiUrl}/equipo`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token ? `Bearer ${token}` : "",
-            },
-          }),
-          fetch(`${apiUrl}/pais`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token ? `Bearer ${token}` : "",
-            },
-          }),
-          fetch(`${apiUrl}/categories`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token ? `Bearer ${token}` : "",
-            },
-          }),
-        ]);
-        setEquipos(await equiposRes.json());
-        setPaises(await paisesRes.json());
-        setCategorias(await categoriasRes.json());
+        // Fetch equipos
+        const equiposRes = await fetch(`${apiUrl}/equipo`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (equiposRes.ok) {
+          const equiposData = await equiposRes.json();
+          setEquipos(equiposData);
+          console.log("✅ Equipos cargados:", equiposData.length);
+        } else {
+          console.error("❌ Error al cargar equipos:", equiposRes.status);
+        }
+
+        // Fetch países
+        const paisesRes = await fetch(`${apiUrl}/pais`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        if (paisesRes.ok) {
+          const paisesData = await paisesRes.json();
+          setPaises(paisesData);
+          console.log("✅ Países cargados:", paisesData.length);
+          console.log("📍 Países disponibles:", paisesData.map(p => `${p.id}: ${p.name}`));
+        } else {
+          console.error("❌ Error al cargar países:", paisesRes.status);
+        }
+
+        // Fetch categorías con manejo de errores mejorado
+        const categoriasRes = await fetch(`${apiUrl}/categories`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
+        
+        if (categoriasRes.ok) {
+          const contentType = categoriasRes.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const categoriasData = await categoriasRes.json();
+            setCategorias(categoriasData);
+            console.log("✅ Categorías cargadas:", categoriasData.length);
+          } else {
+            const textResponse = await categoriasRes.text();
+            console.error("❌ Error: La respuesta de categorías NO es JSON:", textResponse.substring(0, 200));
+            alert("Error del servidor: El endpoint de categorías no está respondiendo correctamente. Por favor contacte al administrador.");
+          }
+        } else {
+          console.error("❌ Error al cargar categorías - Status:", categoriasRes.status);
+          const errorText = await categoriasRes.text();
+          console.error("❌ Respuesta del servidor:", errorText.substring(0, 200));
+          
+          if (categoriasRes.status === 502) {
+            alert("Error 502: El servidor de categorías no está disponible. Por favor contacte al administrador del sistema.");
+          }
+        }
       } catch (error) {
-        console.error("Error fetching datos:", error);
+        console.error("❌ Error general al cargar datos:", error);
+        alert("Error de conexión. Verifique su conexión a internet.");
       }
     };
     fetchDatos();
@@ -69,6 +106,16 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
   // Si se edita un jugador, se cargan sus datos
   useEffect(() => {
     if (selectedJugador) {
+      const paisIdValue = selectedJugador.pais?.id || "";
+      const equipoIdValue = selectedJugador.equipo?.id || "";
+      const categoriaIdValue = selectedJugador.category?.id || "";
+      
+      console.log("🔄 Cargando datos del jugador para edición:");
+      console.log("   Jugador:", selectedJugador.name);
+      console.log("   País ID:", paisIdValue, "- País:", selectedJugador.pais?.name);
+      console.log("   Equipo ID:", equipoIdValue, "- Equipo:", selectedJugador.equipo?.name);
+      console.log("   Categoría ID:", categoriaIdValue, "- Categoría:", selectedJugador.category?.name);
+      
       setFormData({
         name: selectedJugador.name || "",
         image: selectedJugador.image || "",
@@ -82,12 +129,10 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
         tarjetasAmarillas: selectedJugador.tarjetasAmarillas || 0,
         tarjetasRojas: selectedJugador.tarjetasRojas || 0,
         description: selectedJugador.description || "",
-        equipoId: selectedJugador.equipo?.id || 0,
-        // Usamos selectedJugador.category?.id en lugar de selectedJugador.categoriesId
-        categoriesId: selectedJugador.category?.id || 0,
-        paisId: selectedJugador.pais?.id || 0,
+        equipoId: equipoIdValue,
+        categoriesId: categoriaIdValue,
+        paisId: paisIdValue,
       });
-      console.log(selectedJugador);
     }
   }, [selectedJugador]);
 
@@ -398,7 +443,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
               </label>
               <select
                 name="paisId"
-                value={formData.paisId}
+                value={formData.paisId || ""}
                 onChange={handleInputChange}
                 required
                 className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
@@ -409,36 +454,58 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 }}
               >
                 <option value="">Seleccione un país</option>
-                {paises.map((pais) => (
-                  <option key={pais.id} value={pais.id}>
-                    {pais.name}
-                  </option>
-                ))}
+                {paises.length > 0 ? (
+                  paises.map((pais) => (
+                    <option key={pais.id} value={pais.id}>
+                      {pais.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>Cargando países...</option>
+                )}
               </select>
+              {formData.paisId && (
+                <p className="text-xs mt-1" style={{ color: colores.acento }}>
+                  País seleccionado: {paises.find(p => p.id === Number(formData.paisId))?.name || formData.paisId}
+                </p>
+              )}
             </div>
             <div>
               <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
                 Categoría:
               </label>
               <select
-  name="categoriesId"
-  value={formData.categoriesId || ""}
-  onChange={handleInputChange}
-  required
-  className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-  style={{
-    backgroundColor: colores.inputBg,
-    border: `1px solid ${colores.acento}`,
-    color: colores.texto,
-  }}
->
-  <option value="">Sin categoría</option>
-  {categorias.map((categoria) => (
-    <option key={categoria.id} value={categoria.id}>
-      {categoria.name}
-    </option>
-  ))}
-</select>
+                name="categoriesId"
+                value={formData.categoriesId || ""}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
+                style={{
+                  backgroundColor: colores.inputBg,
+                  border: `1px solid ${colores.acento}`,
+                  color: colores.texto,
+                }}
+              >
+                <option value="">Sin categoría</option>
+                {categorias.length > 0 ? (
+                  categorias.map((categoria) => (
+                    <option key={categoria.id} value={categoria.id}>
+                      {categoria.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>⚠️ Servicio de categorías temporalmente no disponible</option>
+                )}
+              </select>
+              {categorias.length === 0 && (
+                <p className="text-xs mt-1 text-orange-400">
+                  ⚠️ Error 503: El servidor backend no está disponible. Puede guardar el jugador sin categoría y asignarla después.
+                </p>
+              )}
+              {formData.categoriesId && categorias.length > 0 && (
+                <p className="text-xs mt-1" style={{ color: colores.acento }}>
+                  Categoría seleccionada: {categorias.find(c => c.id === Number(formData.categoriesId))?.name || formData.categoriesId}
+                </p>
+              )}
             </div>
           </div>
           {/* Fila 6: Equipo / Posición */}

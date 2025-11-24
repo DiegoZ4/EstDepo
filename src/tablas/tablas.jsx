@@ -7,23 +7,41 @@ const Tablas = ({ torneoId, categoriaId }) => {
   const [grupos, setGrupos] = useState([]);
 
   useEffect(() => {
-    if (!torneoId || !categoriaId) return;
+    console.log("🔍 Verificando parámetros - torneoId:", torneoId, "categoriaId:", categoriaId);
+    
+    if (!torneoId || !categoriaId) {
+      console.warn("⚠️ Falta torneoId o categoriaId. No se cargará la tabla.");
+      setLoading(false);
+      return;
+    }
   
     const fetchTablaAgrupada = async () => {
+      console.log("🔄 Iniciando carga de tabla...");
       setLoading(true);
       try {
         const token = localStorage.getItem("access_token");
-        const response = await fetch(`${apiUrl}/torneo/${torneoId}/tabla/${categoriaId}`, {
+        const url = `${apiUrl}/torneo/${torneoId}/tabla/${categoriaId}`;
+        console.log("📡 Haciendo request a:", url);
+        
+        const response = await fetch(url, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           }
         });
   
-        if (!response.ok) throw new Error("No se pudo obtener la tabla");
+        console.log("📥 Respuesta recibida - Status:", response.status, response.statusText);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error("❌ Error del servidor:", errorText);
+          throw new Error("No se pudo obtener la tabla");
+        }
   
         const tabla = await response.json();
-        console.log("Tabla obtenida:", tabla);
+        console.log("✅ Tabla obtenida:", tabla);
+        console.log("📊 Tipo de datos recibidos:", typeof tabla, Array.isArray(tabla) ? "Array" : "Object");
+        console.log("📦 Claves del objeto:", Object.keys(tabla));
         setItems(tabla);
         // Extrae y ordena las claves en orden numérico cuando sean números,
 // o lexicográfico cuando no lo sean.
@@ -48,10 +66,13 @@ const sortedGrupos = Object.keys(tabla).sort((a, b) => {
   }
 });
 setGrupos(sortedGrupos);
+        console.log("✅ Grupos ordenados:", sortedGrupos);
 
       } catch (err) {
-        console.error("Error al cargar la tabla:", err);
+        console.error("❌ Error al cargar la tabla:", err);
+        console.error("❌ Detalles del error:", err.message);
       } finally {
+        console.log("🏁 Finalizando carga - setLoading(false)");
         setLoading(false);
       }
     };
@@ -62,10 +83,22 @@ setGrupos(sortedGrupos);
 
   if (loading) return <div className="text-white text-center">Cargando tabla...</div>;
 
+  if (!grupos || grupos.length === 0) {
+    return (
+      <div className="text-white text-center p-8">
+        <p className="text-xl mb-2">No hay datos de tabla disponibles</p>
+        <p className="text-gray-400 text-sm">
+          TorneoId: {torneoId} | CategoríaId: {categoriaId}
+        </p>
+        <p className="text-gray-400 text-sm mt-2">
+          Verifica la consola del navegador (F12) para más detalles
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-6xl mx-auto p-4">
-
-
       {grupos.map((grupo) => (
         <div key={grupo} className="mb-6">
           <h2 className="text-xl font-semibold text-[#a0f000] mb-2 text-center">

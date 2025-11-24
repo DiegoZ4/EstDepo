@@ -14,7 +14,7 @@ import AdBanner from "../components/AdBanner";
 <AdBanner type="sidebar-left" />
 
 // Anuncio con contenido personalizado
-<AdBanner 
+<AdBanner
   type="mobile-top"
   content={
     <div>
@@ -25,14 +25,14 @@ import AdBanner from "../components/AdBanner";
 />
 
 // Anuncio clickeable con enlace
-<AdBanner 
+<AdBanner
   type="sidebar-right"
   href="https://example.com"
   content={<div>Haz clic aquí</div>}
 />
 
 // Anuncio con función onClick
-<AdBanner 
+<AdBanner
   onClick={() => alert('Anuncio clickeado')}
   content={<div>Botón personalizado</div>}
 />
@@ -40,22 +40,24 @@ import AdBanner from "../components/AdBanner";
 
 ## Props
 
-| Prop | Tipo | Defecto | Descripción |
-|------|------|---------|-------------|
-| `type` | string | "default" | Tipo de anuncio: "sidebar-left", "sidebar-right", "mobile-top", "mobile-bottom" |
-| `content` | ReactNode | null | Contenido personalizado del anuncio |
-| `className` | string | "" | Clases CSS adicionales |
-| `style` | object | {} | Estilos CSS adicionales |
-| `onClick` | function | null | Función a ejecutar al hacer clic |
-| `href` | string | null | URL para abrir en nueva pestaña al hacer clic |
+| Prop        | Tipo      | Defecto   | Descripción                                                                     |
+| ----------- | --------- | --------- | ------------------------------------------------------------------------------- |
+| `type`      | string    | "default" | Tipo de anuncio: "sidebar-left", "sidebar-right", "mobile-top", "mobile-bottom" |
+| `content`   | ReactNode | null      | Contenido personalizado del anuncio                                             |
+| `className` | string    | ""        | Clases CSS adicionales                                                          |
+| `style`     | object    | {}        | Estilos CSS adicionales                                                         |
+| `onClick`   | function  | null      | Función a ejecutar al hacer clic                                                |
+| `href`      | string    | null      | URL para abrir en nueva pestaña al hacer clic                                   |
 
 ## Tipos de Anuncio
 
 ### Desktop - Laterales
+
 - `sidebar-left`: Anuncio lateral izquierdo (160x600px aprox)
 - `sidebar-right`: Anuncio lateral derecho (160x600px aprox)
 
 ### Mobile - Horizontales
+
 - `mobile-top`: Banner superior móvil (320x50px)
 - `mobile-bottom`: Banner inferior móvil (320x50px)
 
@@ -70,27 +72,25 @@ import AdBanner from "../components/AdBanner";
 ## Ejemplos de Implementación
 
 ### Página Home
+
 La página de inicio ya implementa los 4 tipos de anuncios:
+
 - 2 laterales para desktop
 - 2 horizontales para móvil
 
 ### Agregar a Otras Páginas
+
 ```jsx
 // En cualquier página
 const MiPagina = () => {
   return (
     <div className="flex">
       {/* Contenido principal */}
-      <main className="flex-1">
-        Mi contenido
-      </main>
-      
+      <main className="flex-1">Mi contenido</main>
+
       {/* Anuncio lateral */}
       <aside className="hidden lg:block w-48">
-        <AdBanner 
-          type="sidebar-right"
-          href="https://mi-sponsor.com"
-        />
+        <AdBanner type="sidebar-right" href="https://mi-sponsor.com" />
       </aside>
     </div>
   );
@@ -100,6 +100,7 @@ const MiPagina = () => {
 ## Monetización
 
 Este sistema permite fácilmente:
+
 - Vender espacios publicitarios
 - Rotar anuncios dinámicamente
 - Trackear clicks y conversiones
@@ -108,5 +109,6 @@ Este sistema permite fácilmente:
 ## Personalización
 
 Para cambiar los estilos por defecto, modifica:
+
 - `/src/components/AdBanner.jsx` - Lógica del componente
 - `/src/colores.jsx` - Colores del tema

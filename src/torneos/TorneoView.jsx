@@ -19,62 +19,108 @@ function TorneoView() {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
 
-    const fetchTorneo = async () => {
+    const fetchTorneoYCategorias = async () => {
       try {
-        const res = await fetch(`${apiUrl}/torneo/${torneoId}`, {
+        console.log("🔄 Cargando torneo ID:", torneoId);
+        
+        // 1. Primero cargamos el torneo básico (sin relaciones circulares)
+        const resTorneo = await fetch(`${apiUrl}/torneo/${torneoId}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           }
         });
 
-        if (!res.ok) throw new Error("No se pudo cargar el torneo");
-        const data = await res.json();
-        const torneo = data;
-        const cat = (data.categories || []).slice();
-        // Orden alfabético “natural” (numérico dentro de la cadena)
-        cat.sort((a, b) =>
+        if (!resTorneo.ok) {
+          console.error("❌ Error al cargar torneo - Status:", resTorneo.status);
+          throw new Error("No se pudo cargar el torneo");
+        }
+        
+        const torneoData = await resTorneo.json();
+        console.log("✅ Torneo cargado:", torneoData);
+        setTorneo(torneoData);
+
+        // 2. Hacemos un fetch separado para las categorías del torneo
+        // Esto evita la dependencia circular entre torneo y categorías
+        console.log("🔄 Cargando categorías del torneo...");
+        const resCategorias = await fetch(`${apiUrl}/torneo/${torneoId}/categorias`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        let categoriasFinales = [];
+        
+        if (!resCategorias.ok) {
+          console.warn("⚠️ Endpoint /torneo/:id/categorias no disponible - Status:", resCategorias.status);
+          console.warn("⚠️ Intentando usar data.categories si existe...");
+          // Fallback: intentar usar las categorías del torneo data si vienen
+          categoriasFinales = (torneoData.categories || []).slice();
+          if (categoriasFinales.length === 0) {
+            console.error("❌ No se pudieron cargar las categorías");
+          }
+        } else {
+          const categoriasData = await resCategorias.json();
+          console.log("✅ Categorías cargadas desde endpoint:", categoriasData);
+          categoriasFinales = categoriasData.slice();
+        }
+        
+        // Orden alfabético "natural" (numérico dentro de la cadena)
+        categoriasFinales.sort((a, b) =>
           a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
         );
         
-        setTorneo(torneo)
+        setCategories(categoriasFinales);
+        console.log("📋 Categorías disponibles:", categoriasFinales.map(c => `${c.id}: ${c.name}`));
 
-        setCategories(cat);
-
-        if (!categoriaId && cat.length > 0) {
-          const firstId = cat[0].id;
+        // 3. Seleccionamos la primera categoría si no hay una seleccionada
+        if (!categoriaId && categoriasFinales.length > 0) {
+          const firstId = categoriasFinales[0].id;
+          console.log("🎯 Auto-seleccionando primera categoría:", firstId);
           setSelectedCategoriaId(firstId);
           navigate(`/torneo/${torneoId}/${activeTab}/${firstId}`, { replace: true });
         } else {
+          console.log("🎯 Usando categoría de URL:", categoriaId);
           setSelectedCategoriaId(categoriaId);
         }
       } catch (e) {
-        console.error("Error:", e);
+        console.error("❌ Error general:", e);
       } finally {
+        console.log("🏁 Carga completada");
         setLoadingTorneo(false);
       }
     };
 
-    fetchTorneo();
-  }, [apiUrl, torneoId]);
+    fetchTorneoYCategorias();
+  }, [apiUrl, torneoId, activeTab, categoriaId, navigate]);
 
   const handleCategoryClick = (catId) => {
+    console.log("🎯 Categoría seleccionada:", catId);
     setSelectedCategoriaId(catId);
     navigate(`/torneo/${torneoId}/${activeTab}/${catId}`);
   };
 
   const handleTabChange = (newTab) => {
+    console.log("📑 Tab cambiada a:", newTab, "con categoría:", selectedCategoriaId);
     setActiveTab(newTab);
     if (selectedCategoriaId) {
       navigate(`/torneo/${torneoId}/${newTab}/${selectedCategoriaId}`);
     }
   };
 
-  const selectedCategory = categories.find(
-    (cat) => Number(cat.id) === Number(selectedCategoriaId)
-  );
+  console.log("🔍 TorneoView - torneoId:", torneoId, "selectedCategoriaId:", selectedCategoriaId, "activeTab:", activeTab);
 
-  if (loadingTorneo) return <div>Cargando torneo...</div>;
+  if (loadingTorneo) return <div className="text-white text-center p-8">Cargando torneo...</div>;
+
+  if (!torneo) {
+    return (
+      <div className="text-white text-center p-8">
+        <p className="text-xl text-red-400">Error: No se pudo cargar el torneo</p>
+        <p className="text-sm text-gray-400 mt-2">Torneo ID: {torneoId}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -98,21 +144,30 @@ function TorneoView() {
             {torneo.name}
           </h1>
 
-          <div className="flex justify-center mb-4 border-b border-gray-400 pb-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => handleCategoryClick(cat.id)}
-                className={`mx-2 px-4 py-2 text-white ${Number(selectedCategoriaId) === Number(cat.id)
-                  ? "bg-green-500"
-                  : "bg-gray-700 hover:bg-green-500"
-                  }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
+          {/* Botones de Categorías */}
+          {categories.length > 0 ? (
+            <div className="flex justify-center mb-4 border-b border-gray-400 pb-2 flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => handleCategoryClick(cat.id)}
+                  className={`mx-2 px-4 py-2 text-white rounded ${Number(selectedCategoriaId) === Number(cat.id)
+                    ? "bg-green-500"
+                    : "bg-gray-700 hover:bg-green-500"
+                    }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center mb-4 p-4 bg-yellow-900 text-yellow-200 rounded">
+              <p>⚠️ No hay categorías disponibles para este torneo</p>
+              <p className="text-xs mt-1">Verifica la consola del navegador para más detalles</p>
+            </div>
+          )}
 
+          {/* Tabs de Fixture, Tabla, Goleadores */}
           <div className="flex justify-center mb-4 border-b border-gray-400 pb-2">
             {["fixture", "tabla", "goleadoras"].map((tabKey) => (
               <button
@@ -132,14 +187,23 @@ function TorneoView() {
             ))}
           </div>
 
-          {activeTab === "fixture" && (
-            <Fixture torneoId={torneoId} categoriaId={selectedCategoriaId} />
-          )}
-          {activeTab === "tabla" && (
-            <Tablas torneoId={torneoId} categoriaId={selectedCategoriaId} />
-          )}
-          {activeTab === "goleadoras" && (
-            <Goleadores torneoId={torneoId} categoriaId={selectedCategoriaId} />
+          {/* Contenido de las tabs */}
+          {selectedCategoriaId ? (
+            <>
+              {activeTab === "fixture" && (
+                <Fixture torneoId={torneoId} categoriaId={selectedCategoriaId} />
+              )}
+              {activeTab === "tabla" && (
+                <Tablas torneoId={torneoId} categoriaId={selectedCategoriaId} />
+              )}
+              {activeTab === "goleadoras" && (
+                <Goleadores torneoId={torneoId} categoriaId={selectedCategoriaId} />
+              )}
+            </>
+          ) : (
+            <div className="text-center text-gray-400 p-8">
+              <p>Por favor selecciona una categoría</p>
+            </div>
           )}
         </div>
 
