@@ -438,6 +438,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
           {/* Fila 5: País / Categoría */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
+              
               <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
                 País:
               </label>
