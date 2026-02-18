@@ -226,22 +226,22 @@ useEffect(() => {
   
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 animate-fade-in">
       <form
         onSubmit={handleSubmit}
-        className="bg-[#141414] border border-[#003c3c] p-6 rounded-lg shadow-2xl w-full max-w-md mx-4 space-y-4 text-white"
+        className="glass-card p-6 w-full max-w-md mx-4 space-y-4 text-white max-h-[90vh] overflow-y-auto"
       >
-        <h2 className="text-2xl font-bold text-center text-[#a0f000] uppercase tracking-wide mb-4">
+        <h2 className="text-2xl font-bold text-center text-gradient-accent uppercase tracking-wide mb-4">
           {selectedPartido ? "Editar Partido" : "Crear Partido"}
         </h2>
         {/* Torneo */}
         <div>
-          <label className="block font-semibold mb-1 text-[#a0f000]">Torneo:</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Torneo</label>
           <select
             name="torneoId"
             value={formData.torneoId}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
+            className="input-modern w-full"
             required
           >
             <option value="">{selectedPartido ? "Seleccione torneo" : "Seleccione un torneo"}</option>
@@ -265,9 +265,9 @@ useEffect(() => {
         setIsInterzonal(chk);
         if (!chk) setFormData(f => ({ ...f, groupLocal: "", groupVisitante: "" }));
       }}
-      className="h-5 w-5 rounded border-2 border-[#a0f000] bg-transparent text-[#a0f000] focus:ring-0 transition"
+      className="h-5 w-5 rounded border-2 border-gray-600 bg-transparent text-[#a0f000] focus:ring-0 transition"
     />
-    <span className="text-white font-medium">Partido interzonal</span>
+    <span className="text-gray-300 font-medium">Partido interzonal</span>
   </label>
           </div>
         )}
@@ -277,12 +277,12 @@ useEffect(() => {
           isInterzonal ? (
             <>
               <div>
-                <label className="block text-[#a0f000] mb-1">Grupo local</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Grupo local</label>
                 <select
                   name="groupLocal"
                   value={formData.groupLocal}
                   onChange={e => setFormData(f => ({ ...f, groupLocal: e.target.value }))}
-                  className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                  className="input-modern w-full"
                   required
                 >
                   <option value="">-- Seleccione --</option>
@@ -290,12 +290,12 @@ useEffect(() => {
                 </select>
               </div>
               <div>
-                <label className="block text-[#a0f000] mb-1">Grupo visitante</label>
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">Grupo visitante</label>
                 <select
                   name="groupVisitante"
                   value={formData.groupVisitante}
                   onChange={e => setFormData(f => ({ ...f, groupVisitante: e.target.value }))}
-                  className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                  className="input-modern w-full"
                   required
                 >
                   <option value="">-- Seleccione --</option>
@@ -305,12 +305,12 @@ useEffect(() => {
             </>
           ) : (
             <div>
-              <label className="block text-[#a0f000] mb-1">Grupo</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Grupo</label>
               <select
                 name="group"
                 value={formData.group}
                 onChange={e => setFormData(f => ({ ...f, group: e.target.value }))}
-                className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded"
+                className="input-modern w-full"
                 required
               >
                 <option value="">-- Seleccione --</option>
@@ -321,16 +321,12 @@ useEffect(() => {
         )}
         {/* Categoría */}
         <div>
-          <label className="block font-semibold mb-1 text-[#a0f000]">
-            Categoría:
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Categorías
           </label>
-{/* Sección visual con checkboxes como en FormularioTorneos */}
 <div>
-  <label className="block text-sm font-semibold text-[#a0f000] mb-2">
-    Categorías:
-  </label>
   {categorias.length > 0 ? (
-    <div className="flex flex-wrap gap-3 justify-center">
+    <div className="flex flex-wrap gap-2 justify-center">
       {categorias.map((categoria) => (
         <div key={categoria.id} className="flex items-center">
           <input
@@ -356,7 +352,7 @@ useEffect(() => {
           />
           <label
             htmlFor={`cat-${categoria.id}`}
-            className="cursor-pointer px-4 py-1 border border-[#444] rounded-md peer-checked:bg-green-500 peer-checked:text-black text-white hover:bg-gray-600 transition"
+            className="cursor-pointer px-3 py-1 glass-card-sm !rounded-lg text-sm text-gray-400 transition-all peer-checked:bg-[#a0f000]/15 peer-checked:text-[#a0f000] peer-checked:border-[#a0f000]/40 hover:text-white"
           >
             {categoria.name}
           </label>
@@ -364,45 +360,45 @@ useEffect(() => {
       ))}
     </div>
   ) : (
-    <p className="text-gray-400">No hay categorías disponibles.</p>
+    <p className="text-gray-500 text-sm">No hay categorías disponibles.</p>
   )}
 </div>
 
 
         </div>
 
-        <div className="flex justify-around">
+        <div className="flex justify-around gap-4">
 
         {/* Fecha (matchday) */}
         <div className="w-1/3">
-          <label className="block font-semibold mb-1 text-[#a0f000]">
-            Fecha :
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Fecha
           </label>
           <input
             type="number"
             name="fecha"
             value={formData.fecha}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
+            className="input-modern w-full"
             required
           />
           {errorFecha && (
-            <p className="text-red-500 text-xs mt-1">{errorFecha}</p>
+            <p className="text-red-400 text-xs mt-1">{errorFecha}</p>
           )}
         </div>
 
 
         {/* Fecha y Hora */}
         <div className="w-1/2">
-          <label className="block font-semibold mb-1 text-[#a0f000]">
-            Dia y Hora:
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Día y Hora
           </label>
           <input
             type="datetime-local"
             name="date"
             value={formData.date}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] transition"
+            className="input-modern w-full"
             required
           />
         </div>
@@ -411,14 +407,14 @@ useEffect(() => {
 
         {/* Equipo Local */}
         <div>
-          <label className="block font-semibold mb-1 text-[#a0f000]">
-            Equipo Local:
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Equipo Local
           </label>
           <select
             name="equipoLocalId"
             value={formData.equipoLocalId}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
+            className="input-modern w-full"
             required
           >
             <option value="">
@@ -434,14 +430,14 @@ useEffect(() => {
 
         {/* Equipo Visitante */}
         <div>
-          <label className="block font-semibold mb-1 text-[#a0f000]">
-            Equipo Visitante:
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Equipo Visitante
           </label>
           <select
             name="equipoVisitanteId"
             value={formData.equipoVisitanteId}
             onChange={handleInputChange}
-            className="w-full p-2 border border-[#003c3c] rounded-md bg-[#1f1f1f] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] transition"
+            className="input-modern w-full"
             required
           >
             <option value="">
@@ -459,8 +455,8 @@ useEffect(() => {
 
         {/* Selector de Estado */}
         <div>
-          <label className="block font-semibold mb-2 text-[#a0f000]">
-            Estado del Partido:
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Estado del Partido
           </label>
           <div className="grid grid-cols-2 gap-2">
             {["Pendiente", "Finalizado", "Suspendido", "Postergado"].map((estado) => (
@@ -468,10 +464,10 @@ useEffect(() => {
                 key={estado}
                 type="button"
                 onClick={() => handleInputChange({ target: { name: "estado", value: estado } })}
-                className={`px-3 py-2 rounded-md font-semibold text-sm transition-all duration-200 border ${
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border ${
                   formData.estado === estado
-                    ? "bg-[#a0f000] text-black border-[#a0f000]"
-                    : "bg-[#1f1f1f] text-[#a0f000] border-[#003c3c] hover:bg-[#2a2a2a]"
+                    ? "bg-[#a0f000]/15 text-[#a0f000] border-[#a0f000]/40"
+                    : "bg-white/5 text-gray-400 border-gray-700/40 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {estado}
@@ -482,19 +478,19 @@ useEffect(() => {
 
 
         {/* Botones */}
-        <div className="flex justify-end space-x-4 pt-4">
-          <button
-            type="submit"
-            className="bg-[#a0f000] text-black px-4 py-2 rounded-md font-bold hover:bg-[#8cd000] transition"
-          >
-            {selectedPartido ? "Guardar Cambios" : "Crear Partido"}
-          </button>
+        <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
             onClick={() => setCreator(false)}
-            className="bg-red-600 text-white px-4 py-2 rounded-md font-bold hover:bg-red-800 transition"
+            className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
           >
             Cancelar
+          </button>
+          <button
+            type="submit"
+            className="btn-primary px-6 py-2 text-sm"
+          >
+            {selectedPartido ? "Guardar Cambios" : "Crear Partido"}
           </button>
         </div>
       </form>

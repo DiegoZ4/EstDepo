@@ -7,25 +7,18 @@ export default function Paginador({
   onNext,
   onLast
 }) {
-  // Genera un array [1,2,…,max]
   const fechas = Array.from({ length: max }, (_, i) => i + 1);
 
+  const navBtnClass = "px-3 py-1.5 rounded-lg glass-card-sm !rounded-lg text-gray-400 hover:text-[#a0f000] hover:border-[#a0f000]/30 disabled:opacity-30 disabled:hover:text-gray-400 transition text-sm";
+
   return (
-    <div className="mt-6">
+    <div className="mt-6 space-y-3">
       {/* Versión desktop */}
-      <div className="hidden md:flex justify-center space-x-2 items-center">
-        <button
-          onClick={onFirst}
-          disabled={current === 1}
-          className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
+      <div className="hidden md:flex justify-center items-center gap-1.5">
+        <button onClick={onFirst} disabled={current === 1} className={navBtnClass}>
           &laquo;
         </button>
-        <button
-          onClick={onPrev}
-          disabled={current === 1}
-          className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
+        <button onClick={onPrev} disabled={current === 1} className={navBtnClass}>
           &lsaquo;
         </button>
 
@@ -33,75 +26,52 @@ export default function Paginador({
           <button
             key={f}
             onClick={() => onSelect(f)}
-            className={`px-2 py-1 rounded ${
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
               f === current
-                ? "bg-green-500 text-white"
-                : "bg-gray-700 text-white hover:bg-gray-600"
+                ? "bg-[#a0f000] text-black shadow-lg shadow-[#a0f000]/20"
+                : "glass-card-sm !rounded-lg text-gray-400 hover:text-white hover:border-[#a0f000]/30"
             }`}
           >
             {f}
           </button>
         ))}
 
-        <button
-          onClick={onNext}
-          disabled={current === max}
-          className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
+        <button onClick={onNext} disabled={current === max} className={navBtnClass}>
           &rsaquo;
         </button>
-        <button
-          onClick={onLast}
-          disabled={current === max}
-          className="px-3 py-1 bg-gray-700 text-white rounded disabled:opacity-50"
-        >
+        <button onClick={onLast} disabled={current === max} className={navBtnClass}>
           &raquo;
         </button>
       </div>
 
-      {/* Versión móvil con scroll horizontal */}
+      {/* Versión móvil */}
       <div className="md:hidden">
-        <div className="flex space-x-2 mb-2 justify-center">
-          <button
-            onClick={onFirst}
-            disabled={current === 1}
-            className="px-2 py-1 bg-gray-700 text-white rounded disabled:opacity-50 text-sm"
-          >
+        <div className="flex gap-2 mb-2 justify-center">
+          <button onClick={onFirst} disabled={current === 1} className={navBtnClass}>
             &laquo;
           </button>
-          <button
-            onClick={onPrev}
-            disabled={current === 1}
-            className="px-2 py-1 bg-gray-700 text-white rounded disabled:opacity-50 text-sm"
-          >
+          <button onClick={onPrev} disabled={current === 1} className={navBtnClass}>
             &lsaquo;
           </button>
-          <button
-            onClick={onNext}
-            disabled={current === max}
-            className="px-2 py-1 bg-gray-700 text-white rounded disabled:opacity-50 text-sm"
-          >
+          <span className="px-3 py-1.5 text-sm text-[#a0f000] font-bold">{current}/{max}</span>
+          <button onClick={onNext} disabled={current === max} className={navBtnClass}>
             &rsaquo;
           </button>
-          <button
-            onClick={onLast}
-            disabled={current === max}
-            className="px-2 py-1 bg-gray-700 text-white rounded disabled:opacity-50 text-sm"
-          >
+          <button onClick={onLast} disabled={current === max} className={navBtnClass}>
             &raquo;
           </button>
         </div>
         
         <div className="overflow-x-auto pb-2">
-          <div className="flex space-x-2 px-4 min-w-max">
+          <div className="flex gap-1.5 px-4 min-w-max">
             {fechas.map((f) => (
               <button
                 key={f}
                 onClick={() => onSelect(f)}
-                className={`px-3 py-2 rounded flex-shrink-0 ${
+                className={`px-3 py-1.5 rounded-lg flex-shrink-0 text-sm transition-all ${
                   f === current
-                    ? "bg-green-500 text-white"
-                    : "bg-gray-700 text-white hover:bg-gray-600"
+                    ? "bg-[#a0f000] text-black font-bold"
+                    : "glass-card-sm !rounded-lg text-gray-400 hover:text-white"
                 }`}
               >
                 {f}

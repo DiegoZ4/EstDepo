@@ -39,78 +39,88 @@ const FormularioUsuario = ({ setMostrarFormulario, usuarioSeleccionado, onSave }
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/70 backdrop-blur-sm z-50 animate-fade-in">
       <form 
         onSubmit={handleSubmit}
-        className="bg-[#003c3c] p-6 rounded-lg shadow-lg w-96 text-white space-y-4"
+        className="glass-card w-full max-w-md mx-4 space-y-4 text-white"
       >
-        <h2 className="text-2xl font-bold text-center text-[#a0f000]">
+        <h2 className="text-2xl font-bold text-center text-gradient-accent">
           {usuarioSeleccionado ? "Actualizar Usuario" : "Crear Usuario"}
         </h2>
         
-        <label className="block text-sm">Email:</label>
-        <input 
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
-          required
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Email:</label>
+          <input 
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            className="input-modern"
+            required
+          />
+        </div>
 
-        <label className="block text-sm">Nombre:</label>
-        <input 
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-          required
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Nombre:</label>
+          <input 
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="input-modern"
+            required
+          />
+        </div>
 
-        <label className="block text-sm">Contraseña:</label>
-        <input 
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-          required={!usuarioSeleccionado} // Requerida al crear, opcional al actualizar
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Contraseña:</label>
+          <input 
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            className="input-modern"
+            required={!usuarioSeleccionado}
+          />
+        </div>
 
-        <label className="block text-sm">Rol:</label>
-        <select
-          name="rol"
-          value={formData.rol}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-          required
-        >
-          <option value="freeUser">freeUser</option>
-          <option value="SubsUser">SubsUser</option>
-          <option value="admin">admin</option>
-        </select>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Rol:</label>
+          <select
+            name="rol"
+            value={formData.rol}
+            onChange={handleInputChange}
+            className="input-modern"
+            required
+          >
+            <option value="freeUser">freeUser</option>
+            <option value="SubsUser">SubsUser</option>
+            <option value="admin">admin</option>
+          </select>
+        </div>
 
-        <label className="block text-sm">Nacimiento:</label>
-        <input 
-          type="date"
-          name="bornDate"
-          value={formData.bornDate}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1">Nacimiento:</label>
+          <input 
+            type="date"
+            name="bornDate"
+            value={formData.bornDate}
+            onChange={handleInputChange}
+            className="input-modern"
+          />
+        </div>
 
-        <div className="flex justify-around mt-4">
+        <div className="flex justify-end gap-3 mt-4">
           <button 
             type="submit"
-            className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition"
+            className="btn-primary px-4 py-2"
           >
             {usuarioSeleccionado ? "Actualizar" : "Crear"}
           </button>
           <button 
             type="button"
             onClick={close}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition"
+            className="btn-outline px-4 py-2"
           >
             Cancelar
           </button>

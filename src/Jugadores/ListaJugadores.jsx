@@ -1,87 +1,45 @@
 import React from "react";
 import { FiUser } from "react-icons/fi";
-import { colores } from "../colores"; // Ajusta la ruta según tu estructura
 
 const ListaJugadores = ({ jugadores, onEdit, onDelete }) => {
   return (
-    <div className="w-3/5 space-y-4">
+    <div className="space-y-3">
       {jugadores.map((jugador) => (
         <div
           key={jugador.id}
-          className="p-4 rounded-lg shadow-md flex justify-between items-center transition duration-300 group"
-          style={{
-            backgroundColor: colores.cardBg,
-            border: `1px solid ${colores.border}`,
-            color: colores.texto,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = colores.hoverBg;
-            e.currentTarget.style.color = "black";
-            const nameElement = e.currentTarget.querySelector(".nombreJugador");
-            if (nameElement) {
-              nameElement.style.color = colores.cardBg;
-            }
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = colores.cardBg;
-            e.currentTarget.style.color = colores.texto;
-            const nameElement = e.currentTarget.querySelector(".nombreJugador");
-            if (nameElement) {
-              nameElement.style.color = colores.acento;
-            }
-          }}
+          className="glass-card-sm p-4 flex justify-between items-center"
         >
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             {jugador.image ? (
               <img
                 src={jugador.image}
                 alt={jugador.name}
-                className="w-16 h-16 object-cover rounded-md mr-4"
+                className="w-14 h-14 object-cover rounded-xl"
               />
             ) : (
-              <div className="w-16 h-16 flex items-center justify-center rounded-md mr-4 bg-gray-700">
-                <FiUser className="text-white text-2xl" />
+              <div className="w-14 h-14 flex items-center justify-center rounded-xl bg-white/10">
+                <FiUser className="text-gray-400 text-xl" />
               </div>
             )}
             <div>
-              <p className="nombreJugador text-xl font-bold transition duration-300">
+              <p className="text-lg font-bold text-white">
                 {jugador.name}
               </p>
-              <p>Posición: {jugador.posicion}</p>
-              <p>Equipo: {jugador.equipo?.name || "Sin equipo"}</p>
-              <p>País: {jugador.pais?.name || "Sin país"}</p>
+              <p className="text-gray-400 text-sm">Posición: {jugador.posicion}</p>
+              <p className="text-gray-500 text-xs">Equipo: {jugador.equipo?.name || "Sin equipo"}</p>
+              <p className="text-gray-500 text-xs">País: {jugador.pais?.name || "Sin país"}</p>
             </div>
           </div>
-          <div className="space-x-2">
+          <div className="flex gap-2 flex-shrink-0">
             <button
               onClick={() => onEdit(jugador)}
-              className="px-3 py-1 rounded-md font-semibold transition"
-              style={{
-                backgroundColor: colores.botonEditar,
-                color: "black",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.botonEditarHover)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.botonEditar)
-              }
+              className="btn-outline px-3 py-1.5 text-sm"
             >
               Editar
             </button>
             <button
               onClick={() => onDelete(jugador.id)}
-              className="px-3 py-1 rounded-md font-semibold transition"
-              style={{
-                backgroundColor: colores.botonEliminar,
-                color: colores.texto,
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.botonEliminarHover)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.botonEliminar)
-              }
+              className="btn-danger px-3 py-1.5 text-sm"
             >
               Eliminar
             </button>

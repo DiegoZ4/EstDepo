@@ -81,7 +81,11 @@ const Goleadores = ({ torneoId, categoriaId }) => {
   }, [apiUrl, goleadores]);
 
   if (loading) {
-    return <div>Loading Goleadores...</div>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="w-6 h-6 border-2 border-[#a0f000] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
   }
 
   // Filtrado por nombre y orden por rank
@@ -92,78 +96,72 @@ const Goleadores = ({ torneoId, categoriaId }) => {
     .sort((a, b) => a.rank - b.rank);
 
   return (
-    <div className="max-w-6xl mx-auto p-2 md:p-4 bg-[#141414] text-white min-h-screen">
-      <h1 className="text-xl md:text-3xl font-bold text-center mb-4 md:mb-6 text-[#a0f000] uppercase tracking-wide px-2">
-        {torneo ? torneo.titulo : "Torneo no encontrado"}
+    <div className="max-w-6xl mx-auto p-2 md:p-4">
+      <h1 className="text-xl md:text-3xl font-extrabold text-center mb-4 md:mb-6 text-gradient-accent uppercase tracking-wide px-2">
+        {torneo ? torneo.titulo : "Goleadores"}
       </h1>
 
       {/* Buscador */}
-      <div className="flex justify-center mb-4 px-2">
+      <div className="flex justify-center mb-5 px-2">
         <input
           type="text"
           placeholder="Buscar jugador..."
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
-          className="w-full max-w-sm px-3 py-2 rounded bg-[#1f1f1f] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000] text-sm md:text-base"
+          className="input-modern w-full max-w-sm text-sm"
         />
       </div>
 
       <div className="px-2 md:px-0">
-        <div className="overflow-x-auto shadow-lg rounded-lg border border-[#003c3c]">
-        <table className="w-full text-sm text-white min-w-[300px]">
-          <thead className="bg-purple-700 text-xs uppercase text-gray-100">
-            <tr>
-              <th className="px-2 md:px-4 py-3 text-center w-12 md:w-16">#</th>
-              <th className="px-2 md:px-4 py-3 text-left">Jugador</th>
-              <th className="px-2 md:px-4 py-3 text-center w-12 md:w-auto">Equipo</th>
-              <th className="px-2 md:px-4 py-3 text-center w-16 md:w-20">Goles</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.length === 0 && (
-                <tr>
-                <td colSpan={4} className="text-center py-4 text-gray-400 text-xs md:text-sm">
-                  No se encontraron resultados.
-                </td>
+        <div className="glass-card overflow-hidden animate-fade-up">
+          <table className="table-modern">
+            <thead>
+              <tr>
+                <th className="text-center w-12 md:w-16">#</th>
+                <th>Jugador</th>
+                <th className="text-center w-12 md:w-auto">Equipo</th>
+                <th className="text-center w-16 md:w-20">Goles</th>
               </tr>
-            )}
-
-            {filtered.map(g => {
-              const equipo = equiposMap[g.equipoid];
-              return (
-                <tr
-                  key={g.jugadorid}
-                  className={`${
-                    g.rank % 2 === 0 ? "bg-purple-900" : "bg-purple-800"
-                  } hover:bg-green-500 hover:text-black transition duration-300`}
-                >
-                  <td className="px-2 md:px-4 py-3 text-center font-bold text-sm md:text-base">{g.rank}</td>
-                  <td className="px-2 md:px-4 py-3 text-left">
-                    <span className="text-xs md:text-sm">{g.jugadorname}</span>
-                  </td>
-                  <td className="px-2 md:px-4 py-3">
-                    <div className="flex items-center justify-center space-x-1 md:space-x-2">
-                      {equipo && (
-                        <img
-                          src={equipo.image}
-                          alt={equipo.name}
-                          className="h-6 w-6 object-contain flex-shrink-0"
-                        />
-                      )}
-                      {/* Nombre del equipo solo en desktop */}
-                      <span className="hidden md:inline text-sm truncate">
-                        {equipo ? equipo.name : g.equiponame}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-2 md:px-4 py-3 text-center font-bold text-sm md:text-base">
-                    {g.totalgoles}
+            </thead>
+            <tbody>
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">
+                    No se encontraron resultados.
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
+              )}
+
+              {filtered.map(g => {
+                const equipo = equiposMap[g.equipoid];
+                return (
+                  <tr key={g.jugadorid}>
+                    <td className="text-center font-bold text-[#a0f000]">{g.rank}</td>
+                    <td>
+                      <span className="text-sm font-medium">{g.jugadorname}</span>
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-center gap-2">
+                        {equipo && (
+                          <img
+                            src={equipo.image}
+                            alt={equipo.name}
+                            className="h-6 w-6 object-contain flex-shrink-0"
+                          />
+                        )}
+                        <span className="hidden md:inline text-sm text-gray-400 truncate">
+                          {equipo ? equipo.name : g.equiponame}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="text-center font-bold text-white text-sm md:text-base">
+                      {g.totalgoles}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

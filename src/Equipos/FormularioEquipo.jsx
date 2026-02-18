@@ -96,7 +96,7 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.add("bg-[#0a4f4f]"); // Cambia el color para indicar que se puede soltar
+      dropzoneRef.current.classList.add("bg-[#a0f000]/10");
     }
   };
 
@@ -104,7 +104,7 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.remove("bg-[#0a4f4f]");
+      dropzoneRef.current.classList.remove("bg-[#a0f000]/10");
     }
   };
 
@@ -112,7 +112,7 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.remove("bg-[#0a4f4f]");
+      dropzoneRef.current.classList.remove("bg-[#a0f000]/10");
     }
     const file = e.dataTransfer.files[0];
     uploadFile(file);
@@ -124,108 +124,112 @@ const FormularioEquipo = ({ setCreator, selectedEquipo, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50 animate-fade-in">
       <form
         onSubmit={handleSubmit}
-        className="bg-[#003c3c] p-6 rounded-lg shadow-lg w-96 text-white space-y-4"
+        className="glass-card p-6 w-full max-w-md space-y-4 max-h-[90vh] overflow-y-auto"
       >
-        <h2 className="text-2xl font-bold text-center text-[#a0f000] uppercase">
+        <h2 className="text-2xl font-bold text-center text-gradient-accent uppercase">
           {selectedEquipo ? "Actualizar Equipo" : "Crear Equipo"}
         </h2>
 
-        {/* Nombre */}
-        <label className="block text-sm font-semibold">Nombre:</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white focus:outline-none"
-          required
-        />
-
-        {/* Descripción */}
-        <label className="block text-sm font-semibold">Descripción:</label>
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-          required
-        />
-
-        {/* Arrastrar/soltar y Seleccionar archivo */}
-        <label className="block text-sm font-semibold">Subir Imagen:</label>
-        <div
-          ref={dropzoneRef}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className="w-full   rounded bg-[#143c3c] border border-[#a0f000] flex flex-col items-center justify-center text-center cursor-pointer transition-colors"
-        >
-          <p className="text-[#a0f000] m-4 font-bold">arrastre aquí</p>
-          <p className="text-gray-200 ">o</p>
-          <label className="px-2 py-1 m-4 bg-[#a0f000] text-black rounded cursor-pointer hover:bg-[#8cd000] transition">
-            Seleccione un archivo
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </label>
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Nombre</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleInputChange}
+            className="input-modern w-full"
+            required
+          />
         </div>
-        {uploading && (
-          <p className="text-yellow-400 text-center">Subiendo imagen...</p>
-        )}
-        {formData.image && (
-          <p className="text-sm text-center mt-1 text-gray-300 truncate">
-            {`Imagen subida: ${formData.image}`}
-          </p>
-        )}
 
-        {/* Fecha de Creación */}
-        <label className="block text-sm font-semibold">Fecha de Creación:</label>
-        <input
-          type="number"
-          name="createdOn"
-          value={formData.createdOn}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Descripción</label>
+          <input
+            type="text"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            className="input-modern w-full"
+            required
+          />
+        </div>
 
-        {/* País */}
-        <label className="block text-sm font-semibold">País:</label>
-        <select
-          name="paisId"
-          value={formData.paisId}
-          onChange={handleInputChange}
-          className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-          required
-        >
-          <option value="">Seleccione un país</option>
-          {paises.map((pais) => (
-            <option key={pais.id} value={pais.id}>
-              {pais.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Botones */}
-        <div className="flex justify-around mt-4">
-          <button
-            type="submit"
-            className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition font-bold"
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Subir Imagen</label>
+          <div
+            ref={dropzoneRef}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className="w-full rounded-xl border-2 border-dashed border-gray-600/60 bg-white/5 flex flex-col items-center justify-center text-center cursor-pointer transition-colors hover:border-[#a0f000]/40"
           >
-            {selectedEquipo ? "Actualizar" : "Crear"}
-          </button>
+            <p className="text-[#a0f000] m-3 font-medium text-sm">Arrastre aquí</p>
+            <p className="text-gray-500 text-xs">o</p>
+            <label className="btn-primary px-3 py-1.5 m-3 text-sm cursor-pointer">
+              Seleccione un archivo
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+          {uploading && (
+            <p className="text-yellow-400 text-center text-sm mt-2">Subiendo imagen...</p>
+          )}
+          {formData.image && (
+            <p className="text-xs text-center mt-1.5 text-gray-400 truncate">
+              Imagen subida: {formData.image}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">Fecha de Creación</label>
+          <input
+            type="number"
+            name="createdOn"
+            value={formData.createdOn}
+            onChange={handleInputChange}
+            className="input-modern w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">País</label>
+          <select
+            name="paisId"
+            value={formData.paisId}
+            onChange={handleInputChange}
+            className="input-modern w-full"
+            required
+          >
+            <option value="">Seleccione un país</option>
+            {paises.map((pais) => (
+              <option key={pais.id} value={pais.id}>
+                {pais.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
           <button
             type="button"
             onClick={close}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition font-bold"
+            className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
           >
             Cancelar
+          </button>
+          <button
+            type="submit"
+            className="btn-primary px-6 py-2 text-sm"
+          >
+            {selectedEquipo ? "Actualizar" : "Crear"}
           </button>
         </div>
       </form>

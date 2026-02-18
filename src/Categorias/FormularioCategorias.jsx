@@ -27,41 +27,38 @@ const FormularioCategorias = ({ setCreator, selectedCategory, onSave }) => {
 
   return (
 
-<div className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-md flex justify-center items-center z-50">
+<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 animate-fade-in">
   <form
     onSubmit={handleSubmit}
-    className="bg-[#000000] p-6 rounded-lg shadow-lg w-80 text-white space-y-4 border-2 border-[#003c3c]"
+    className="glass-card p-6 w-full max-w-sm space-y-4"
   >
-      <label className="block text-sm">Nombre:</label>
+    <h2 className="text-xl font-bold text-center text-gradient-accent">
+      {selectedCategory ? "Editar Categoría" : "Crear Categoría"}
+    </h2>
+    <div>
+      <label className="block text-sm font-medium text-gray-300 mb-1.5">Nombre</label>
       <input
         type="text"
         name="name"
         value={formData.name}
         onChange={handleInputChange}
-        className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+        className="input-modern w-full"
         required
       />
-    <div className="flex justify-between mt-4">
-      <button
-        type="submit"
-        className="bg-[#a0f000] text-black font-bold px-4 py-2 rounded hover:bg-[#143c3c] hover:text-white transition duration-300 flex items-center gap-1"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-</svg>
-
-        Guardar
-      </button>
+    </div>
+    <div className="flex justify-end gap-2 pt-2">
       <button
         type="button"
         onClick={cancel}
-        className="bg-red-600 text-white font-bold px-4 py-2 rounded hover:bg-red-800 transition duration-300 flex items-center gap-1"
+        className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-</svg>
-
         Cancelar
+      </button>
+      <button
+        type="submit"
+        className="btn-primary px-6 py-2 text-sm"
+      >
+        Guardar
       </button>
     </div>
   </form>

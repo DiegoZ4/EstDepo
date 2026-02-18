@@ -8,6 +8,8 @@ const Torneos = () => {
   const [creator, setCreator] = useState(false);
   const [selectedTorneo, setSelectedTorneo] = useState(null);
   const [editId, setEditId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("name");
 
   // Fetch inicial de torneos con token en headers
   const fetchTorneos = async () => {
@@ -89,14 +91,48 @@ const Torneos = () => {
     fetchTorneos();
   }, []);
 
+  const filteredTorneos = torneos
+    .filter((t) => {
+      const q = search.toLowerCase();
+      return (
+        t.name?.toLowerCase().includes(q) ||
+        t.description?.toLowerCase().includes(q) ||
+        t.pais?.name?.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") return (a.name || "").localeCompare(b.name || "");
+      if (sortBy === "pais") return (a.pais?.name || "").localeCompare(b.pais?.name || "");
+      return 0;
+    });
+
   return (
-    <div className="bg-[#141414] min-h-screen p-6 text-white">
-      <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase tracking-wide">
+    <div className="min-h-screen p-6 text-white">
+      <h1 className="text-3xl font-extrabold text-center mb-8 text-gradient-accent uppercase tracking-wide animate-fade-up">
         Gestión de Torneos
       </h1>
 
-      <div className="w-3/5 mx-auto space-y-4">
-        <ListaTorneos torneos={torneos} onEdit={handleEdit} onDelete={deleteTorneo} />
+      <div className="max-w-3xl mx-auto space-y-4 animate-fade-up delay-100">
+        {/* Buscador y ordenar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-2">
+          <input
+            type="text"
+            placeholder="Buscar torneo..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="input-modern flex-1"
+          />
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="input-modern sm:w-48"
+          >
+            <option value="name">Ordenar por nombre</option>
+            <option value="pais">Ordenar por país</option>
+          </select>
+        </div>
+
+        <ListaTorneos torneos={filteredTorneos} onEdit={handleEdit} onDelete={deleteTorneo} />
 
         <button
           onClick={() => {
@@ -104,7 +140,7 @@ const Torneos = () => {
             setSelectedTorneo(null);
             setEditId(null);
           }}
-          className="w-full bg-[#003c3c] text-[#a0f000] py-2 rounded-md hover:bg-[#a0f000] hover:text-black transition duration-300 font-bold"
+          className="btn-primary w-full py-3 text-sm"
         >
           Crear Torneo
         </button>

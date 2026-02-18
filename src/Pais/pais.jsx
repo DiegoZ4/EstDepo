@@ -7,6 +7,7 @@ const Pais = () => {
   const [pais, setPais] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedPais, setSelectedPais] = useState(null);
+  const [search, setSearch] = useState("");
   
   const fetchPais = async () => {
     const token = localStorage.getItem("access_token");
@@ -94,13 +95,28 @@ const Pais = () => {
     fetchPais();
   }, []);
 
+  const filteredPais = pais.filter((p) =>
+    p.name?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-[#141414] text-white min-h-screen">
-      <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase">
-        Gestión de Pais
+    <div className="max-w-3xl mx-auto p-6 text-white">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gradient-accent uppercase">
+        Gestión de País
       </h1>
 
-      <ListaPais pais={pais} onEdit={handleEdit} onDelete={deletePais} />
+      {/* Buscador */}
+      <div className="mb-5">
+        <input
+          type="text"
+          placeholder="Buscar país..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-modern w-full"
+        />
+      </div>
+
+      <ListaPais pais={filteredPais} onEdit={handleEdit} onDelete={deletePais} />
 
       <div className="flex justify-center mt-6">
         <button
@@ -108,9 +124,9 @@ const Pais = () => {
             setCreator(true);
             setSelectedPais(null);
           }}
-          className="bg-[#003c3c] text-white px-6 py-3 rounded-md hover:bg-[#005555] transition"
+          className="btn-primary px-6 py-3"
         >
-          Crear Pais
+          Crear País
         </button>
       </div>
 

@@ -10,6 +10,7 @@ const Admin = lazy(() => import("./admin/admin"));
 const Login = lazy(() => import("./login/login"));
 const Register = lazy(() => import("./register/register"));
 const Suscipcion = lazy(() => import("./suscipcion/suscipcion"));
+const SuscripcionResultado = lazy(() => import("./suscipcion/SuscripcionResultado"));
 const Equipos = lazy(() => import("./Equipos/equipos"));
 const FormularioEquipo = lazy(() => import("./Equipos/FormularioEquipo"));
 const Pais = lazy(() => import("./Pais/pais"));
@@ -28,6 +29,7 @@ const ListaJugadores = lazy(() => import("./Jugadores/ListaJugadores"));
 const Goleadores = lazy(() => import("./Goleadores/goleadores"));
 const TorneoView = lazy(() => import("./torneos/TorneoView"));
 const TorneoInspect = lazy(() => import("./torneos/TorneoInspect"));
+const Perfil = lazy(() => import("./perfil/Perfil"));
 
 // Rutas protegidas para usuarios
 const Usuarios = lazy(() => import("./users/Usuarios"));
@@ -43,6 +45,9 @@ const AppRoutes = () => {
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/suscipcion", element: <Suscipcion /> },
+    { path: "/suscipcion/resultado", element: <SuscripcionResultado /> },
+    { path: "/suscripcion/resultado", element: <SuscripcionResultado /> }, // Alias para MP
+    { path: "/perfil", element: <Perfil /> },
     { path: "/equipos", element: <Equipos /> },
     { path: "/equipos/formulario", element: <FormularioEquipo /> },
     { path: "/equipos/editar/:id", element: <FormularioEquipo /> },

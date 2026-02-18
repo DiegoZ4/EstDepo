@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "../auth/auth.context";
-import { colores } from "../colores"; // Asegúrate de ajustar la ruta
+import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -42,13 +42,11 @@ const Login = ({ onLoginSuccess }) => {
         console.error("Error decodificando el token", err);
       }
       
-      // Guardar ambos tokens
       localStorage.setItem("access_token", access_token);
       if (refresh_token) {
         localStorage.setItem("refresh_token", refresh_token);
       }
       
-      // Actualiza el contexto de autenticación
       login(access_token, refresh_token);
       if (onLoginSuccess) onLoginSuccess(access_token);
       
@@ -76,7 +74,6 @@ const Login = ({ onLoginSuccess }) => {
       const data = await response.json();
       const { access_token, refresh_token } = data;
       
-      // Guardar ambos tokens
       localStorage.setItem("access_token", access_token);
       if (refresh_token) {
         localStorage.setItem("refresh_token", refresh_token);
@@ -98,86 +95,88 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div
-      className="login-container max-w-md mx-auto p-6 rounded shadow-md"
-      style={{ backgroundColor: colores.fondoPrincipal }}
-    >
-      <h2
-        className="text-2xl font-bold mb-4 text-center uppercase tracking-wide"
-        style={{ color: colores.acento }}
-      >
-        Iniciar Sesión
-      </h2>
-      {error && <p className="mb-4" style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block mb-1" style={{ color: colores.acento }}>
-            Email:
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: colores.inputBg,
-              borderColor: colores.acento,
-              color: colores.texto,
-            }}
-          />
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-md animate-fade-up">
+        <div className="glass-card p-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex p-3 rounded-2xl bg-[#a0f000]/10 mb-4">
+              <FiLock className="w-6 h-6 text-[#a0f000]" />
+            </div>
+            <h2 className="text-2xl font-bold text-white">Iniciar Sesión</h2>
+            <p className="text-gray-400 text-sm mt-1">Accedé a tu cuenta de EstDepo</p>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-6 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1.5">
+                Email
+              </label>
+              <div className="relative">
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="tu@email.com"
+                  className="input-modern w-full !pl-12"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1.5">
+                Contraseña
+              </label>
+              <div className="relative">
+                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className="input-modern w-full !pl-12"
+                />
+              </div>
+            </div>
+            <button type="submit" className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2">
+              Ingresar <FiArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px bg-gray-700/50" />
+            <span className="text-xs text-gray-500">o continuar con</span>
+            <div className="flex-1 h-px bg-gray-700/50" />
+          </div>
+
+          {/* Google */}
+          <div className="flex justify-center">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+            />
+          </div>
+
+          <p className="mt-6 text-center text-sm text-gray-400">
+            ¿No tienes cuenta?{" "}
+            <Link to="/register" className="text-[#a0f000] hover:text-[#8cd000] font-medium">
+              Registrate
+            </Link>
+          </p>
         </div>
-        <div>
-          <label htmlFor="password" className="block mb-1" style={{ color: colores.acento }}>
-            Contraseña:
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-2 rounded border focus:outline-none focus:ring-2"
-            style={{
-              backgroundColor: colores.inputBg,
-              borderColor: colores.acento,
-              color: colores.texto,
-            }}
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full py-2 rounded transition"
-          style={{
-            backgroundColor: colores.buttonBg,
-            color: "black",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = colores.buttonHover)
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = colores.buttonBg)
-          }
-        >
-          Ingresar
-        </button>
-      </form>
-      <div className="mt-4">
-        <GoogleLogin
-          onSuccess={handleGoogleLoginSuccess}
-          onError={handleGoogleLoginError}
-        />
       </div>
-      <p className="mt-4 text-center">
-        ¿No tienes cuenta?{" "}
-        <Link
-          to="/register"
-          style={{ color: colores.link, textDecoration: "underline" }}
-        >
-          Regístrate
-        </Link>
-      </p>
     </div>
   );
 };

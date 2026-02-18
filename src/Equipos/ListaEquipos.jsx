@@ -3,33 +3,32 @@ import React from "react";
 
 const ListaEquipos = ({ equipos, onEdit, onDelete }) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {equipos.map((equipo) => (
         <div
           key={equipo.id}
-          className="p-4 border-2 border-[#003c3c] rounded-lg shadow-md bg-[#141414] text-white flex justify-between items-center hover:shadow-xl transition-shadow duration-300"
+          className="glass-card-sm p-4 flex justify-between items-center"
         >
-          <div className="flex gap-4">
-          <div className="mr-4 w-20 flex justify-center">
-            <img src={equipo.image} className="h-20" alt={equipo.name} />
+          <div className="flex gap-4 items-center">
+            <div className="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+              <img src={equipo.image} className="h-16 object-contain" alt={equipo.name} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-white">{equipo.name}</h2>
+              <p className="text-gray-400 text-sm">{equipo.description}</p>
+              <p className="text-gray-500 text-xs mt-0.5">{equipo.pais?.name || "Sin país"}</p>
+            </div>
           </div>
-          <div>
-
-            <h2 className="text-xl font-bold text-[#a0f000]">{equipo.name}</h2>
-            <p className="text-gray-300">Descripción: {equipo.description}</p>
-            <p className="text-gray-400">País: {equipo.pais?.name || "Sin país"}</p>
-          </div>
-          </div>
-          <div className="space-x-2">
+          <div className="flex gap-2 flex-shrink-0">
             <button
               onClick={() => onEdit(equipo)}
-              className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition"
+              className="btn-outline px-3 py-1.5 text-sm"
             >
               Editar
             </button>
             <button
               onClick={() => onDelete(equipo.id)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition"
+              className="btn-danger px-3 py-1.5 text-sm"
             >
               Eliminar
             </button>

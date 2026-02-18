@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { colores } from "../colores"; // Ajusta la ruta según tu estructura
 
-const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
+const FormularioJugador = ({ setCreator, selectedJugador, onSave, defaultCategoriaId, defaultEquipoId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [equipos, setEquipos] = useState([]);
   const [paises, setPaises] = useState([]);
@@ -23,8 +22,8 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     tarjetasAmarillas: 0,
     tarjetasRojas: 0,
     description: "",
-    equipoId: 0,
-    categoriesId: 0,
+    equipoId: defaultEquipoId || 0,
+    categoriesId: defaultCategoriaId || 0,
     paisId: 0,
   });
 
@@ -197,7 +196,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.add("bg-[#0a4f4f]");
+      dropzoneRef.current.classList.add("bg-[#a0f000]/10");
     }
   };
 
@@ -205,7 +204,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.remove("bg-[#0a4f4f]");
+      dropzoneRef.current.classList.remove("bg-[#a0f000]/10");
     }
   };
 
@@ -229,7 +228,7 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
     e.preventDefault();
     e.stopPropagation();
     if (dropzoneRef.current) {
-      dropzoneRef.current.classList.remove("bg-[#0a4f4f]");
+      dropzoneRef.current.classList.remove("bg-[#a0f000]/10");
     }
     const file = e.dataTransfer.files[0];
     uploadFile(file);
@@ -243,216 +242,152 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
 
   return (
     <div
-      className="fixed inset-0 flex justify-center items-center z-50"
+      className="fixed inset-0 flex justify-center items-center z-50 bg-black/60 backdrop-blur-sm animate-fade-in"
       onClick={() => setCreator(false)}
-      style={{
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
-        backdropFilter: "blur(4px)",
-      }}
     >
       <div
-        className="p-6 rounded-lg shadow-2xl w-full max-w-lg mx-4 border-2"
+        className="glass-card p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
-        style={{
-          backgroundColor: colores.fondoPrincipal,
-          borderColor: colores.border,
-        }}
       >
-        <h2
-          className="text-2xl font-bold mb-4 text-center uppercase tracking-wide"
-          style={{ color: colores.acento }}
-        >
+        <h2 className="text-2xl font-bold mb-4 text-center uppercase tracking-wide text-gradient-accent">
           {selectedJugador ? "Actualizar Jugador" : "Crear Jugador"}
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-4" style={{ color: colores.texto }}>
+        <form onSubmit={handleSubmit} className="space-y-4 text-white">
           {/* Fila 1: Nombre / Nacimiento */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Nombre:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Nombre
               </label>
               <input
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Nacimiento:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Nacimiento
               </label>
               <input
                 type="date"
                 name="fechaNacimiento"
                 value={formData.fechaNacimiento}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
           </div>
           {/* Fila 2: Altura / Peso */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Altura (cm):
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Altura (cm)
               </label>
               <input
                 type="number"
                 name="altura"
                 value={formData.altura}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Peso (kg):
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Peso (kg)
               </label>
               <input
                 type="number"
                 name="peso"
                 value={formData.peso}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
           </div>
           {/* Fila 3: Subir Imagen */}
           <div>
-            <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-              Subir Imagen:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Subir Imagen
             </label>
             <div
               ref={dropzoneRef}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className="w-full rounded flex flex-col items-center justify-center text-center cursor-pointer transition-colors p-4"
-              style={{
-                backgroundColor: colores.cardBg,
-                border: `1px solid ${colores.acento}`,
-              }}
+              className="w-full rounded-xl border-2 border-dashed border-gray-600/60 bg-white/5 flex flex-col items-center justify-center text-center cursor-pointer transition-colors hover:border-[#a0f000]/40 p-4"
             >
-              <p className="m-2" style={{ color: colores.acento, fontWeight: "bold" }}>
+              <p className="text-[#a0f000] m-2 font-medium text-sm">
                 Arrastre aquí
               </p>
-              <p className="text-gray-200">o</p>
-              <label
-                className="px-2 py-1 m-2 rounded cursor-pointer transition"
-                style={{
-                  backgroundColor: colores.buttonBg,
-                  color: "black",
-                }}
-              >
+              <p className="text-gray-500 text-xs">o</p>
+              <label className="btn-primary px-3 py-1.5 m-2 text-sm cursor-pointer">
                 Seleccione un archivo
                 <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
               </label>
             </div>
             {uploading && (
-              <p className="text-yellow-400 text-center">Subiendo imagen...</p>
+              <p className="text-yellow-400 text-center text-sm mt-2">Subiendo imagen...</p>
             )}
             {formData.image && (
-              <p className="text-sm text-center mt-1 truncate" style={{ color: colores.texto }}>
-                {`Imagen subida: ${formData.image}`}
+              <p className="text-xs text-center mt-1.5 text-gray-400 truncate">
+                Imagen subida: {formData.image}
               </p>
             )}
           </div>
           {/* Fila 4: Edad / Tarjetas Rojas / Tarjetas Amarillas */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Edad:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Edad
               </label>
               <input
                 type="number"
                 name="edad"
                 value={formData.edad}
                 onChange={handleInputChange}
-                
-
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Tarjetas Rojas:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                T. Rojas
               </label>
               <input
                 type="number"
                 name="tarjetasRojas"
                 value={formData.tarjetasRojas}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Tarjetas Amarillas:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                T. Amarillas
               </label>
               <input
                 type="number"
                 name="tarjetasAmarillas"
                 value={formData.tarjetasAmarillas}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               />
             </div>
           </div>
           {/* Fila 5: País / Categoría */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                País:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                País
               </label>
               <select
                 name="paisId"
                 value={formData.paisId || ""}
                 onChange={handleInputChange}
                 required
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               >
                 <option value="">Seleccione un país</option>
                 {paises.length > 0 ? (
@@ -466,25 +401,20 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                 )}
               </select>
               {formData.paisId && (
-                <p className="text-xs mt-1" style={{ color: colores.acento }}>
+                <p className="text-xs mt-1 text-[#a0f000]">
                   País seleccionado: {paises.find(p => p.id === Number(formData.paisId))?.name || formData.paisId}
                 </p>
               )}
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Categoría:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Categoría
               </label>
               <select
                 name="categoriesId"
                 value={formData.categoriesId || ""}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               >
                 <option value="">Sin categoría</option>
                 {categorias.length > 0 ? (
@@ -494,17 +424,17 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
                     </option>
                   ))
                 ) : (
-                  <option value="" disabled>⚠️ Servicio de categorías temporalmente no disponible</option>
+                  <option value="" disabled>Servicio no disponible</option>
                 )}
               </select>
               {categorias.length === 0 && (
                 <p className="text-xs mt-1 text-orange-400">
-                  ⚠️ Error 503: El servidor backend no está disponible. Puede guardar el jugador sin categoría y asignarla después.
+                  Servidor de categorías no disponible.
                 </p>
               )}
               {formData.categoriesId && categorias.length > 0 && (
-                <p className="text-xs mt-1" style={{ color: colores.acento }}>
-                  Categoría seleccionada: {categorias.find(c => c.id === Number(formData.categoriesId))?.name || formData.categoriesId}
+                <p className="text-xs mt-1 text-[#a0f000]">
+                  Categoría: {categorias.find(c => c.id === Number(formData.categoriesId))?.name || formData.categoriesId}
                 </p>
               )}
             </div>
@@ -512,20 +442,15 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
           {/* Fila 6: Equipo / Posición */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Equipo:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Equipo
               </label>
               <select
                 name="equipoId"
                 value={formData.equipoId}
                 onChange={handleInputChange}
                 required
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               >
                 <option value="">Seleccione un equipo</option>
                 {equipos.map((equipo) => (
@@ -536,20 +461,15 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
               </select>
             </div>
             <div>
-              <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-                Posición:
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Posición
               </label>
               <select
                 name="posicion"
                 value={formData.posicion}
                 onChange={handleInputChange}
                 required
-                className="w-full p-2 rounded-md focus:outline-none focus:ring-2"
-                style={{
-                  backgroundColor: colores.inputBg,
-                  border: `1px solid ${colores.acento}`,
-                  color: colores.texto,
-                }}
+                className="input-modern w-full"
               >
                 <option value="">Seleccione una posición</option>
                 {posiciones.map((posicion) => (
@@ -561,41 +481,19 @@ const FormularioJugador = ({ setCreator, selectedJugador, onSave }) => {
             </div>
           </div>
           {/* Botones Guardar / Cancelar */}
-          <div className="flex justify-between">
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-md font-bold transition duration-300"
-              style={{
-                backgroundColor: colores.buttonBg,
-                color: "black",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.buttonHover)
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor = colores.buttonBg)
-              }
-            >
-              Guardar
-            </button>
+          <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => setCreator(false)}
-              className="px-4 py-2 rounded-md font-bold transition duration-300"
-              style={{
-                backgroundColor: colores.botonCancelar || "#DC2626",
-                color: colores.texto,
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor =
-                  colores.botonCancelarHover || "#B91C1C")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor =
-                  colores.botonCancelar || "#DC2626")
-              }
+              className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
             >
               Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn-primary px-6 py-2 text-sm"
+            >
+              Guardar
             </button>
           </div>
         </form>

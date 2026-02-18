@@ -152,14 +152,14 @@ const navigate = useNavigate();
   };
   
 
-  if (loading) return <div className="p-4 text-white">Cargando torneo...</div>;
-  if (!torneo) return <div className="p-4 text-red-500">Torneo no encontrado.</div>;
+  if (loading) return <div className="flex justify-center items-center h-64"><div className="w-10 h-10 border-4 border-[#a0f000] border-dashed rounded-full animate-spin" /></div>;
+  if (!torneo) return <div className="p-4 text-red-400">Torneo no encontrado.</div>;
 
   const fechas = Array.from({ length: torneo.fechas }, (_, i) => i + 1);
 
   return (
-    <div className="space-y-6 p-4">
-      <h2 className="text-3xl font-bold text-[#a0f000]">Torneo: {torneo.name}</h2>
+    <div className="max-w-5xl mx-auto space-y-4 p-4">
+      <h2 className="text-3xl font-bold text-gradient-accent">Torneo: {torneo.name}</h2>
 
       {fechas.map((fecha) => {
         const partidosDeFecha = partidosPorFecha[fecha] || [];
@@ -167,12 +167,12 @@ const navigate = useNavigate();
         return (
           <div
             key={fecha}
-            className="p-4 border border-[#003c3c] rounded-lg bg-[#1f1f1f] shadow-md space-y-4"
+            className="glass-card !p-0 overflow-hidden"
           >
-            <div className="flex justify-between items-center">
-              <h3 onClick={() => toggleFecha(fecha)} className="text-xl font-semibold text-white">Fecha {fecha}</h3>
+            <div className="flex justify-between items-center p-4">
+              <h3 onClick={() => toggleFecha(fecha)} className="text-lg font-semibold text-white cursor-pointer hover:text-[#a0f000] transition">Fecha {fecha}</h3>
               <button
-                className="bg-[#a0f000] text-black font-bold px-3 py-1 rounded hover:bg-[#8cd000] transition"
+                className="btn-primary px-3 py-1.5 text-sm"
                 onClick={() => handleCrearPartido(fecha)}
               >
                 + Crear Partido
@@ -181,55 +181,54 @@ const navigate = useNavigate();
             {fechasAbiertas[fecha] && (
   partidosDeFecha.length > 0 ? (
     <div className="overflow-x-auto">
-      {/* ...tu tabla acá... */}
         {partidosDeFecha.length > 0 ? (
     <div className="overflow-x-auto">
-    <table className="w-full text-sm text-left border-collapse border border-[#003c3c]">
-    <thead className="bg-[#003c3c] text-[#a0f000] uppercase text-xs">
+    <table className="table-modern w-full">
+    <thead>
     <tr>
-      <th className="px-4 py-2 text-center">ID</th>
-      <th className="px-4 py-2 text-center">Fecha</th>
-      <th className="px-4 py-2 text-center">Categoría</th>
-      <th className="px-4 py-2 text-center">Local</th>
-      <th className="px-4 py-2 text-center">Visitante</th>
-      <th className="px-4 py-2 text-center">Acciones</th>
+      <th className="px-4 py-3 text-center">ID</th>
+      <th className="px-4 py-3 text-center">Fecha</th>
+      <th className="px-4 py-3 text-center">Categoría</th>
+      <th className="px-4 py-3 text-center">Local</th>
+      <th className="px-4 py-3 text-center">Visitante</th>
+      <th className="px-4 py-3 text-center">Acciones</th>
     </tr>
     </thead>
     <tbody>
     {partidosDeFecha.map((partido, index) => (
       <tr
         key={partido.id}
-        className={`${
-          index % 2 === 0 ? "bg-[#143c3c]" : "bg-[#003c3c]"
-        } hover:bg-[#a0f000] hover:text-black transition duration-300`}
+        className="border-t border-gray-700/30 hover:bg-white/5 transition"
       >
-        <td className="px-4 py-2 text-center">{partido.id}</td>
-        <td className="px-4 py-2 text-center">{partido.fecha}</td>
-        <td className="px-4 py-2 text-center">{partido.category?.name}</td>
-        <td className="px-4 py-2 text-center">{partido.equipoLocal?.name}</td>
-        <td className="px-4 py-2 text-center">{partido.equipoVisitante?.name}</td>
-        <td className="px-4 py-2 text-center space-x-2">
-  <button
-    onClick={() => handleEdit(partido)}
-    className="bg-yellow-500 text-black px-3 py-1 rounded hover:bg-yellow-400 transition font-semibold"
-    title="Editar"
-  >
-    <FaPencilAlt />
-  </button>
-  <button
-    onClick={() => handleDelete(partido.id, partido.fecha)}
-    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-800 transition font-semibold"
-    title="Eliminar"
-  >
-    <FaTrashAlt />
-  </button>
-  <button
-    onClick={() => navigate(`/partidos/${partido.id}`)}
-    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 transition font-semibold"
-    title="Inspeccionar"
-  >
-    <FaEye />
-  </button>
+        <td className="px-4 py-2.5 text-center text-gray-400">{partido.id}</td>
+        <td className="px-4 py-2.5 text-center">{partido.fecha}</td>
+        <td className="px-4 py-2.5 text-center text-gray-300">{partido.category?.name}</td>
+        <td className="px-4 py-2.5 text-center">{partido.equipoLocal?.name}</td>
+        <td className="px-4 py-2.5 text-center">{partido.equipoVisitante?.name}</td>
+        <td className="px-4 py-2.5 text-center">
+  <div className="flex justify-center gap-1.5">
+    <button
+      onClick={() => handleEdit(partido)}
+      className="btn-outline px-2.5 py-1 text-xs"
+      title="Editar"
+    >
+      <FaPencilAlt />
+    </button>
+    <button
+      onClick={() => handleDelete(partido.id, partido.fecha)}
+      className="btn-danger px-2.5 py-1 text-xs"
+      title="Eliminar"
+    >
+      <FaTrashAlt />
+    </button>
+    <button
+      onClick={() => navigate(`/partidos/${partido.id}`)}
+      className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-lg text-xs hover:bg-blue-500/30 transition"
+      title="Inspeccionar"
+    >
+      <FaEye />
+    </button>
+  </div>
 </td>
 
       </tr>
@@ -238,11 +237,11 @@ const navigate = useNavigate();
     </table>
     </div>
     ) : (
-    <p className="text-gray-400 text-sm">No hay partidos para esta fecha.</p>
+    <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
     )}
     </div>
   ) : (
-    <p className="text-gray-400 text-sm">No hay partidos para esta fecha.</p>
+    <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
   )
 )}
 

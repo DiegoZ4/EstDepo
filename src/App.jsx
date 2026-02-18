@@ -18,10 +18,14 @@ const apiKey = import.meta.env.VITE_API_KEY
     <GoogleOAuthProvider clientId={apiKey}>
        <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#141414] text-white flex flex-col">
+        <div className="min-h-screen bg-page-gradient text-white flex flex-col">
           <Navbar />
           <main className="flex-1 mt-16">
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={
+              <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="w-8 h-8 border-2 border-[#a0f000] border-t-transparent rounded-full animate-spin" />
+              </div>
+            }>
               <Routes>
                 {/* Rutas públicas */}
                 <Route path="/register" element={<Register />} />
@@ -36,8 +40,8 @@ const apiKey = import.meta.env.VITE_API_KEY
               </Routes>
             </Suspense>
           </main>
-          <footer className="bg-[#003c3c] text-center py-4 text-sm text-gray-300">
-            © {new Date().getFullYear()} Est Depo. Todos los derechos reservados.
+          <footer className="border-t border-gray-700/40 bg-black/20 backdrop-blur-sm text-center py-6 text-sm text-gray-400">
+            <p>© {new Date().getFullYear()} <span className="text-[#a0f000] font-semibold">EstDepo</span>. Todos los derechos reservados.</p>
           </footer>
         </div>
       </BrowserRouter>

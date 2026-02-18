@@ -34,55 +34,61 @@ const FormularioPais = ({ setCreator, selectedPais, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 backdrop-blur-sm">
+    <div className="fixed inset-0 flex justify-center items-center bg-black/60 backdrop-blur-sm z-50 animate-fade-in">
     <form
       onSubmit={handleSubmit}
-      className="bg-[#003c3c] p-6 rounded-lg shadow-lg w-96 text-white space-y-4"
+      className="glass-card p-6 w-full max-w-sm space-y-4"
     >
-      <h2 className="text-2xl font-bold text-center text-[#a0f000]">
-        {selectedPais ? "Actualizar Equipo" : "Crear Equipo"}
+      <h2 className="text-xl font-bold text-center text-gradient-accent">
+        {selectedPais ? "Actualizar País" : "Crear País"}
       </h2>
 
-      <label className="block text-sm">Nombre:</label>
-      <input
-        type="text"
-        name="name"
-        value={formData.name}
-        onChange={handleInputChange}
-        className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
-        required
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">Nombre</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleInputChange}
+          className="input-modern w-full"
+          required
+        />
+      </div>
 
-      <label className="block text-sm">Descripción:</label>
-      <textarea
-        name="description"
-        value={formData.description}
-        onChange={handleInputChange}
-        className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">Descripción</label>
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
+          className="input-modern w-full"
+        />
+      </div>
 
-      <label className="block text-sm">Imagen (URL):</label>
-      <input
-        type="text"
-        name="image"
-        value={formData.image}
-        onChange={handleInputChange}
-        className="w-full p-2 rounded bg-[#143c3c] border border-[#a0f000] text-white"
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">Imagen (URL)</label>
+        <input
+          type="text"
+          name="image"
+          value={formData.image}
+          onChange={handleInputChange}
+          className="input-modern w-full"
+        />
+      </div>
 
-      <div className="flex justify-around mt-4">
-        <button
-          type="submit"
-          className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition"
-        >
-          {selectedPais ? "Actualizar" : "Crear"}
-        </button>
+      <div className="flex justify-end gap-2 pt-2">
         <button
           type="button"
           onClick={close}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition"
+          className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
         >
           Cancelar
+        </button>
+        <button
+          type="submit"
+          className="btn-primary px-6 py-2 text-sm"
+        >
+          {selectedPais ? "Actualizar" : "Crear"}
         </button>
       </div>
     </form>

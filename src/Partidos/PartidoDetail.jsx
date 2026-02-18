@@ -149,44 +149,40 @@ const fetchAllPartidos = async (torneoId) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-[#141414]">
-        <div style={{ animationDuration: "2s" }} className="w-12 h-12 border-4 border-[#a0f000] border-dashed rounded-full animate-spin " />
+      <div className="flex justify-center items-center h-screen">
+        <div style={{ animationDuration: "2s" }} className="w-12 h-12 border-4 border-[#a0f000] border-dashed rounded-full animate-spin" />
       </div>
     );
     
   }
   
-  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
+  if (error) return <div className="text-center text-red-400 p-8">Error: {error}</div>;
 
   return (
     <div className="max-w-4xl mx-auto p-4 text-white">
-      <h1 className="text-3xl font-bold text-center text-[#a0f000] mb-6 uppercase">
+      <h1 className="text-3xl font-bold text-center text-gradient-accent mb-6 uppercase">
         Detalles del Partido
       </h1>
 
-      <div className="bg-[#1f1f1f] p-6 rounded-lg shadow-md border border-[#003c3c] space-y-4">
+      <div className="glass-card p-6 space-y-4">
         {/* Info general */}
         <div className="flex justify-center">
-  <div className="grid grid-cols-8 gap-4 w-full text-center items-center ">
-    {/* Categoria (col-span-2) */}
+  <div className="grid grid-cols-8 gap-4 w-full text-center items-center">
     <div className="col-start-2 col-end-2 flex flex-col items-center justify-center">
       <h2 className="text-sm text-[#a0f000]">Categoria</h2>
       <p className="font-semibold">{partido.category.name}</p>
     </div>
 
-    {/* Fecha (col-span-1) */}
     <div className="col-span-1 flex flex-col items-center justify-center">
       <h2 className="text-sm text-[#a0f000]">Fecha</h2>
       <p className="font-semibold">{partido.fecha}</p>
     </div>
 
-    {/* Torneo (col-span-3) */}
     <div className="col-span-3 flex flex-col items-center justify-center">
       <h2 className="text-sm text-[#a0f000]">Torneo</h2>
       <p className="font-semibold">{partido.torneo?.name}</p>
     </div>
 
-    {/* Estado - toggle switch (col-span-2) */}
     <div className="col-span-1 flex flex-col items-center justify-center">
   <h2 className="text-sm text-[#a0f000] mb-2">Finalizado</h2>
   <div
@@ -210,13 +206,13 @@ const fetchAllPartidos = async (torneoId) => {
 
         {/* Equipos */}
         <div className="flex justify-between items-center mt-6">
-          <div className="w-1/2 text-center border-r border-[#003c3c] pr-4">
+          <div className="w-1/2 text-center border-r border-gray-700/40 pr-4">
             <h3 className="text-lg font-bold text-[#a0f000]">Equipo Local</h3>
             <p className="text-xl font-semibold">{partido.equipoLocal?.name}</p>
             <p className="text-4xl font-bold my-2">{partido.golesLocal?.length}</p>
             <button
               onClick={() => handleAddGol(partido.equipoLocal.id)}
-              className="bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded transition"
+              className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg text-sm hover:bg-blue-500/30 transition"
             >
               + Agregar Gol
             </button>
@@ -228,7 +224,7 @@ const fetchAllPartidos = async (torneoId) => {
             <p className="text-4xl font-bold my-2">{partido.golesVisitante?.length}</p>
             <button
               onClick={() => handleAddGol(partido.equipoVisitante.id)}
-              className="bg-blue-500 hover:bg-blue-400 text-white px-3 py-1 rounded transition"
+              className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-3 py-1.5 rounded-lg text-sm hover:bg-blue-500/30 transition"
             >
               + Agregar Gol
             </button>
@@ -236,10 +232,10 @@ const fetchAllPartidos = async (torneoId) => {
         </div>
 
         {/* Botón Volver */}
-        <div className="flex justify-end space-x-4 mt-6">
+        <div className="flex justify-end mt-6">
           <button
-            onClick={() => navigate(-1)} // <-- volvemos a la pantalla anterior
-            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded transition"
+            onClick={() => navigate(-1)}
+            className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
           >
             Volver
           </button>
@@ -249,34 +245,34 @@ const fetchAllPartidos = async (torneoId) => {
 
       {/* Lista de goles */}
 {goles.length > 0 && (
-  <div className="mt-8">
-    <h3 className="text-xl font-bold mb-2 text-center text-[#a0f000]">
+  <div className="mt-6">
+    <h3 className="text-xl font-bold mb-3 text-center text-[#a0f000]">
       Goles Registrados
     </h3>
     <div className="space-y-2">
     {goles.map((gol) => (
   <div
     key={gol.id}
-    className="flex justify-between items-center bg-[#292929] p-3 rounded-md border border-[#003c3c]"
+    className="glass-card-sm p-3 flex justify-between items-center"
   >
     <div>
       <p>
         <strong>Jugador:</strong> {gol.jugador?.name || "Desconocido"}
       </p>
-      <p>
+      <p className="text-gray-400 text-sm">
         <strong>Minuto:</strong> {gol.minuto}'
       </p>
     </div>
     <div className="flex gap-2">
       <button
-        onClick={() => setEditGol(gol)} // Setea el gol a editar
-        className="bg-yellow-500 hover:bg-yellow-400 text-black px-3 py-1 rounded"
+        onClick={() => setEditGol(gol)}
+        className="btn-outline px-3 py-1 text-xs"
       >
         Editar
       </button>
       <button
         onClick={() => handleDeleteGol(gol.id)}
-        className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded"
+        className="btn-danger px-3 py-1 text-xs"
       >
         Eliminar
       </button>
@@ -297,6 +293,7 @@ const fetchAllPartidos = async (torneoId) => {
     torneoId={selectedTorneo?.id}
     equipoId={selectedTeamId || editGol?.equipo?.id}
     partidoId={partido.id}
+    categoriaId={partido.category?.id}
     gol={editGol} // si es edición, se le pasa el gol
     onSubmit={() => {
       setShowGolForm(false);

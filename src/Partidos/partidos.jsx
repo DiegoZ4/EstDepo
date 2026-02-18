@@ -281,27 +281,25 @@ const Partidos = () => {
   };
 
   return (
-    <div className="w-4/5 mx-auto bg-[#141414] p-6 rounded-lg shadow-lg text-white border border-[#003c3c]">
-      <h1 className="text-3xl font-bold text-center mb-6 text-[#a0f000] uppercase tracking-wide">
+    <div className="max-w-5xl mx-auto p-6 text-white">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gradient-accent uppercase tracking-wide">
         Gestión de Partidos
       </h1>
 
       {/* Filtros de Búsqueda */}
-      <div className="bg-[#1f1f1f] rounded-lg mb-6 border border-[#003c3c]">
+      <div className="glass-card mb-6">
         {/* Header de filtros con botón para expandir/contraer */}
         <div 
-          className="flex justify-between items-center p-4 cursor-pointer hover:bg-[#2a2a2a] transition-colors"
+          className="flex justify-between items-center p-4 cursor-pointer hover:bg-white/5 transition-colors rounded-t-3xl"
           onClick={() => setFiltrosExpanded(!filtrosExpanded)}
         >
           <h3 className="text-lg font-semibold text-[#a0f000]">Filtros de Búsqueda</h3>
           <div className="flex items-center space-x-2">
-            {/* Contador de filtros activos */}
             {Object.values(filtros).filter(valor => valor !== "").length > 0 && (
-              <span className="bg-[#a0f000] text-black text-xs px-2 py-1 rounded-full">
+              <span className="bg-[#a0f000] text-black text-xs px-2 py-1 rounded-full font-bold">
                 {Object.values(filtros).filter(valor => valor !== "").length}
               </span>
             )}
-            {/* Flecha */}
             <svg 
               className={`w-5 h-5 text-[#a0f000] transition-transform duration-200 ${filtrosExpanded ? 'rotate-180' : ''}`}
               fill="none" 
@@ -316,26 +314,24 @@ const Partidos = () => {
         {/* Contenido de filtros (colapsable) */}
         {filtrosExpanded && (
           <div className="px-4 pb-4">
-            {/* Buscador de texto */}
             <div className="mb-4">
-              <label className="block text-sm font-medium mb-1 text-gray-300">Búsqueda general:</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Búsqueda general</label>
               <input
                 type="text"
                 value={filtros.busqueda}
                 onChange={(e) => handleFiltroChange('busqueda', e.target.value)}
                 placeholder="Buscar por equipo, torneo o categoría..."
-                className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+                className="input-modern w-full"
               />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-          {/* Selector de Torneo */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Torneo:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Torneo</label>
             <select
               value={filtros.torneo}
               onChange={(e) => handleFiltroChange('torneo', e.target.value)}
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             >
               <option value="">Todos los torneos</option>
               {torneos.map(torneo => (
@@ -346,13 +342,12 @@ const Partidos = () => {
             </select>
           </div>
 
-          {/* Selector de Categoría */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Categoría:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Categoría</label>
             <select
               value={filtros.categoria}
               onChange={(e) => handleFiltroChange('categoria', e.target.value)}
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             >
               <option value="">Todas las categorías</option>
               {categorias.map(categoria => (
@@ -363,13 +358,12 @@ const Partidos = () => {
             </select>
           </div>
 
-          {/* Selector de Equipo Local */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Equipo Local:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Equipo Local</label>
             <select
               value={filtros.equipoLocal}
               onChange={(e) => handleFiltroChange('equipoLocal', e.target.value)}
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             >
               <option value="">Todos los equipos</option>
               {equipos.map(equipo => (
@@ -380,13 +374,12 @@ const Partidos = () => {
             </select>
           </div>
 
-          {/* Selector de Equipo Visitante */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Equipo Visitante:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Equipo Visitante</label>
             <select
               value={filtros.equipoVisitante}
               onChange={(e) => handleFiltroChange('equipoVisitante', e.target.value)}
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             >
               <option value="">Todos los equipos</option>
               {equipos.map(equipo => (
@@ -397,26 +390,24 @@ const Partidos = () => {
             </select>
           </div>
 
-          {/* Selector de Fecha */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Fecha:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Fecha</label>
             <input
               type="number"
               min="1"
               value={filtros.fecha}
               onChange={(e) => handleFiltroChange('fecha', e.target.value)}
               placeholder="Número de fecha"
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             />
           </div>
 
-          {/* Selector de Estado */}
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-300">Estado:</label>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">Estado</label>
             <select
               value={filtros.estado}
               onChange={(e) => handleFiltroChange('estado', e.target.value)}
-              className="w-full p-2 rounded bg-[#2a2a2a] border border-[#003c3c] text-white focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+              className="input-modern w-full"
             >
               <option value="">Todos los estados</option>
               <option value="Pendiente">Pendiente</option>
@@ -425,18 +416,16 @@ const Partidos = () => {
           </div>
         </div>
 
-            {/* Botón para limpiar filtros */}
             <div className="flex justify-end">
               <button
                 onClick={limpiarFiltros}
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-500 transition"
+                className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
               >
                 Limpiar Filtros
               </button>
             </div>
 
-            {/* Contador de resultados */}
-            <div className="mt-4 text-sm text-gray-300">
+            <div className="mt-3 text-sm text-gray-400">
               Mostrando {partidosFiltrados.length} de {partidos.length} partidos
             </div>
           </div>
@@ -450,7 +439,7 @@ const Partidos = () => {
             setSelectedPartido(null);
             setEditId(null);
           }}
-          className="bg-[#a0f000] text-black px-4 py-2 rounded font-bold hover:bg-[#8cd600] transition"
+          className="btn-primary px-4 py-2"
         >
           Crear Partido
         </button>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ListaJugadores from "./ListaJugadores";
 import FormularioJugadores from "./FormularioJugadores";
-import { colores } from "../colores"; // Asegúrate de ajustar la ruta según tu estructura
 
 const Jugadores = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -11,6 +10,7 @@ const Jugadores = () => {
   const [selectedJugador, setSelectedJugador] = useState(null);
   const [editId, setEditId] = useState(null);
   const [sortBy, setSortBy] = useState("name");
+  const [search, setSearch] = useState("");
 
   const sortJugadores = (jugadores, criterio) => {
     return [...jugadores].sort((a, b) => {
@@ -141,69 +141,62 @@ const Jugadores = () => {
   }, []);
 
   return (
-    <div
-      className="p-6 rounded-lg shadow-xl flex flex-col items-center"
-      style={{
-        backgroundColor: colores.fondoPrincipal,
-        color: colores.texto,
-      }}
-    >
-      <h1
-        className="text-3xl font-bold text-center mb-4 uppercase"
-        style={{ color: colores.acento }}
-      >
+    <div className="max-w-3xl mx-auto p-6 text-white">
+      <h1 className="text-3xl font-bold text-center mb-4 uppercase text-gradient-accent">
         Gestión de Jugadores
       </h1>
 
-      <div className="mb-4 ">
-        <label className="block font-semibold mb-1" style={{ color: colores.acento }}>
-          Clasificar por:
-        </label>
+      <div className="mb-4 flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          placeholder="Buscar jugador..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="input-modern flex-1"
+        />
         <select
           onChange={(e) => setSortBy(e.target.value)}
           value={sortBy}
-          className="w-3/5 p-2 rounded-md focus:outline-none focus:ring-2"
-          style={{
-            backgroundColor: colores.inputBg,
-            border: `1px solid ${colores.acento}`,
-            color: colores.texto,
-          }}
+          className="input-modern sm:w-48"
         >
-          <option value="name">Nombre</option>
-          <option value="equipoId">Equipo</option>
-          <option value="posicion">Posición</option>
+          <option value="name">Ordenar por nombre</option>
+          <option value="equipoId">Ordenar por equipo</option>
+          <option value="posicion">Ordenar por posición</option>
           <option value="fechaNacimiento">Fecha de Nacimiento</option>
-          <option value="altura">Altura</option>
-          <option value="peso">Peso</option>
+          <option value="altura">Ordenar por altura</option>
+          <option value="peso">Ordenar por peso</option>
         </select>
       </div>
 
       <ListaJugadores
-        jugadores={sortJugadores(jugadores, sortBy)}
+        jugadores={sortJugadores(
+          jugadores.filter((j) => {
+            const q = search.toLowerCase();
+            return (
+              j.name?.toLowerCase().includes(q) ||
+              j.posicion?.toLowerCase().includes(q) ||
+              j.equipo?.name?.toLowerCase().includes(q) ||
+              j.pais?.name?.toLowerCase().includes(q)
+            );
+          }),
+          sortBy
+        )}
         onEdit={handleEdit}
         onDelete={deleteJugador}
       />
 
-      <button
-        onClick={() => {
-          setCreator(true);
-          setSelectedJugador(null);
-          setEditId(null);
-        }}
-        className="w-3/5 p-3 rounded-md mt-4 font-bold transition duration-300"
-        style={{
-          backgroundColor: colores.buttonBg,
-          color: "black",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = colores.buttonHover;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = colores.buttonBg;
-        }}
-      >
-        Crear Jugador
-      </button>
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => {
+            setCreator(true);
+            setSelectedJugador(null);
+            setEditId(null);
+          }}
+          className="btn-primary px-6 py-3"
+        >
+          Crear Jugador
+        </button>
+      </div>
 
       {creator && (
         <FormularioJugadores

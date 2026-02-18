@@ -9,6 +9,7 @@ const Categoria = () => {
   const [categorias, setCategorias] = useState([]);
   const [creator, setCreator] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [search, setSearch] = useState("");
 
   const fetchCategorias = async () => {
     const token = localStorage.getItem("access_token");
@@ -69,10 +70,24 @@ const Categoria = () => {
     fetchCategorias();
   }, []);
 
-  return (
-<div className="max-w-4xl mx-auto p-6 bg-[#141414] text-white min-h-screen">
+  const filteredCategorias = categorias.filter((c) =>
+    c.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
-  
+  return (
+<div className="max-w-3xl mx-auto p-6 text-white">
+
+  {/* Buscador */}
+  <div className="mb-4">
+    <input
+      type="text"
+      placeholder="Buscar categoría..."
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="input-modern w-full"
+    />
+  </div>
+
   {creator && (
     <FormularioCategorias
       setCreator={setCreator}
@@ -82,23 +97,24 @@ const Categoria = () => {
   )}
 
   <ListaCategorias
-    categorias={categorias}
+    categorias={filteredCategorias}
     onEdit={handleEdit}
     onDelete={deleteCategoria}
   />
-  <button
-    onClick={() => {
-      setCreator(true);
-      setSelectedCategory(null);
-    }}
-    className="bg-[#a0f000] text-black font-bold py-2 mt-2 px-4 rounded shadow-md hover:bg-[#003c3c] hover:text-white transition duration-300 mb-4 flex items-center gap-2"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-</svg>
-
-    Crear Categoría
-  </button>
+  <div className="flex justify-center mt-6">
+    <button
+      onClick={() => {
+        setCreator(true);
+        setSelectedCategory(null);
+      }}
+      className="btn-primary px-6 py-3 flex items-center gap-2"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Crear Categoría
+    </button>
+  </div>
 </div>
   );
 };

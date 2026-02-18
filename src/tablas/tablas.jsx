@@ -81,77 +81,77 @@ setGrupos(sortedGrupos);
   }, [apiUrl, torneoId, categoriaId]);
   
 
-  if (loading) return <div className="text-white text-center">Cargando tabla...</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center py-12">
+      <div className="w-6 h-6 border-2 border-[#a0f000] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
 
   if (!grupos || grupos.length === 0) {
     return (
-      <div className="text-white text-center p-8">
-        <p className="text-xl mb-2">No hay datos de tabla disponibles</p>
-        <p className="text-gray-400 text-sm">
+      <div className="text-center p-8">
+        <p className="text-lg text-gray-400 mb-2">No hay datos de tabla disponibles</p>
+        <p className="text-gray-600 text-xs">
           TorneoId: {torneoId} | CategoríaId: {categoriaId}
-        </p>
-        <p className="text-gray-400 text-sm mt-2">
-          Verifica la consola del navegador (F12) para más detalles
         </p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-2 md:p-4 space-y-6">
       {grupos.map((grupo) => (
-        <div key={grupo} className="mb-6">
-          <h2 className="text-xl font-semibold text-[#a0f000] mb-2 text-center">
-            Grupo {grupo}
-          </h2>
+        <div key={grupo} className="glass-card overflow-hidden animate-fade-up">
+          <div className="px-5 py-3 border-b border-gray-700/40">
+            <h2 className="text-lg font-bold text-[#a0f000]">
+              Grupo {grupo}
+            </h2>
+          </div>
           <div className="overflow-x-auto">
-            <table className="table-auto w-full text-sm text-left text-white">
-              <thead className="bg-purple-700 text-xs uppercase text-gray-100">
+            <table className="table-modern">
+              <thead>
                 <tr>
-                  <th className="px-4 py-2">#</th>
-                  <th className="px-4 py-2">Club</th>
-                  <th className="px-4 py-2">Pts</th>
-                  <th className="px-4 py-2">PJ</th>
-                  <th className="px-4 py-2">PG</th>
-                  <th className="px-4 py-2">PE</th>
-                  <th className="px-4 py-2">PP</th>
-                  <th className="px-4 py-2">GF</th>
-                  <th className="px-4 py-2">GC</th>
-                  <th className="px-4 py-2">DIF</th>
+                  <th className="w-10 text-center">#</th>
+                  <th>Club</th>
+                  <th className="text-center">Pts</th>
+                  <th className="text-center">PJ</th>
+                  <th className="text-center">PG</th>
+                  <th className="text-center">PE</th>
+                  <th className="text-center">PP</th>
+                  <th className="text-center">GF</th>
+                  <th className="text-center">GC</th>
+                  <th className="text-center">DIF</th>
                 </tr>
               </thead>
               <tbody>
-  {items[grupo].map((row, index) => (
-    <tr
-      key={index}
-      className={index % 2 === 0 ? "bg-purple-900" : "bg-purple-800"}
-    >
-      <td className="px-4 py-2 w-1">{index + 1}</td>
-      
-      {/* Aquí pongo la imagen y el nombre */}
-      <td className="px-4 py-2 flex items-center space-x-2">
-        <div className="w-9 flex justify-center">
-        <img
-          src={row.equipo.image}
-          alt={row.equipo.name}
-          className="h-9 object-cover"
-        />
-
-        </div>
-        <span className="w-20">{row.equipo.name}</span>
-      </td>
-
-      <td className="px-4 py-2">{row.Pts}</td>
-      <td className="px-4 py-2">{row.PJ}</td>
-      <td className="px-4 py-2">{row.PG}</td>
-      <td className="px-4 py-2">{row.PE}</td>
-      <td className="px-4 py-2">{row.PP}</td>
-      <td className="px-4 py-2">{row.GF}</td>
-      <td className="px-4 py-2">{row.GC}</td>
-      <td className="px-4 py-2">{row.DIF}</td>
-    </tr>
-  ))}
-</tbody>
+                {items[grupo].map((row, index) => (
+                  <tr key={index}>
+                    <td className="text-center font-bold text-[#a0f000]">{index + 1}</td>
+                    <td>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 flex justify-center flex-shrink-0">
+                          <img
+                            src={row.equipo.image}
+                            alt={row.equipo.name}
+                            className="h-8 object-cover"
+                          />
+                        </div>
+                        <span className="font-medium text-white">{row.equipo.name}</span>
+                      </div>
+                    </td>
+                    <td className="text-center font-bold text-white">{row.Pts}</td>
+                    <td className="text-center">{row.PJ}</td>
+                    <td className="text-center">{row.PG}</td>
+                    <td className="text-center">{row.PE}</td>
+                    <td className="text-center">{row.PP}</td>
+                    <td className="text-center">{row.GF}</td>
+                    <td className="text-center">{row.GC}</td>
+                    <td className={`text-center font-semibold ${row.DIF > 0 ? 'text-green-400' : row.DIF < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                      {row.DIF > 0 ? `+${row.DIF}` : row.DIF}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         </div>

@@ -1,4 +1,6 @@
+import { useContext } from "react";
 import { colores } from "../colores";
+import { AuthContext } from "../auth/auth.context";
 
 const AdBanner = ({ 
   type = "default", 
@@ -8,6 +10,10 @@ const AdBanner = ({
   onClick = null,
   href = null
 }) => {
+  // No mostrar ads si el usuario es Premium
+  const { isSubscribed } = useContext(AuthContext);
+  if (isSubscribed) return null;
+
   const getDefaultContent = () => {
     switch (type) {
       case "sidebar-left":
@@ -15,8 +21,8 @@ const AdBanner = ({
         return (
           <div className="text-center p-6">
             <div className="transform -rotate-90 space-y-3">
-              <div className="text-[#a0f000] font-bold text-lg">DEPORTES</div>
-              <div className="text-gray-400 text-sm">Tu tienda deportiva</div>
+              <div className="text-[#a0f000] font-bold text-lg">TU ANUNCIO ACÁ</div>
+              <div className="text-gray-400 text-sm">Espacio disponible</div>
               <div className="text-gray-500 text-xs">160x600</div>
             </div>
           </div>
@@ -26,7 +32,7 @@ const AdBanner = ({
         return (
           <div className="text-center p-6">
             <div className="transform -rotate-90 space-y-3">
-              <div className="text-[#a0f000] font-bold text-lg">SPONSOR</div>
+              <div className="text-[#a0f000] font-bold text-lg">TU ANUNCIO ACÁ</div>
               <div className="text-gray-400 text-sm">Espacio disponible</div>
               <div className="text-gray-500 text-xs">160x600</div>
             </div>
@@ -35,21 +41,21 @@ const AdBanner = ({
       case "mobile-top":
         return (
           <div className="text-center px-4">
-            <div className="text-[#a0f000] font-bold text-sm">PUBLICIDAD</div>
-            <div className="text-gray-400 text-xs">320x50 - Banner superior</div>
+            <div className="text-[#a0f000] font-bold text-sm">TU ANUNCIO ACÁ</div>
+            <div className="text-gray-400 text-xs">Espacio publicitario disponible</div>
           </div>
         );
       case "mobile-bottom":
         return (
           <div className="text-center px-4">
-            <div className="text-[#a0f000] font-bold text-sm">ANUNCIO</div>
-            <div className="text-gray-400 text-xs">320x50 - Banner inferior</div>
+            <div className="text-[#a0f000] font-bold text-sm">TU ANUNCIO ACÁ</div>
+            <div className="text-gray-400 text-xs">Espacio publicitario disponible</div>
           </div>
         );
       default:
         return (
           <span className="text-gray-400 text-sm">
-            Anuncio
+            Tu anuncio acá
           </span>
         );
     }
@@ -79,7 +85,7 @@ const AdBanner = ({
       case "desktop-right":
       case "sidebar-left":
       case "sidebar-right":
-        return "h-96 min-h-[24rem]"; // 384px mínimo
+        return "h-[600px] min-h-[600px]"; // 600px para sidebars
       case "mobile-top":
       case "mobile-bottom":
         return "h-16"; // 64px para móvil

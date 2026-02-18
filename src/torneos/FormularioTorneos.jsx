@@ -130,50 +130,50 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-[#141414] border border-[#003c3c] p-6 rounded-lg shadow-md w-full max-w-md mx-4 relative text-white">
-        <h2 className="text-2xl font-bold mb-4 text-center text-[#a0f000] uppercase tracking-wide">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 animate-fade-in">
+      <div className="glass-card p-6 w-full max-w-md mx-4 relative text-white max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-5 text-center text-gradient-accent uppercase tracking-wide">
           Formulario de Torneo
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Nombre */}
           <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              Nombre:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Nombre
             </label>
             <input
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+              className="input-modern w-full"
             />
           </div>
 
           {/* Descripción */}
           <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              Descripción:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Descripción
             </label>
             <input
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+              className="input-modern w-full"
             />
           </div>
 
           {/* País */}
           <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              País:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              País
             </label>
             <select
               name="paisId"
               value={formData.paisId}
               onChange={handleInputChange}
               required
-              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f0f0] focus:bg-[#1e4d4d] transition"
+              className="input-modern w-full"
             >
               <option value="">Selecciona un país</option>
               {paises.map((pais) => (
@@ -186,8 +186,8 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
 
           {/* Fechas */}
           <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              Fechas:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Fechas
             </label>
             <input
               type="number"
@@ -196,20 +196,19 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
               onChange={handleInputChange}
               required
               placeholder="Número de fechas"
-              className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000] focus:bg-[#1e4d4d] transition"
+              className="input-modern w-full"
             />
           </div>
 
           {/* Sección de categorías */}
-          <div className="">
-            <label className="block text-sm font-semibold text-[#a0f000] mb-4">
-              Categorías:
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-3">
+              Categorías
             </label>
             {availableCategories.length > 0 ? (
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="flex flex-wrap justify-center gap-2">
                 {availableCategories.map((category) => (
                   <div key={category.id} className="flex items-center">
-                    {/* Ocultamos el checkbox nativo */}
                     <input
                       type="checkbox"
                       name="categoriesIds"
@@ -219,10 +218,9 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
                       className="hidden peer"
                       id={`category-${category.id}`}
                     />
-                    {/* Label estilizado que actúa como checkbox */}
                     <label
                       htmlFor={`category-${category.id}`}
-                      className="cursor-pointer w-20 flex justify-center items-center gap-2 px-3 py-1 border border-gray-600 rounded-md transition-colors duration-200 peer-checked:bg-green-500 peer-checked:text-white hover:bg-gray-600"
+                      className="cursor-pointer w-20 flex justify-center items-center px-3 py-1.5 glass-card-sm !rounded-lg text-sm text-gray-400 transition-all peer-checked:bg-[#a0f000]/15 peer-checked:text-[#a0f000] peer-checked:border-[#a0f000]/40 hover:text-white"
                     >
                       {category.name}
                     </label>
@@ -230,14 +228,14 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
                 ))}
               </div>
             ) : (
-              <p>No hay categorías disponibles.</p>
+              <p className="text-gray-500 text-sm">No hay categorías disponibles.</p>
             )}
           </div>
 
-            {/* Nueva sección para Grupos */}
+            {/* Grupos */}
             <div>
-            <label className="block text-sm font-semibold text-[#a0f000] mb-1">
-              Grupos:
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Grupos
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -245,31 +243,31 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
                 name="newGroup"
                 value={newGroup}
                 onChange={(e) => setNewGroup(e.target.value)}
-                className="w-full p-2 bg-[#143c3c] text-white border border-[#003c3c] rounded-md focus:outline-none focus:ring-2 focus:ring-[#a0f000]"
+                className="input-modern w-full"
                 placeholder="Ingresar grupo"
               />
               <button
                 type="button"
                 onClick={handleAddGroup}
-                className="bg-[#a0f000] text-black px-2 py-1 rounded"
+                className="btn-primary px-3 py-2 text-sm flex-shrink-0"
               >
                 +
               </button>
             </div>
             {formData.groups.length > 0 && (
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 space-y-1.5">
                 {formData.groups.map((group, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-1 bg-gray-700 rounded"
+                    className="flex items-center justify-between p-2 glass-card-sm !rounded-lg text-sm"
                   >
-                    <span>{group}</span>
+                    <span className="text-gray-300">{group}</span>
                     <button
                       type="button"
                       onClick={() => handleRemoveGroup(index)}
-                      className="text-red-500 px-2"
+                      className="text-red-400 hover:text-red-300 px-2 transition"
                     >
-                      -
+                      ×
                     </button>
                   </div>
                 ))}
@@ -278,19 +276,19 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
           </div>
 
 
-          <div className="flex justify-end space-x-2">
-            <button
-              type="submit"
-              className="bg-[#a0f000] text-black px-4 py-2 rounded hover:bg-[#8cd000] transition font-bold"
-            >
-              Guardar
-            </button>
+          <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
               onClick={() => setCreator(false)}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-800 transition font-bold"
+              className="btn-outline px-4 py-2 text-sm !text-gray-400 !border-gray-600 hover:!text-white"
             >
               Cancelar
+            </button>
+            <button
+              type="submit"
+              className="btn-primary px-6 py-2 text-sm"
+            >
+              Guardar
             </button>
           </div>
         </form>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FormularioJugadores from "../Jugadores/FormularioJugadores";
-const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }) => {
+const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol, categoriaId }) => {
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const [jugadores, setJugadores] = useState([]);
@@ -141,33 +141,31 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }
   
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 animate-fade-in">
       <form
         onSubmit={handleSubmit}
-        className="bg-[#141414] border border-[#003c3c] p-6 rounded-lg shadow-2xl w-full max-w-md mx-4 space-y-4 text-white"
+        className="glass-card w-full max-w-md mx-4 space-y-4 text-white"
       >
-        <h2 className="text-2xl font-bold text-center text-[#a0f000] uppercase tracking-wide mb-4">
+        <h2 className="text-2xl font-bold text-center text-gradient-accent uppercase tracking-wide mb-4">
           Registrar Gol
         </h2>
 
         {/* Jugador */}
         <div>
-          <label className="block mb-1 text-sm font-semibold text-[#a0f000]">Jugador:</label>
+          <label className="block mb-1 text-sm font-medium text-gray-300">Jugador:</label>
           <select
-  name="jugadorId"
-  value={formData.jugadorId}
-  onChange={(e) => {
-    if (e.target.value === "crear") {
-      setCreator(true);
-    } else {
-      setFormData((prev) => ({ ...prev, jugadorId: e.target.value }));
-      
-    }
-  }}
-  className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md"
-  required
->
-
+            name="jugadorId"
+            value={formData.jugadorId}
+            onChange={(e) => {
+              if (e.target.value === "crear") {
+                setCreator(true);
+              } else {
+                setFormData((prev) => ({ ...prev, jugadorId: e.target.value }));
+              }
+            }}
+            className="input-modern"
+            required
+          >
             <option value="">Seleccione un jugador</option>
             {jugadores.map((j) => (
               <option key={j.id} value={j.id.toString()}>{j.name}</option>
@@ -178,13 +176,13 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }
 
         {/* Minuto */}
         <div>
-          <label className="block mb-1 text-sm font-semibold text-[#a0f000]">Minuto:</label>
+          <label className="block mb-1 text-sm font-medium text-gray-300">Minuto:</label>
           <input
             type="number"
             name="minuto"
             value={formData.minuto}
             onChange={handleInputChange}
-            className="w-full p-2 bg-[#1f1f1f] border border-[#003c3c] rounded-md"
+            className="input-modern"
             placeholder="Ej: 45"
             required
           />
@@ -192,17 +190,13 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }
 
         {/* Botones */}
         <div className="flex justify-end gap-3">
-        <button
-  type="submit"
-  className="bg-green-500 hover:bg-green-400 text-black font-bold px-4 py-2 rounded-lg"
->
-  {gol ? "Actualizar Gol" : "Crear Gol"}
-</button>
-
+          <button type="submit" className="btn-primary px-4 py-2">
+            {gol ? "Actualizar Gol" : "Crear Gol"}
+          </button>
           <button
             type="button"
             onClick={() => onClose(false)}
-            className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-lg"
+            className="btn-outline px-4 py-2"
           >
             Cancelar
           </button>
@@ -214,6 +208,8 @@ const FormularioGol = ({ onSubmit, onClose, torneoId, equipoId, partidoId, gol }
           setCreator={setCreator}
           selectedJugador={null}
           onSave={handleJugadorCreado}
+          defaultCategoriaId={categoriaId}
+          defaultEquipoId={equipoId}
         />
       )}
     </div>
