@@ -25,6 +25,19 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (formData.bornDate) {
+      const year = new Date(formData.bornDate).getFullYear();
+      if (year < 1800) {
+        setError("La fecha de nacimiento debe ser posterior al año 1800.");
+        return;
+      }
+      if (new Date(formData.bornDate) > new Date()) {
+        setError("La fecha de nacimiento no puede ser en el futuro.");
+        return;
+      }
+    }
+
     try {
       const response = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
@@ -32,8 +45,12 @@ const Register = () => {
         body: JSON.stringify(formData),
       });
       if (!response.ok) {
-        const errorMessage = await response.text();
-        setError(errorMessage);
+        try {
+          const errorData = await response.json();
+          setError(errorData.message || "Error al registrarse");
+        } catch {
+          setError("Error al registrarse");
+        }
         return;
       }
       navigate("/login");
@@ -52,8 +69,12 @@ const Register = () => {
         body: JSON.stringify({ token: credentialResponse.credential }),
       });
       if (!response.ok) {
-        const errorMsg = await response.text();
-        setError(errorMsg);
+        try {
+          const errorData = await response.json();
+          setError(errorData.message || "Error al registrarse con Google");
+        } catch {
+          setError("Error al registrarse con Google");
+        }
         return;
       }
       navigate("/login");

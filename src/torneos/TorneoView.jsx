@@ -13,7 +13,7 @@ function TorneoView() {
   const { isSubscribed } = useContext(AuthContext);
 
   const [categories, setCategories] = useState([]);
-  const [activeTab, setActiveTab] = useState(tab || "tabla");
+  const [activeTab, setActiveTab] = useState(tab || "fixture");
   const [selectedCategoriaId, setSelectedCategoriaId] = useState(categoriaId || null);
   const [loadingTorneo, setLoadingTorneo] = useState(true);
   const [torneo, setTorneo] = useState(null);

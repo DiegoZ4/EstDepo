@@ -76,7 +76,7 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
         image: selectedTorneo.image || "",
         paisId: selectedTorneo.pais?.id || "",
         // Se asume que en el torneo ya vienen las categorías asociadas como arreglo de números o se puede mapear:
-        categoriesIds: selectedTorneo.categories ? selectedTorneo.categories.map(cat => cat.id) : [],
+        categoriesIds: selectedTorneo.categories ? selectedTorneo.categories.map(cat => Number(cat.id)) : [],
         groups: selectedTorneo.groups || []
       });
     }

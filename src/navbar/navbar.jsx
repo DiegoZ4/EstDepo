@@ -105,7 +105,8 @@ function Navbar() {
             <div
               ref={tournamentMenuRef}
               onMouseLeave={() => setShowTorneosMenu(false)}
-              className="absolute left-0 mt-1 w-72 glass-card p-2 shadow-2xl animate-fade-in"
+              className="absolute left-0 mt-1 w-72 p-2 shadow-2xl animate-fade-in rounded-2xl border border-gray-700/40 backdrop-blur-md"
+              style={{ background: 'rgba(13, 31, 31, 0.80)' }}
             >
               {isAuthenticated ? (
                 <ul className="space-y-0.5">
@@ -153,7 +154,7 @@ function Navbar() {
           )}
         </button>
         {showUserMenu && (
-          <div className="absolute right-0 mt-2 w-56 glass-card p-2 shadow-2xl animate-fade-in">
+          <div className="absolute right-0 mt-2 w-56 glass-card p-2 shadow-2xl animate-fade-in bg-[#0d1f1f]/95">
             <ul className="space-y-0.5">
               <li
                 onClick={() => { navigate("/perfil"); setShowUserMenu(false); }}
@@ -208,8 +209,8 @@ function Navbar() {
             <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowMenu(false)} />
           )}
           <animated.div
-            style={menuAnimation}
-            className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col bg-gradient-to-b from-[#1a3a3a] to-[#0d1f1f] border-r border-gray-700/40 p-6 text-white shadow-2xl"
+            style={{ ...menuAnimation, background: 'rgba(13, 31, 31, 0.80)' }}
+            className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-gray-700/40 p-6 text-white shadow-2xl backdrop-blur-md"
           >
             <div className="flex items-center justify-between mb-8">
               <span className="text-lg font-bold text-[#a0f000]">Admin Panel</span>

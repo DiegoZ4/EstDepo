@@ -34,7 +34,25 @@ const Torneos = () => {
   };
 
   const handleEdit = async (torneo) => {
-    setSelectedTorneo(torneo);
+    const token = localStorage.getItem("access_token");
+    try {
+      const [torneoRes, categoriasRes] = await Promise.all([
+        fetch(`${apiUrl}/torneo/${torneo.id}`, {
+          headers: { "Content-Type": "application/json", Authorization: token ? `Bearer ${token}` : "" },
+        }),
+        fetch(`${apiUrl}/torneo/${torneo.id}/categorias`, {
+          headers: { "Content-Type": "application/json", Authorization: token ? `Bearer ${token}` : "" },
+        }),
+      ]);
+
+      const fullTorneo = torneoRes.ok ? await torneoRes.json() : torneo;
+      const categorias = categoriasRes.ok ? await categoriasRes.json() : [];
+
+      setSelectedTorneo({ ...fullTorneo, categories: categorias });
+    } catch (error) {
+      console.error("Error fetching torneo para editar:", error);
+      setSelectedTorneo(torneo);
+    }
     setCreator(true);
     setEditId(torneo.id);
   };

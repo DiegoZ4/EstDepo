@@ -91,9 +91,6 @@ setGrupos(sortedGrupos);
     return (
       <div className="text-center p-8">
         <p className="text-lg text-gray-400 mb-2">No hay datos de tabla disponibles</p>
-        <p className="text-gray-600 text-xs">
-          TorneoId: {torneoId} | CategoríaId: {categoriaId}
-        </p>
       </div>
     );
   }

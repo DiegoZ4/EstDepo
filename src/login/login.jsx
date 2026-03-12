@@ -25,8 +25,12 @@ const Login = ({ onLoginSuccess }) => {
         body: JSON.stringify({ email, password }),
       });
       if (!response.ok) {
-        const errorMessage = await response.text();
-        setError(errorMessage);
+        try {
+          const errorData = await response.json();
+          setError(errorData.message || "Credenciales inválidas");
+        } catch {
+          setError("Credenciales inválidas");
+        }
         return;
       }
       const data = await response.json();
@@ -67,8 +71,12 @@ const Login = ({ onLoginSuccess }) => {
         body: JSON.stringify({ token: credentialResponse.credential }),
       });
       if (!response.ok) {
-        const errorMsg = await response.text();
-        setError(errorMsg);
+        try {
+          const errorData = await response.json();
+          setError(errorData.message || "Error al iniciar sesión con Google");
+        } catch {
+          setError("Error al iniciar sesión con Google");
+        }
         return;
       }
       const data = await response.json();
