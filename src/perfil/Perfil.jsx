@@ -616,11 +616,7 @@ const Perfil = () => {
               <div className="text-xs text-gray-400 space-y-2 text-left bg-white/5 rounded-lg p-4">
                 <p className="flex items-start gap-2">
                   <span className="text-[#a0f000] mt-0.5">•</span>
-                  <span>Si cancelás <strong className="text-white">antes de 10 días</strong> desde tu suscripción, se cancela inmediatamente y se te reembolsa el pago.</span>
-                </p>
-                <p className="flex items-start gap-2">
-                  <span className="text-[#a0f000] mt-0.5">•</span>
-                  <span>Si cancelás <strong className="text-white">después de 10 días</strong>, mantenés acceso premium hasta el final del período actual.</span>
+                  <span>Al cancelar, mantenés acceso premium hasta el final del período actual.</span>
                 </p>
               </div>
             </div>
