@@ -5,6 +5,8 @@ import AppRoutes from "./AppRoutes";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import Register from "./register/register";
 import Login from "./login/login";
+import ForgotPassword from "./auth/ForgotPassword";
+import ResetPassword from "./auth/ResetPassword";
 import "./index.css"; // CSS de Tailwind
 import "./App.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -30,6 +32,8 @@ const apiKey = import.meta.env.VITE_API_KEY
                 {/* Rutas públicas */}
                 <Route path="/register" element={<Register />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 {/* Rutas públicas o de acceso libre */}
                 <Route path="/" element={<AppRoutes />} />
                 

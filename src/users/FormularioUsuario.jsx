@@ -35,7 +35,12 @@ const FormularioUsuario = ({ setMostrarFormulario, usuarioSeleccionado, onSave }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(formData);
+    if (usuarioSeleccionado) {
+      const { password, ...dataWithoutPassword } = formData;
+      onSave(dataWithoutPassword);
+    } else {
+      onSave(formData);
+    }
   };
 
   return (
@@ -72,6 +77,7 @@ const FormularioUsuario = ({ setMostrarFormulario, usuarioSeleccionado, onSave }
           />
         </div>
 
+        {!usuarioSeleccionado && (
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Contraseña:</label>
           <input 
@@ -80,9 +86,10 @@ const FormularioUsuario = ({ setMostrarFormulario, usuarioSeleccionado, onSave }
             value={formData.password}
             onChange={handleInputChange}
             className="input-modern"
-            required={!usuarioSeleccionado}
+            required
           />
         </div>
+        )}
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1">Rol:</label>

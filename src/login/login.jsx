@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
 import { AuthContext } from "../auth/auth.context";
-import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import { FiMail, FiLock, FiArrowRight, FiX } from "react-icons/fi";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -12,6 +12,11 @@ const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [forgotModal, setForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMessage, setForgotMessage] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -102,8 +107,90 @@ const Login = ({ onLoginSuccess }) => {
     setError("Error al iniciar sesión con Google");
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setForgotError("");
+    setForgotMessage("");
+    setForgotLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+      if (!response.ok) {
+        try {
+          const data = await response.json();
+          setForgotError(data.message || "Error al enviar el correo.");
+        } catch {
+          setForgotError("Error al enviar el correo.");
+        }
+      } else {
+        setForgotMessage("Te enviamos un correo con el link para restablecer tu contraseña.");
+      }
+    } catch {
+      setForgotError("Error de conexión. Intenta de nuevo.");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const openForgotModal = () => {
+    setForgotEmail(email);
+    setForgotMessage("");
+    setForgotError("");
+    setForgotModal(true);
+  };
+
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
+      {/* Modal olvidé contraseña */}
+      {forgotModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm">
+          <div className="glass-card p-6 w-full max-w-sm animate-fade-up">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white">Recuperar contraseña</h3>
+              <button onClick={() => setForgotModal(false)} className="p-1 text-gray-400 hover:text-white transition">
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-gray-400 text-sm mb-4">
+              Ingresá tu email y te enviaremos un link para restablecer tu contraseña.
+            </p>
+            {forgotError && (
+              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center">
+                {forgotError}
+              </div>
+            )}
+            {forgotMessage ? (
+              <div className="p-3 rounded-xl bg-[#a0f000]/10 border border-[#a0f000]/30 text-[#a0f000] text-sm text-center">
+                {forgotMessage}
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <div className="relative">
+                  <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    required
+                    placeholder="tu@email.com"
+                    className="input-modern w-full !pl-12"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="btn-primary w-full py-2.5 text-sm flex items-center justify-center gap-2"
+                >
+                  {forgotLoading ? "Enviando..." : (<>Enviar link <FiArrowRight className="w-4 h-4" /></>)}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
       <div className="w-full max-w-md animate-fade-up">
         <div className="glass-card p-8">
           {/* Header */}
@@ -160,6 +247,15 @@ const Login = ({ onLoginSuccess }) => {
             <button type="submit" className="btn-primary w-full py-3 text-sm flex items-center justify-center gap-2">
               Ingresar <FiArrowRight className="w-4 h-4" />
             </button>
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={openForgotModal}
+                className="text-xs text-gray-400 hover:text-[#a0f000] transition"
+              >
+                ¿Olvidaste tu contraseña?
+              </button>
+            </div>
           </form>
 
           {/* Divider */}

@@ -30,6 +30,8 @@ const Goleadores = lazy(() => import("./Goleadores/goleadores"));
 const TorneoView = lazy(() => import("./torneos/TorneoView"));
 const TorneoInspect = lazy(() => import("./torneos/TorneoInspect"));
 const Perfil = lazy(() => import("./perfil/Perfil"));
+const ForgotPassword = lazy(() => import("./auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./auth/ResetPassword"));
 
 // Rutas protegidas para usuarios
 const Usuarios = lazy(() => import("./users/Usuarios"));
@@ -44,6 +46,8 @@ const AppRoutes = () => {
     { path: "/admin", element: <Admin /> },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
+    { path: "/forgot-password", element: <ForgotPassword /> },
+    { path: "/reset-password", element: <ResetPassword /> },
     { path: "/suscipcion", element: <Suscipcion /> },
     { path: "/suscipcion/resultado", element: <SuscripcionResultado /> },
     { path: "/suscripcion/resultado", element: <SuscripcionResultado /> }, // Alias para MP
