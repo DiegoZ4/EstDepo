@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../auth/auth.context";
 import {
   initiateSubscription,
@@ -307,6 +307,13 @@ const Suscripcion = () => {
               </button>
             </form>
 
+            <p className="text-xs text-gray-400 text-center mt-4 leading-relaxed">
+              Al suscribirte aceptás nuestras{" "}
+              <Link to="/politicas" className="text-[#a0f000] hover:underline" target="_blank" rel="noopener noreferrer">
+                Políticas de uso y privacidad
+              </Link>
+              . <span className="text-yellow-400/80">No se realizan reembolsos</span> en cancelaciones anticipadas, pero mantenés el acceso Premium hasta el fin del período abonado.
+            </p>
             <div className="flex items-center justify-center gap-2 text-gray-500 text-xs mt-3">
               <FiShield className="w-3 h-3" />
               Pago seguro · Cancelás cuando quieras

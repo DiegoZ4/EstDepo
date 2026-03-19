@@ -7,6 +7,7 @@ import Register from "./register/register";
 import Login from "./login/login";
 import ForgotPassword from "./auth/ForgotPassword";
 import ResetPassword from "./auth/ResetPassword";
+import PoliticasPrivacidad from "./legal/PoliticasPrivacidad";
 import "./index.css"; // CSS de Tailwind
 import "./App.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -34,6 +35,7 @@ const apiKey = import.meta.env.VITE_API_KEY
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/politicas" element={<PoliticasPrivacidad />} />
                 {/* Rutas públicas o de acceso libre */}
                 <Route path="/" element={<AppRoutes />} />
                 
@@ -46,6 +48,9 @@ const apiKey = import.meta.env.VITE_API_KEY
           </main>
           <footer className="border-t border-gray-700/40 bg-black/20 backdrop-blur-sm text-center py-6 text-sm text-gray-400">
             <p>© {new Date().getFullYear()} <span className="text-[#a0f000] font-semibold">EstDepo</span>. Todos los derechos reservados.</p>
+            <p className="mt-2">
+              <a href="/politicas" className="text-gray-500 hover:text-[#a0f000] transition text-xs underline">Políticas de privacidad y uso</a>
+            </p>
           </footer>
         </div>
       </BrowserRouter>
