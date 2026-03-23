@@ -111,6 +111,7 @@ const Fixture = () => {
   );
 
   // 3) Agrupar por grupo y luego ordenarlos
+  const hasRealGroups = partidos.some(p => p.group);
   const gruposMap = partidos.reduce((acc, p) => {
     const g = p.group || "Sin grupo";
     if (!acc[g]) acc[g] = [];
@@ -173,9 +174,11 @@ const Fixture = () => {
       {/* Por cada grupo */}
       {grupos.map((grupo) => (
         <div key={grupo} className="mb-4 md:mb-6 animate-fade-up">
-          <h3 className="text-lg md:text-xl font-bold text-[#a0f000] mb-3 px-2 md:px-0">
-            Grupo {grupo}
-          </h3>
+          {hasRealGroups && (
+            <h3 className="text-lg md:text-xl font-bold text-[#a0f000] mb-3 px-2 md:px-0">
+              Grupo {grupo}
+            </h3>
+          )}
           <div className="space-y-2 md:space-y-3 px-2 md:px-0">
             {gruposMap[grupo].map((p, i) => {
               const key = `${grupo}-${i}`;

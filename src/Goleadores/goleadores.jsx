@@ -1,7 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../auth/auth.context";
+import { FiEdit2 } from "react-icons/fi";
+import FormularioJugador from "../Jugadores/FormularioJugadores";
 
 const Goleadores = ({ torneoId, categoriaId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { user } = useContext(AuthContext);
+  const isAdmin = user?.rol === "admin";
+  const [editingJugador, setEditingJugador] = useState(null);
   const [goleadores, setGoleadores] = useState([]);
   const [torneo, setTorneo] = useState(null);
   const [equiposMap, setEquiposMap] = useState({});
@@ -80,6 +86,43 @@ const Goleadores = ({ torneoId, categoriaId }) => {
       .catch(err => console.error("Error fetch equipos:", err));
   }, [apiUrl, goleadores]);
 
+  const handleEditJugador = async (jugadorId) => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`${apiUrl}/jugador/${jugadorId}`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEditingJugador(data);
+      }
+    } catch (err) {
+      console.error("Error al cargar jugador:", err);
+    }
+  };
+
+  const handleSaveJugador = async (formData) => {
+    if (!editingJugador) return;
+    const token = localStorage.getItem("access_token");
+    try {
+      const res = await fetch(`${apiUrl}/jugador/${editingJugador.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setEditingJugador(null);
+      } else {
+        console.error("Error al guardar jugador:", await res.text());
+      }
+    } catch (err) {
+      console.error("Error al guardar jugador:", err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -114,19 +157,20 @@ const Goleadores = ({ torneoId, categoriaId }) => {
 
       <div className="px-2 md:px-0">
         <div className="glass-card overflow-hidden animate-fade-up">
-          <table className="table-modern">
+          <table className="table-modern w-full">
             <thead>
               <tr>
-                <th className="text-center w-12 md:w-16">#</th>
-                <th>Jugador</th>
-                <th className="text-center w-12 md:w-auto">Equipo</th>
+                <th className="text-center w-10 md:w-14">#</th>
+                <th className="text-left">Jugador</th>
+                <th className="text-left w-40 md:w-48">Equipo</th>
                 <th className="text-center w-16 md:w-20">Goles</th>
+                {isAdmin && <th className="text-center w-10"></th>}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center py-6 text-gray-500 text-sm">
+                  <td colSpan={isAdmin ? 5 : 4} className="text-center py-6 text-gray-500 text-sm">
                     No se encontraron resultados.
                   </td>
                 </tr>
@@ -136,12 +180,12 @@ const Goleadores = ({ torneoId, categoriaId }) => {
                 const equipo = equiposMap[g.equipoid];
                 return (
                   <tr key={g.jugadorid}>
-                    <td className="text-center font-bold text-[#a0f000]">{g.rank}</td>
-                    <td>
+                    <td className="text-center font-bold text-[#a0f000] tabular-nums">{g.rank}</td>
+                    <td className="text-left">
                       <span className="text-sm font-medium">{g.jugadorname}</span>
                     </td>
-                    <td>
-                      <div className="flex items-center justify-center gap-2">
+                    <td className="text-left">
+                      <div className="flex items-center gap-2">
                         {equipo && (
                           <img
                             src={equipo.image}
@@ -149,7 +193,7 @@ const Goleadores = ({ torneoId, categoriaId }) => {
                             className="h-6 w-6 object-contain flex-shrink-0"
                           />
                         )}
-                        <span className="hidden md:inline text-sm text-gray-400 truncate">
+                        <span className="text-sm text-gray-400 truncate">
                           {equipo ? equipo.name : g.equiponame}
                         </span>
                       </div>
@@ -157,6 +201,17 @@ const Goleadores = ({ torneoId, categoriaId }) => {
                     <td className="text-center font-bold text-white text-sm md:text-base">
                       {g.totalgoles}
                     </td>
+                    {isAdmin && (
+                      <td className="text-center">
+                        <button
+                          onClick={() => handleEditJugador(g.jugadorid)}
+                          title="Editar jugador"
+                          className="inline-flex items-center justify-center p-1.5 rounded-lg text-gray-400 hover:text-[#a0f000] hover:bg-[#a0f000]/10 transition"
+                        >
+                          <FiEdit2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 );
               })}
@@ -164,6 +219,14 @@ const Goleadores = ({ torneoId, categoriaId }) => {
           </table>
         </div>
       </div>
+
+      {editingJugador && (
+        <FormularioJugador
+          setCreator={() => setEditingJugador(null)}
+          selectedJugador={editingJugador}
+          onSave={handleSaveJugador}
+        />
+      )}
     </div>
   );
 };

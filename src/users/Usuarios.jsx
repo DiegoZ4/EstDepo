@@ -134,7 +134,19 @@ const Usuarios = () => {
       <h1 className="text-3xl font-bold text-center mb-2 text-gradient-accent uppercase">
         Gestión de Usuarios
       </h1>
-      <p className="text-center text-gray-400 mb-6">Usuarios registrados: {usuarios.length}</p>
+      <div className="flex items-center justify-center gap-6 mb-6">
+        <div className="text-center">
+          <span className="block text-2xl font-bold text-white">{usuarios.length}</span>
+          <span className="text-xs text-gray-400">Usuarios registrados</span>
+        </div>
+        <div className="w-px h-10 bg-gray-700" />
+        <div className="text-center">
+          <span className="block text-2xl font-bold text-[#a0f000]">
+            {usuarios.filter(u => u.subscriptionStatus === "active" || u.subscriptionStatus === "authorized" || u.is_premium === true).length}
+          </span>
+          <span className="text-xs text-gray-400">Usuarios suscritos</span>
+        </div>
+      </div>
 
       {/* Buscador y filtros */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
