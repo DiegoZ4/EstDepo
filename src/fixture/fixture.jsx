@@ -17,6 +17,7 @@ const Fixture = () => {
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [maxFecha, setMaxFecha] = useState(null);
   const [torneo, setTorneo] = useState(null);
+  const [equipoLibre, setEquipoLibre] = useState(null);
   const { isSubscribed } = useContext(AuthContext);
 
   // 1) Traer datos del torneo y buscar última fecha con datos
@@ -75,6 +76,18 @@ const Fixture = () => {
     const fetchFixture = async () => {
       setLoading(true);
       const token = localStorage.getItem("access_token");
+      // Fetch equipo libre de esta fecha/categoría en paralelo
+      fetch(`${apiUrl}/equipo-libre/${torneoId}/${categoriaId}/${currentFecha}`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (!data) return setEquipoLibre(null);
+          // El endpoint puede devolver array o un objeto único
+          const item = Array.isArray(data) ? data[0] : data;
+          setEquipoLibre(item?.equipo || null);
+        })
+        .catch(() => setEquipoLibre(null));
       try {
         const res = await fetch(
           `${apiUrl}/partido/${torneoId}/fixture/${categoriaId}/${currentFecha}`,
@@ -160,9 +173,23 @@ const Fixture = () => {
         </div>
       )}
       {/* Título */}
-      <h1 className="text-xl md:text-2xl pt-4 md:pt-6 font-bold text-center text-gradient-accent mb-4 md:mb-6">
+      <h1 className="text-xl md:text-2xl pt-4 md:pt-6 font-bold text-center text-gradient-accent mb-2">
         {torneo?.name || "Torneo"}
       </h1>
+
+      {/* Equipo libre */}
+      {equipoLibre && (
+        <div className="flex justify-end mb-4 md:mb-6 px-2">
+          <div className="inline-flex items-center gap-2 glass-card-sm !rounded-xl px-3 py-1.5 text-xs">
+            <span className="text-gray-500">Libre:</span>
+            {equipoLibre.image && (
+              <img src={equipoLibre.image} alt={equipoLibre.name} className="h-5 w-5 object-contain" />
+            )}
+            <span className="font-medium text-white">{equipoLibre.name}</span>
+          </div>
+        </div>
+      )}
+      {!equipoLibre && <div className="mb-4 md:mb-6" />}
 
       {/* Sin partidos */}
       {partidos.length === 0 && (
