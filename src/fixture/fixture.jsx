@@ -146,7 +146,7 @@ const Fixture = () => {
 
 
   return (
-    
+
     <div className="max-w-4xl mx-auto p-2 md:p-4">
 
       {isSubscribed ? (
@@ -232,7 +232,7 @@ const Fixture = () => {
                             {p.equipoLocal.name}
                           </span>
                         </div>
-                        
+
                         {/* Marcador */}
                         <div className="flex items-center justify-center px-3">
                           {p.estado === "Finalizado" ? (
@@ -245,7 +245,7 @@ const Fixture = () => {
                             <span className="text-sm font-bold text-gray-400">VS</span>
                           )}
                         </div>
-                        
+
                         {/* Equipo Visitante */}
                         <div className="flex items-center space-x-2 flex-1 justify-end">
                           <span className="text-xs font-medium truncate text-gray-200">
@@ -258,15 +258,14 @@ const Fixture = () => {
                           />
                         </div>
                       </div>
-                      
+
                       {/* Estado del partido */}
                       {p.estado !== "Pendiente" && (
-                        <div className={`text-xs text-center py-1 border-t border-gray-700/30 ${
-                          p.estado === "Finalizado" ? "text-[#a0f000]" :
-                          p.estado === "Suspendido" ? "text-red-400" :
-                          p.estado === "Postergado" ? "text-orange-400" :
-                          "text-gray-400"
-                        }`}>
+                        <div className={`text-xs text-center py-1 border-t border-gray-700/30 ${p.estado === "Finalizado" ? "text-[#a0f000]" :
+                            p.estado === "Suspendido" ? "text-red-400" :
+                              p.estado === "Postergado" ? "text-orange-400" :
+                                "text-gray-400"
+                          }`}>
                           {p.estado}
                         </div>
                       )}
@@ -286,7 +285,7 @@ const Fixture = () => {
                             {p.equipoLocal.name}
                           </span>
                         </div>
-                        
+
                         {/* VS + goles */}
                         <div className="flex items-center justify-center w-1/2">
                           {p.estado === "Finalizado" && (
@@ -301,7 +300,7 @@ const Fixture = () => {
                             </h1>
                           )}
                         </div>
-                        
+
                         {/* Visitante */}
                         <div className="flex items-center space-x-3 w-1/4 justify-end">
                           <span className="text-base font-medium text-gray-200">
@@ -314,15 +313,14 @@ const Fixture = () => {
                           />
                         </div>
                       </div>
-                      
+
                       {/* Estado del partido para desktop */}
                       {p.estado !== "Pendiente" && (
-                        <div className={`text-sm text-center mt-2 ${
-                          p.estado === "Finalizado" ? "text-[#a0f000]" :
-                          p.estado === "Suspendido" ? "text-red-400" :
-                          p.estado === "Postergado" ? "text-orange-400" :
-                          "text-gray-400"
-                        }`}>
+                        <div className={`text-sm text-center mt-2 ${p.estado === "Finalizado" ? "text-[#a0f000]" :
+                            p.estado === "Suspendido" ? "text-red-400" :
+                              p.estado === "Postergado" ? "text-orange-400" :
+                                "text-gray-400"
+                          }`}>
                           {p.estado}
                         </div>
                       )}

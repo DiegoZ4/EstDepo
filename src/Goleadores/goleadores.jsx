@@ -5,8 +5,7 @@ import FormularioJugador from "../Jugadores/FormularioJugadores";
 
 const Goleadores = ({ torneoId, categoriaId }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const { user } = useContext(AuthContext);
-  const isAdmin = user?.rol === "admin";
+  const { user, isAdmin } = useContext(AuthContext);
   const [editingJugador, setEditingJugador] = useState(null);
   const [goleadores, setGoleadores] = useState([]);
   const [torneo, setTorneo] = useState(null);

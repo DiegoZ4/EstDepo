@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate  } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import FormularioPartido from "../Partidos/FormularioPartidos";
 import { FaPencilAlt, FaTrashAlt, FaEye } from "react-icons/fa";
 import { FiChevronDown, FiX, FiUser } from "react-icons/fi";
@@ -21,7 +21,7 @@ const TorneoInspect = () => {
   const [libreForm, setLibreForm] = useState({ equipoId: "" });
   const [libresMap, setLibresMap] = useState({}); // key: `${fecha}-${categoriaId}` → equipo libre obj
   const [savingLibre, setSavingLibre] = useState(false);
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const navigate = useNavigate();
           abiertas[i] = true;
         }
         setFechasAbiertas(abiertas);
-  
+
 
         // 2. Partidos agrupados por fecha
         const partidosRes = await fetch(`${apiUrl}/partido/torneo/${id}`, {
@@ -108,7 +108,7 @@ const navigate = useNavigate();
       [fecha]: !prev[fecha],
     }));
   };
-  
+
 
   const handleDelete = async (id, fecha) => {
     const token = localStorage.getItem("access_token");
@@ -128,7 +128,7 @@ const navigate = useNavigate();
       console.error("Error al eliminar:", err);
     }
   };
-  
+
 
   const handleSaveLibre = async (fecha) => {
     const { equipoId } = libreForm;
@@ -205,16 +205,16 @@ const navigate = useNavigate();
     setSelectedPartido(partido);
     setShowForm(true);
   };
-  
+
   const handleSave = async (partidoData, isEdit) => {
     const token = localStorage.getItem("access_token");
-  
+
     try {
       const method = isEdit ? "PUT" : "POST";
       const endpoint = isEdit
         ? `${apiUrl}/partido/${selectedPartido.id}`
         : `${apiUrl}/partido`;
-  
+
       const body = {
         equipoVisitanteId: partidoData.equipoVisitanteId,
         equipoLocalId: partidoData.equipoLocalId,
@@ -227,7 +227,7 @@ const navigate = useNavigate();
         groupLocal: partidoData.groupLocal,
         groupVisitante: partidoData.groupVisitante
       };
-  
+
       const response = await fetch(endpoint, {
         method,
         headers: {
@@ -236,18 +236,18 @@ const navigate = useNavigate();
         },
         body: JSON.stringify(body),
       });
-  
+
       if (!response.ok) throw new Error(await response.text());
-  
+
       const updatedPartido = await response.json();
       const fecha = updatedPartido.fecha;
-  
+
       setPartidosPorFecha((prev) => ({
         ...prev,
         [fecha]: isEdit
           ? prev[fecha].map((p) =>
-              p.id === updatedPartido.id ? updatedPartido : p
-            )
+            p.id === updatedPartido.id ? updatedPartido : p
+          )
           : [...(prev[fecha] || []), updatedPartido],
       }));
     } catch (error) {
@@ -257,7 +257,7 @@ const navigate = useNavigate();
       setSelectedPartido(null);
     }
   };
-  
+
 
   if (loading) return <div className="flex justify-center items-center h-64"><div className="w-10 h-10 border-4 border-[#a0f000] border-dashed rounded-full animate-spin" /></div>;
   if (!torneo) return <div className="p-4 text-red-400">Torneo no encontrado.</div>;
@@ -361,71 +361,71 @@ const navigate = useNavigate();
               </div>
             )}
             {fechasAbiertas[fecha] && (
-  partidosDeFecha.length > 0 ? (
-    <div className="overflow-x-auto">
-        {partidosDeFecha.length > 0 ? (
-    <div className="overflow-x-auto">
-    <table className="table-modern w-full">
-    <thead>
-    <tr>
-      <th className="px-4 py-3 text-center">ID</th>
-      <th className="px-4 py-3 text-center">Fecha</th>
-      <th className="px-4 py-3 text-center">Categoría</th>
-      <th className="px-4 py-3 text-center">Local</th>
-      <th className="px-4 py-3 text-center">Visitante</th>
-      <th className="px-4 py-3 text-center">Acciones</th>
-    </tr>
-    </thead>
-    <tbody>
-    {partidosDeFecha.map((partido, index) => (
-      <tr
-        key={partido.id}
-        className="border-t border-gray-700/30 hover:bg-white/5 transition"
-      >
-        <td className="px-4 py-2.5 text-center text-gray-400">{partido.id}</td>
-        <td className="px-4 py-2.5 text-center">{partido.fecha}</td>
-        <td className="px-4 py-2.5 text-center text-gray-300">{partido.category?.name}</td>
-        <td className="px-4 py-2.5 text-center">{partido.equipoLocal?.name}</td>
-        <td className="px-4 py-2.5 text-center">{partido.equipoVisitante?.name}</td>
-        <td className="px-4 py-2.5 text-center">
-  <div className="flex justify-center gap-1.5">
-    <button
-      onClick={() => handleEdit(partido)}
-      className="btn-outline px-2.5 py-1 text-xs"
-      title="Editar"
-    >
-      <FaPencilAlt />
-    </button>
-    <button
-      onClick={() => handleDelete(partido.id, partido.fecha)}
-      className="btn-danger px-2.5 py-1 text-xs"
-      title="Eliminar"
-    >
-      <FaTrashAlt />
-    </button>
-    <button
-      onClick={() => navigate(`/partidos/${partido.id}`)}
-      className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-lg text-xs hover:bg-blue-500/30 transition"
-      title="Inspeccionar"
-    >
-      <FaEye />
-    </button>
-  </div>
-</td>
+              partidosDeFecha.length > 0 ? (
+                <div className="overflow-x-auto">
+                  {partidosDeFecha.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="table-modern w-full">
+                        <thead>
+                          <tr>
+                            <th className="px-4 py-3 text-center">ID</th>
+                            <th className="px-4 py-3 text-center">Fecha</th>
+                            <th className="px-4 py-3 text-center">Categoría</th>
+                            <th className="px-4 py-3 text-center">Local</th>
+                            <th className="px-4 py-3 text-center">Visitante</th>
+                            <th className="px-4 py-3 text-center">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {partidosDeFecha.map((partido, index) => (
+                            <tr
+                              key={partido.id}
+                              className="border-t border-gray-700/30 hover:bg-white/5 transition"
+                            >
+                              <td className="px-4 py-2.5 text-center text-gray-400">{partido.id}</td>
+                              <td className="px-4 py-2.5 text-center">{partido.fecha}</td>
+                              <td className="px-4 py-2.5 text-center text-gray-300">{partido.category?.name}</td>
+                              <td className="px-4 py-2.5 text-center">{partido.equipoLocal?.name}</td>
+                              <td className="px-4 py-2.5 text-center">{partido.equipoVisitante?.name}</td>
+                              <td className="px-4 py-2.5 text-center">
+                                <div className="flex justify-center gap-1.5">
+                                  <button
+                                    onClick={() => handleEdit(partido)}
+                                    className="btn-outline px-2.5 py-1 text-xs"
+                                    title="Editar"
+                                  >
+                                    <FaPencilAlt />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDelete(partido.id, partido.fecha)}
+                                    className="btn-danger px-2.5 py-1 text-xs"
+                                    title="Eliminar"
+                                  >
+                                    <FaTrashAlt />
+                                  </button>
+                                  <button
+                                    onClick={() => navigate(`/partidos/${partido.id}`)}
+                                    className="bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-lg text-xs hover:bg-blue-500/30 transition"
+                                    title="Inspeccionar"
+                                  >
+                                    <FaEye />
+                                  </button>
+                                </div>
+                              </td>
 
-      </tr>
-    ))}
-    </tbody>
-    </table>
-    </div>
-    ) : (
-    <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
-    )}
-    </div>
-  ) : (
-    <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
-  )
-)}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm px-4 pb-4">No hay partidos para esta fecha.</p>
+              )
+            )}
 
 
 
@@ -435,12 +435,12 @@ const navigate = useNavigate();
 
       {showForm && (
         <FormularioPartido
-  setCreator={setShowForm}
-  selectedPartido={selectedPartido} // <-- antes estaba null
-  onSave={handleSave}
-  initialFecha={selectedFecha}
-  torneoInfo={{ id: torneo.id, name: torneo.name }}
-/>
+          setCreator={setShowForm}
+          selectedPartido={selectedPartido} // <-- antes estaba null
+          onSave={handleSave}
+          initialFecha={selectedFecha}
+          torneoInfo={{ id: torneo.id, name: torneo.name }}
+        />
 
       )}
     </div>

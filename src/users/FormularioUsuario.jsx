@@ -100,9 +100,11 @@ const FormularioUsuario = ({ setMostrarFormulario, usuarioSeleccionado, onSave }
             className="input-modern"
             required
           >
-            <option value="freeUser">freeUser</option>
-            <option value="SubsUser">SubsUser</option>
-            <option value="admin">admin</option>
+            <option value="freeUser">freeUser — usuario gratuito</option>
+            <option value="SubsUser">SubsUser — suscriptor (MP)</option>
+            <option value="SubsUserManual">SubsUserManual — premium manual</option>
+            <option value="periodista">periodista — acceso admin + premium</option>
+            <option value="admin">admin — administrador</option>
           </select>
         </div>
 

@@ -43,8 +43,8 @@ const Usuarios = () => {
     const token = localStorage.getItem("access_token");
     try {
       const method = usuarioSeleccionado ? "PUT" : "POST";
-      const endpoint = usuarioSeleccionado 
-        ? `${apiUrl}/users/${usuarioSeleccionado.id}` 
+      const endpoint = usuarioSeleccionado
+        ? `${apiUrl}/users/${usuarioSeleccionado.id}`
         : `${apiUrl}/users`;
 
       const response = await fetch(endpoint, {
@@ -116,7 +116,7 @@ const Usuarios = () => {
         u.name?.toLowerCase().includes(q) ||
         u.email?.toLowerCase().includes(q) ||
         u.rol?.toLowerCase().includes(q);
-      
+
       if (filterRol === "all") return matchesSearch;
       if (filterRol === "subscribers") return matchesSearch && (u.subscriptionStatus === "active" || u.subscriptionStatus === "authorized" || u.is_premium === true);
       if (filterRol === "free") return matchesSearch && u.subscriptionStatus !== "active" && u.subscriptionStatus !== "authorized" && !u.is_premium;
@@ -180,9 +180,9 @@ const Usuarios = () => {
         </select>
       </div>
 
-      <ListaUsuarios 
-        usuarios={filteredUsuarios} 
-        onEdit={handleEdit} 
+      <ListaUsuarios
+        usuarios={filteredUsuarios}
+        onEdit={handleEdit}
         onDelete={deleteUsuario}
         onCancelSubscription={cancelUserSubscription}
       />
@@ -198,7 +198,7 @@ const Usuarios = () => {
         </button>
       </div>
       {mostrarFormulario && (
-        <FormularioUsuario 
+        <FormularioUsuario
           setMostrarFormulario={setMostrarFormulario}
           usuarioSeleccionado={usuarioSeleccionado}
           onSave={saveUsuario}

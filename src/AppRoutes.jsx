@@ -64,8 +64,8 @@ const AppRoutes = () => {
     { path: "/torneos", element: <Torneos /> },
     { path: "/torneos/editar/:id", element: <FormularioTorneo /> },
     { path: "/torneos/lista", element: <ListaTorneos /> },
-    { path: "/torneos/inspect/:id", element: <TorneoInspect/>},
-    
+    { path: "/torneos/inspect/:id", element: <TorneoInspect /> },
+
     { path: "/partidos", element: <Partidos /> },
     { path: "/partidos/formulario", element: <FormularioPartido /> },
     { path: "/partidos/editar/:id", element: <FormularioPartido /> },

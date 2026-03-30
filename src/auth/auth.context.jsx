@@ -10,6 +10,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscriptionStatus, setSubscriptionStatus] = useState("none");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const ADMIN_ROLES = ["admin", "periodista"];
+  const PREMIUM_ROLES = ["admin", "periodista", "SubsUserManual"];
 
   // Función para verificar y refrescar el token automáticamente
   const checkTokenValidity = async () => {
@@ -27,11 +31,10 @@ export const AuthProvider = ({ children }) => {
         const newDecoded = jwt_decode(newToken);
         setUser(newDecoded);
         setIsAuthenticated(true);
-        // Admin users get automatic premium access
-        if (newDecoded.rol === "admin") {
+        setIsAdmin(ADMIN_ROLES.includes(newDecoded.rol));
+        if (PREMIUM_ROLES.includes(newDecoded.rol)) {
           setIsSubscribed(true);
         }
-        // Cargar estado de suscripción
         loadSubscription();
         return true;
       }
@@ -39,8 +42,8 @@ export const AuthProvider = ({ children }) => {
       // Si el token es válido
       setUser(decoded);
       setIsAuthenticated(true);
-      // Admin users get automatic premium access
-      if (decoded.rol === "admin") {
+      setIsAdmin(ADMIN_ROLES.includes(decoded.rol));
+      if (PREMIUM_ROLES.includes(decoded.rol)) {
         setIsSubscribed(true);
       }
       // Cargar estado de suscripción
@@ -64,16 +67,13 @@ export const AuthProvider = ({ children }) => {
       // Admin users get automatic premium access
       const token = localStorage.getItem("access_token");
       const decoded = token ? jwt_decode(token) : null;
-      const isAdmin = decoded?.rol === "admin";
-      // El backend puede devolver "active" o "authorized"
-      setIsSubscribed(isAdmin || status === "authorized" || status === "active" || data.is_premium === true);
+      const rolePremium = decoded ? PREMIUM_ROLES.includes(decoded.rol) : false;
+      setIsSubscribed(rolePremium || status === "authorized" || status === "active" || data.is_premium === true);
     } catch (err) {
       console.error("Error cargando suscripción:", err);
-      // Check if user is admin even if subscription check fails
       const token = localStorage.getItem("access_token");
       const decoded = token ? jwt_decode(token) : null;
-      const isAdmin = decoded?.rol === "admin";
-      setIsSubscribed(isAdmin);
+      setIsSubscribed(decoded ? PREMIUM_ROLES.includes(decoded.rol) : false);
       setSubscriptionStatus("none");
     }
   };
@@ -119,6 +119,7 @@ export const AuthProvider = ({ children }) => {
       logout, 
       checkTokenValidity,
       isSubscribed,
+      isAdmin,
       subscriptionStatus,
       refreshSubscription: loadSubscription
     }}>

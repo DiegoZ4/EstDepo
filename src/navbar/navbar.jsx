@@ -9,7 +9,7 @@ function Navbar() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showTorneosMenu, setShowTorneosMenu] = useState(false);
   const [torneos, setTorneos] = useState([]);
-  const { isAuthenticated, user, logout, isSubscribed } = useContext(AuthContext);
+  const { isAuthenticated, user, logout, isSubscribed, isAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
   const tournamentMenuRef = useRef(null);
   const userMenuRef = useRef(null);
@@ -57,7 +57,7 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 border-b border-gray-700/40 bg-black/60 backdrop-blur-xl">
       <div className="flex items-center gap-2">
-        {isAuthenticated && user?.rol === "admin" && (
+        {isAuthenticated && isAdmin && (
           <button
             onClick={() => setShowMenu(!showMenu)}
             className="mr-2 p-2 rounded-xl text-[#a0f000] hover:bg-white/5 transition"
@@ -80,16 +80,16 @@ function Navbar() {
 
         {/* Premium badge / link */}
         <NavLink
-          to={user?.rol === "admin" ? "/perfil" : "/suscipcion"}
+          to={isAdmin ? "/perfil" : "/suscipcion"}
           className={`ml-3 px-3 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${
-            user?.rol === "admin"
+            isAdmin
               ? "bg-gradient-to-r from-[#a0f000] to-[#78b800] text-black shadow-lg shadow-[#a0f000]/20"
               : isSubscribed
               ? "bg-gradient-to-r from-[#a0f000] to-[#78b800] text-black shadow-lg shadow-[#a0f000]/20"
               : "border border-[#a0f000]/50 text-[#a0f000] hover:bg-[#a0f000]/10 hover:border-[#a0f000]"
           }`}
         >
-          {user?.rol === "admin" ? "★ Admin" : isSubscribed ? "★ Premium" : "Ser Premium"}
+          {user?.rol === "admin" ? "★ Admin" : user?.rol === "periodista" ? "★ Periodista" : isSubscribed ? "★ Premium" : "Ser Premium"}
         </NavLink>
 
         {/* Torneos */}
@@ -170,6 +170,8 @@ function Navbar() {
                       <span className="text-white font-medium">{user.name}</span>
                       {user?.rol === "admin" ? (
                         <span className="ml-2 text-[10px] bg-[#a0f000]/20 text-[#a0f000] px-1.5 py-0.5 rounded-full font-bold">ADMIN</span>
+                      ) : user?.rol === "periodista" ? (
+                        <span className="ml-2 text-[10px] bg-blue-400/20 text-blue-300 px-1.5 py-0.5 rounded-full font-bold">PERIODISTA</span>
                       ) : isSubscribed && (
                         <span className="ml-2 text-[10px] bg-[#a0f000]/20 text-[#a0f000] px-1.5 py-0.5 rounded-full font-bold">PREMIUM</span>
                       )}
@@ -203,7 +205,7 @@ function Navbar() {
       </div>
 
       {/* Menú lateral admin */}
-      {isAuthenticated && user?.rol === "admin" && (
+      {isAuthenticated && isAdmin && (
         <>
           {showMenu && (
             <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowMenu(false)} />
