@@ -1,7 +1,7 @@
 import React from "react";
-import { FiStar, FiXCircle } from "react-icons/fi";
+import { FiStar, FiXCircle, FiInfo } from "react-icons/fi";
 
-const ListaUsuarios = ({ usuarios, onEdit, onDelete, onCancelSubscription }) => {
+const ListaUsuarios = ({ usuarios, onEdit, onDelete, onCancelSubscription, onViewDetails }) => {
   const isSubscribed = (usuario) => {
     return usuario.subscriptionStatus === "active" || 
            usuario.subscriptionStatus === "authorized" || 
@@ -33,6 +33,12 @@ const ListaUsuarios = ({ usuarios, onEdit, onDelete, onCancelSubscription }) => 
             )}
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => onViewDetails(usuario)}
+              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl text-blue-400 border border-blue-500/30 hover:bg-blue-500/10 transition"
+            >
+              <FiInfo className="w-3.5 h-3.5" /> Ver detalles
+            </button>
             <button 
               onClick={() => onEdit(usuario)}
               className="btn-outline px-3 py-1.5 text-sm"

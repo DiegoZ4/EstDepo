@@ -37,10 +37,15 @@ const Fixture = () => {
         const totalFechas = data.fechas || 1;
         setMaxFecha(totalFechas);
 
-        // Buscar la última fecha que tenga partidos cargados
-        if (!isSubscribed && categoriaId) {
-          let found = null;
-          for (let f = totalFechas; f >= 1; f--) {
+        // Buscar la última fecha con partidos cargados y aplicar lógica de día
+        if (categoriaId) {
+          // Lunes=1 ... Jueves=4 → última fecha con ≥70% partidos finalizados
+          // Viernes=5, Sábado=6, Domingo=0 → fecha siguiente (próxima jornada)
+          const diaSemana = new Date().getDay(); // 0=Dom, 1=Lun ... 6=Sab
+          const esFinde = diaSemana === 0 || diaSemana === 5 || diaSemana === 6;
+
+          // Función que verifica si una fecha tiene al menos 70% de partidos finalizados
+          const fechaTienePartidosFinalizados = async (f) => {
             try {
               const r = await fetch(
                 `${apiUrl}/partido/${torneoId}/fixture/${categoriaId}/${f}`,
@@ -51,17 +56,35 @@ const Fixture = () => {
                   },
                 }
               );
-              if (r.ok) {
-                const arr = await r.json();
-                if (Array.isArray(arr) && arr.length > 0) {
-                  found = f;
-                  break;
-                }
-              }
-            } catch (e) { /* skip */ }
+              if (!r.ok) return false;
+              const arr = await r.json();
+              if (!Array.isArray(arr) || arr.length === 0) return false;
+              const finalizados = arr.filter(p =>
+                p.estado === "Finalizado" || p.estado === "finalizado"
+              ).length;
+              return finalizados / arr.length >= 0.7;
+            } catch (e) { return false; }
+          };
+
+          let ultimaConPartidos = null;
+          for (let f = totalFechas; f >= 1; f--) {
+            if (await fechaTienePartidosFinalizados(f)) {
+              ultimaConPartidos = f;
+              break;
+            }
           }
-          const ultima = found || 1;
-          setCurrentFecha(ultima);
+
+          let fechaTarget;
+          if (esFinde) {
+            // Viernes-Domingo: mostrar la fecha siguiente a la última jugada
+            fechaTarget = ultimaConPartidos
+              ? Math.min(ultimaConPartidos + 1, totalFechas)
+              : 1;
+          } else {
+            // Lunes-Jueves: mostrar la última fecha con partidos
+            fechaTarget = ultimaConPartidos || 1;
+          }
+          setCurrentFecha(fechaTarget);
         }
       } catch (err) {
         console.error("Error fetching torneo:", err);

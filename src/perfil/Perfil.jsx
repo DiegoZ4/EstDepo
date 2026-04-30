@@ -256,7 +256,16 @@ const Perfil = () => {
 
   if (!isAuthenticated) return null;
 
-  const subStatus = subData?.status || "none";
+  const subStatus = (() => {
+    const s = subData?.status;
+    if (s === "active" || s === "authorized") return s;
+    // Si el estado no es activo pero hay fecha de fin futura, considerar activo
+    if (subData?.subscription_end_date) {
+      const endDate = new Date(subData.subscription_end_date);
+      if (endDate > new Date()) return "authorized";
+    }
+    return s || "none";
+  })();
   const statusInfo = getStatusLabel(subStatus);
   const isActive = subStatus === "active" || subStatus === "authorized";
 

@@ -34,6 +34,9 @@ export default function Home() {
     fetchTorneos();
   }, [apiUrl]);
 
+  const [verMasTorneos, setVerMasTorneos] = useState(false);
+  const TORNEOS_VISIBLES = 5;
+
   return (
     <div className="w-full min-h-screen flex flex-col">
       {/* Anuncio superior para móvil */}
@@ -95,7 +98,7 @@ export default function Home() {
           </div>
 
           {/* Feature cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full mb-10 animate-fade-up delay-200">
+          <div className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full mb-10 animate-fade-up delay-200">
             {[
               { icon: <FiBarChart2 className="w-5 h-5" />, title: "Estadísticas", desc: "Datos completos actualizados" },
               { icon: <FiTrendingUp className="w-5 h-5" />, title: "En Vivo", desc: "Resultados al instante" },
@@ -139,24 +142,44 @@ export default function Home() {
                   <h2 className="text-xl font-bold text-white mb-6 text-center">
                     Torneos disponibles
                   </h2>
-                  <ul className="space-y-2 mb-6">
-                    {torneosRecomendados.map((torneo) => (
-                      <li key={torneo.id}>
-                        <NavLink
-                          to={`/torneo/${torneo.id}`}
-                          className="flex items-center justify-between py-3 px-4 rounded-xl hover:bg-white/5 transition group"
-                        >
-                          <span className="text-gray-200 font-medium group-hover:text-[#a0f000] transition">
-                            {torneo.name}
-                          </span>
-                          <FiArrowRight className="w-4 h-4 text-gray-600 group-hover:text-[#a0f000] group-hover:translate-x-1 transition-all" />
-                        </NavLink>
-                      </li>
-                    ))}
-                    {torneosRecomendados.length === 0 && (
-                      <li className="text-center text-gray-500 py-4">No hay torneos disponibles</li>
-                    )}
-                  </ul>
+                  {(() => {
+                    const sorted = [...torneosRecomendados].sort((a, b) => {
+                      const da = new Date(a.updatedAt || a.updated_at || a.createdAt || a.created_at || 0);
+                      const db = new Date(b.updatedAt || b.updated_at || b.createdAt || b.created_at || 0);
+                      return db - da;
+                    });
+                    const visibles = verMasTorneos ? sorted : sorted.slice(0, TORNEOS_VISIBLES);
+                    return (
+                      <>
+                        <ul className="space-y-2 mb-4">
+                          {visibles.map((torneo) => (
+                            <li key={torneo.id}>
+                              <NavLink
+                                to={`/torneo/${torneo.id}`}
+                                className="flex items-center justify-between py-3 px-4 rounded-xl hover:bg-white/5 transition group"
+                              >
+                                <span className="text-gray-200 font-medium group-hover:text-[#a0f000] transition">
+                                  {torneo.name}
+                                </span>
+                                <FiArrowRight className="w-4 h-4 text-gray-600 group-hover:text-[#a0f000] group-hover:translate-x-1 transition-all" />
+                              </NavLink>
+                            </li>
+                          ))}
+                          {sorted.length === 0 && (
+                            <li className="text-center text-gray-500 py-4">No hay torneos disponibles</li>
+                          )}
+                        </ul>
+                        {sorted.length > TORNEOS_VISIBLES && (
+                          <button
+                            onClick={() => setVerMasTorneos((v) => !v)}
+                            className="w-full py-2 text-sm text-[#a0f000] hover:text-white border border-[#a0f000]/20 hover:border-[#a0f000]/50 rounded-xl transition mb-4"
+                          >
+                            {verMasTorneos ? "Ver menos ▲" : `Ver más (${sorted.length - TORNEOS_VISIBLES} torneos) ▼`}
+                          </button>
+                        )}
+                      </>
+                    );
+                  })()}
                   <div className="border-t border-gray-700/40 pt-5 text-center">
                     <p className="text-sm text-gray-500 mb-3">¿Notaste algún error? Contactanos</p>
                     <a

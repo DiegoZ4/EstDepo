@@ -62,7 +62,13 @@ export const AuthProvider = ({ children }) => {
   const loadSubscription = async () => {
     try {
       const data = await getSubscriptionStatus();
-      const status = data.status || "none";
+      // Si el status no es activo pero hay fecha de fin futura, considerar autorizado
+      let rawStatus = data.status;
+      if (rawStatus !== "active" && rawStatus !== "authorized" && data.subscription_end_date) {
+        const endDate = new Date(data.subscription_end_date);
+        if (endDate > new Date()) rawStatus = "authorized";
+      }
+      const status = rawStatus || "none";
       setSubscriptionStatus(status);
       // Admin users get automatic premium access
       const token = localStorage.getItem("access_token");

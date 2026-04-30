@@ -31,7 +31,12 @@ const Suscripcion = () => {
     try {
       setLoading(true);
       const data = await getSubscriptionStatus();
-      setSubscriptionStatus(data.status || "none");
+      let rawStatus = data.status;
+      if (rawStatus !== "active" && rawStatus !== "authorized" && data.subscription_end_date) {
+        const endDate = new Date(data.subscription_end_date);
+        if (endDate > new Date()) rawStatus = "authorized";
+      }
+      setSubscriptionStatus(rawStatus || "none");
     } catch (err) {
       console.error("Error cargando estado:", err);
     } finally {

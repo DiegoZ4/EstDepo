@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ListaUsuarios from "./ListaUsuarios";
 import FormularioUsuario from "./FormularioUsuario";
 import { apiRequest } from "../services/apiService";
+import { FiX, FiRefreshCw } from "react-icons/fi";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -12,6 +13,10 @@ const Usuarios = () => {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [filterRol, setFilterRol] = useState("all");
+  const [detalleUsuario, setDetalleUsuario] = useState(null);
+  const [detalleSub, setDetalleSub] = useState(null);
+  const [detalleLoading, setDetalleLoading] = useState(false);
+  const [detalleError, setDetalleError] = useState(null);
 
   const fetchUsuarios = async () => {
     const token = localStorage.getItem("access_token");
@@ -84,6 +89,27 @@ const Usuarios = () => {
       fetchUsuarios();
     } catch (error) {
       console.error("Error al eliminar el usuario:", error);
+    }
+  };
+
+  const handleVerDetalles = async (usuario) => {
+    setDetalleUsuario(usuario);
+    setDetalleSub(null);
+    setDetalleError(null);
+    setDetalleLoading(true);
+    try {
+      const res = await apiRequest(`/subscriptions/admin/${usuario.id}`, { method: "GET" });
+      if (res.ok) {
+        const data = await res.json();
+        setDetalleSub(data);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setDetalleError(err.message || `Error ${res.status}`);
+      }
+    } catch (e) {
+      setDetalleError("No se pudo conectar con el servidor.");
+    } finally {
+      setDetalleLoading(false);
     }
   };
 
@@ -185,6 +211,7 @@ const Usuarios = () => {
         onEdit={handleEdit}
         onDelete={deleteUsuario}
         onCancelSubscription={cancelUserSubscription}
+        onViewDetails={handleVerDetalles}
       />
       <div className="flex justify-center mt-6">
         <button
@@ -204,8 +231,91 @@ const Usuarios = () => {
           onSave={saveUsuario}
         />
       )}
+
+      {/* Modal detalles suscripción */}
+      {detalleUsuario && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+          <div className="glass-card w-full max-w-md p-6 relative">
+            <button
+              onClick={() => setDetalleUsuario(null)}
+              className="absolute top-3 right-3 text-gray-400 hover:text-white transition"
+            >
+              <FiX className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-bold text-white mb-1">Detalles de suscripción</h2>
+            <p className="text-sm text-gray-400 mb-4">
+              {detalleUsuario.name} — <span className="text-gray-300">{detalleUsuario.email}</span>
+            </p>
+
+            {detalleLoading && (
+              <div className="flex items-center gap-2 text-gray-400 text-sm">
+                <FiRefreshCw className="animate-spin w-4 h-4" /> Cargando...
+              </div>
+            )}
+
+            {detalleError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-red-400 text-sm">
+                {detalleError}
+              </div>
+            )}
+
+            {detalleSub && !detalleLoading && (() => {
+              const sub = detalleSub.subscription;
+              const usr = detalleSub.user;
+              return (
+                <div className="space-y-2 text-sm">
+                  {/* Suscripción */}
+                  <p className="text-xs text-gray-500 uppercase tracking-wider pt-1">Suscripción</p>
+                  <Row label="Estado" value={sub?.status ?? "—"} highlight />
+                  <Row label="is_premium" value={sub?.is_premium ? "true" : "false"} />
+                  <Row label="Inicio" value={fmtDate(sub?.start_date)} />
+                  <Row label="Fin" value={fmtDate(sub?.end_date)} />
+                  <Row label="Subscription ID" value={sub?.subscription_id ?? "—"} mono />
+                  <Row label="Último pago ID" value={sub?.last_payment_id ?? "—"} mono />
+                  <Row
+                    label="Cancelación pendiente"
+                    value={sub?.pending_cancellation ? "Sí" : "No"}
+                  />
+                  {/* Usuario */}
+                  <p className="text-xs text-gray-500 uppercase tracking-wider pt-3">Usuario</p>
+                  <Row label="Nombre" value={usr?.name ?? "—"} />
+                  <Row label="Email" value={usr?.email ?? "—"} />
+                  <Row label="Rol" value={usr?.rol ?? "—"} />
+                  <Row label="ID" value={usr?.id ?? "—"} mono />
+                  <details className="mt-3">
+                    <summary className="cursor-pointer text-gray-400 hover:text-white transition">Ver JSON completo</summary>
+                    <pre className="mt-2 text-xs text-gray-300 bg-white/5 rounded-lg p-3 overflow-auto max-h-48">
+                      {JSON.stringify(detalleSub, null, 2)}
+                    </pre>
+                  </details>
+                </div>
+              );
+            })()}
+
+            {!detalleSub && !detalleLoading && !detalleError && (
+              <p className="text-gray-400 text-sm">Sin datos de suscripción.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+const fmtDate = (d) => {
+  if (!d) return "—";
+  try {
+    return new Date(d).toLocaleString("es-AR", { dateStyle: "medium", timeStyle: "short" });
+  } catch { return d; }
+};
+
+const Row = ({ label, value, highlight, mono }) => (
+  <div className="flex justify-between items-start gap-2 py-1.5 border-b border-white/5">
+    <span className="text-gray-400 shrink-0">{label}</span>
+    <span className={`text-right break-all ${highlight ? "text-[#a0f000] font-bold" : "text-gray-200"} ${mono ? "font-mono text-xs" : ""}`}>
+      {String(value)}
+    </span>
+  </div>
+);
 
 export default Usuarios;

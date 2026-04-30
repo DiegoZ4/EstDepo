@@ -148,7 +148,7 @@ function TorneoView() {
         </div>
 
         {/* Main Content */}
-        <div className="lg:flex-1 px-4 lg:px-0">
+        <div className="lg:flex-1">
           {/* Tournament Header */}
           <div className="text-center my-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gradient-accent uppercase tracking-wide">

@@ -101,7 +101,7 @@ const AppRoutes = () => {
     },
   ]);
 
-  return <div className="p-4 md:p-6 animate-fade-in">{routes}</div>;
+  return <div className="py-0 px-2 animate-fade-in">{routes}</div>;
 };
 
 export default AppRoutes;
