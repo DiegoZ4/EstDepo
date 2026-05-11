@@ -97,7 +97,10 @@ function Navbar() {
           className="relative ml-2"
           onMouseEnter={() => setShowTorneosMenu(true)}
         >
-          <button className="flex items-center gap-1 px-3 py-2 rounded-xl text-gray-300 hover:text-[#a0f000] hover:bg-white/5 transition text-sm font-medium">
+          <button
+            onClick={() => setShowTorneosMenu((v) => !v)}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl text-gray-300 hover:text-[#a0f000] hover:bg-white/5 transition text-sm font-medium"
+          >
             Torneos
             <FiChevronDown className={`w-3.5 h-3.5 transition-transform ${showTorneosMenu ? 'rotate-180' : ''}`} />
           </button>
@@ -105,12 +108,16 @@ function Navbar() {
             <div
               ref={tournamentMenuRef}
               onMouseLeave={() => setShowTorneosMenu(false)}
-              className="absolute left-0 mt-1 w-72 p-2 shadow-2xl animate-fade-in rounded-2xl border border-gray-700/40 backdrop-blur-md"
-              style={{ background: 'rgba(13, 31, 31, 0.80)' }}
+              className="fixed left-0 right-0 mx-auto mt-0 w-full sm:absolute sm:left-0 sm:right-auto sm:w-72 sm:mt-1 p-2 shadow-2xl animate-fade-in rounded-b-2xl sm:rounded-2xl border-t border-gray-700/40 sm:border backdrop-blur-md z-50"
+              style={{ background: 'rgba(13, 31, 31, 0.97)', top: '56px' }}
             >
               {isAuthenticated ? (
                 <ul className="space-y-0.5">
-                  {torneos.map((t) => (
+                  {[...torneos].sort((a, b) => {
+                    const da = new Date(a.updatedAt || a.updated_at || a.createdAt || a.created_at || 0);
+                    const db = new Date(b.updatedAt || b.updated_at || b.createdAt || b.created_at || 0);
+                    return db - da;
+                  }).map((t) => (
                     <li
                       key={t.id}
                       onClick={() => handleSelectTorneo(t.id)}
