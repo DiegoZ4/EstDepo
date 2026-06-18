@@ -139,18 +139,20 @@ function TorneoView() {
       </div>
 
       {/* Desktop Layout with Sidebars */}
-      <div className="lg:flex lg:gap-6 lg:max-w-5xl lg:mx-auto lg:px-4">
-        {/* Left Advertisement - Desktop Only (solo para no premium) */}
-        {!isSubscribed && (
-          <div className="hidden lg:block lg:w-56 xl:w-64 lg:flex-shrink-0">
-            <div className="sticky top-20">
-              <AdBanner type="desktop-left" />
-            </div>
+      {/* Anuncios laterales (no premium) — absolutos en los márgenes para no comprimir el centro */}
+      {!isSubscribed && (
+        <>
+          <div className="hidden 2xl:block absolute top-0 bottom-0 left-2 w-56">
+            <div className="sticky top-20"><AdBanner type="desktop-left" /></div>
           </div>
-        )}
+          <div className="hidden 2xl:block absolute top-0 bottom-0 right-2 w-56">
+            <div className="sticky top-20"><AdBanner type="desktop-right" /></div>
+          </div>
+        </>
+      )}
 
-        {/* Main Content */}
-        <div className="flex-1 min-w-0">
+      {/* Contenido principal — mismo ancho con o sin anuncios */}
+      <div className="max-w-5xl mx-auto px-4">
           {/* Tournament Header */}
           <div className="text-center my-6">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gradient-accent uppercase tracking-wide">
@@ -231,16 +233,6 @@ function TorneoView() {
               <p>Por favor selecciona una categoría</p>
             </div>
           )}
-        </div>
-
-        {/* Right Advertisement - Desktop Only (solo para no premium) */}
-        {!isSubscribed && (
-          <div className="hidden lg:block lg:w-56 xl:w-64 lg:flex-shrink-0">
-            <div className="sticky top-20">
-              <AdBanner type="desktop-right" />
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Mobile Advertisement - Bottom */}

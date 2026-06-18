@@ -225,7 +225,8 @@ const TorneoInspect = () => {
         estado: partidoData.estado,
         group: partidoData.group, // asegurate de que este campo exista en el DTO del backend
         groupLocal: partidoData.groupLocal,
-        groupVisitante: partidoData.groupVisitante
+        groupVisitante: partidoData.groupVisitante,
+        fechaDeterminada: partidoData.fechaDeterminada
       };
 
       const response = await fetch(endpoint, {
@@ -368,12 +369,12 @@ const TorneoInspect = () => {
                       <table className="table-modern w-full">
                         <thead>
                           <tr>
-                            <th className="px-4 py-3 text-center">ID</th>
-                            <th className="px-4 py-3 text-center">Fecha</th>
-                            <th className="px-4 py-3 text-center">Categoría</th>
-                            <th className="px-4 py-3 text-center">Local</th>
-                            <th className="px-4 py-3 text-center">Visitante</th>
-                            <th className="px-4 py-3 text-center">Acciones</th>
+                            <th className="px-4 py-3 !text-center">ID</th>
+                            <th className="px-4 py-3 !text-center">Fecha</th>
+                            <th className="px-4 py-3 !text-center">Categoría</th>
+                            <th className="px-4 py-3 !text-center">Local</th>
+                            <th className="px-4 py-3 !text-center">Visitante</th>
+                            <th className="px-4 py-3 !text-center">Acciones</th>
                           </tr>
                         </thead>
                         <tbody>

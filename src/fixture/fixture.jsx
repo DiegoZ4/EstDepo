@@ -1,8 +1,37 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../auth/auth.context";
-import { FiLock, FiArrowRight } from "react-icons/fi";
+import { FiLock, FiArrowRight, FiEdit2, FiCalendar } from "react-icons/fi";
 import Paginador from "./Paginador";
+import Pronostico from "../Pronosticos/Pronostico";
+import PronosticoTutorial from "../Pronosticos/PronosticoTutorial";
+import FormularioPartido from "../Partidos/FormularioPartidos";
+
+// Formatea la fecha/hora del partido en español.
+// Se fija la zona en UTC para mostrar exactamente la hora cargada (la fecha se
+// guarda en UTC y, en Argentina UTC-3, el navegador la mostraría 3 horas menos).
+const formatFechaPartido = (iso) => {
+  try {
+    return new Date(iso).toLocaleString("es-AR", {
+      timeZone: "UTC",
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+};
+
+// ¿Ya pasó la hora de inicio? La fecha se guarda en UTC pero representa hora
+// argentina (UTC-3), así que sumamos 3h para comparar contra el instante real.
+const partidoYaEmpezo = (p) => {
+  if (!p?.date) return false;
+  const inicio = new Date(p.date).getTime() + 3 * 60 * 60 * 1000;
+  return Number.isFinite(inicio) && inicio <= Date.now();
+};
 
 const Fixture = () => {
   const { torneoId, categoriaId, fecha: initialFecha } = useParams();
@@ -18,7 +47,12 @@ const Fixture = () => {
   const [maxFecha, setMaxFecha] = useState(null);
   const [torneo, setTorneo] = useState(null);
   const [equipoLibre, setEquipoLibre] = useState(null);
-  const { isSubscribed } = useContext(AuthContext);
+  const { isSubscribed, isAdmin } = useContext(AuthContext);
+
+  // Edición de partido (solo admin)
+  const [editPartido, setEditPartido] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [reloadFlag, setReloadFlag] = useState(0);
 
   // 1) Traer datos del torneo y buscar última fecha con datos
   useEffect(() => {
@@ -138,7 +172,47 @@ const Fixture = () => {
     );
     console.log(currentFecha);
 
-  }, [apiUrl, torneoId, categoriaId, currentFecha, navigate]);
+  }, [apiUrl, torneoId, categoriaId, currentFecha, navigate, reloadFlag]);
+
+  // Edición de partido (admin) — abre el formulario y refresca al guardar
+  const handleEditPartido = (partido) => {
+    setEditPartido(partido);
+    setShowForm(true);
+  };
+
+  const handleSavePartido = async (partidoData) => {
+    const token = localStorage.getItem("access_token");
+    try {
+      const body = {
+        equipoVisitanteId: partidoData.equipoVisitanteId,
+        equipoLocalId: partidoData.equipoLocalId,
+        torneoId: partidoData.torneoId,
+        categoriaId: partidoData.categoriaId,
+        fecha: partidoData.fecha,
+        date: partidoData.date,
+        estado: partidoData.estado,
+        group: partidoData.group,
+        groupLocal: partidoData.groupLocal,
+        groupVisitante: partidoData.groupVisitante,
+        fechaDeterminada: partidoData.fechaDeterminada,
+      };
+      const res = await fetch(`${apiUrl}/partido/${editPartido.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setReloadFlag((f) => f + 1);
+    } catch (err) {
+      console.error("Error guardando partido:", err);
+    } finally {
+      setShowForm(false);
+      setEditPartido(null);
+    }
+  };
 
   if (loading) return (
     <div className="flex items-center justify-center py-12">
@@ -171,6 +245,9 @@ const Fixture = () => {
   return (
 
     <div className="max-w-4xl mx-auto p-2 md:p-4">
+
+      {/* Tutorial de pronósticos (se muestra una sola vez, guardado en cookie) */}
+      <PronosticoTutorial />
 
       {isSubscribed ? (
         <Paginador
@@ -235,11 +312,12 @@ const Fixture = () => {
               const expanded = expandedIndex === key;
               return (
                 <div key={key}>
+                  <div className="flex items-stretch gap-2">
                   <div
                     onClick={() =>
                       setExpandedIndex(expanded ? null : key)
                     }
-                    className="cursor-pointer glass-card-sm overflow-hidden hover:border-[#a0f000]/30 transition-all duration-200"
+                    className="flex-1 min-w-0 cursor-pointer glass-card-sm overflow-hidden hover:border-[#a0f000]/30 transition-all duration-200"
                   >
                     {/* Layout para móvil */}
                     <div className="md:hidden">
@@ -350,10 +428,39 @@ const Fixture = () => {
                     </div>
                   </div>
 
-                  {/* Detalle goles */}
+                  {/* Botón editar (solo admin) — a la derecha de la caja */}
+                  {isAdmin && (
+                    <button
+                      onClick={() => handleEditPartido(p)}
+                      title="Editar partido"
+                      className="flex-shrink-0 px-3 flex items-center justify-center rounded-xl border border-gray-700/40 text-gray-400 hover:text-[#a0f000] hover:border-[#a0f000]/40 transition"
+                    >
+                      <FiEdit2 className="w-4 h-4" />
+                    </button>
+                  )}
+                  </div>
+
+                  {/* Detalle expandido: pronóstico + goles */}
                   {expanded && (
-                    isSubscribed ? (
-                      <div className="mt-2 md:mt-3 flex flex-col gap-2 md:gap-3 px-2 md:px-0 md:flex-row animate-fade-in">
+                    <div className="mt-2 md:mt-3 px-2 md:px-0 space-y-2 md:space-y-3 animate-fade-in">
+                      {/* Fecha del partido — solo si está confirmada */}
+                      {p.fechaDeterminada && p.date && (
+                        <div className="glass-card-sm p-3 flex items-center justify-center gap-2 text-center">
+                          <FiCalendar className="w-4 h-4 text-[#a0f000] flex-shrink-0" />
+                          <div>
+                            <p className="text-xs text-gray-400 leading-none mb-0.5">Fecha del partido</p>
+                            <p className="text-sm font-semibold text-white capitalize">{formatFechaPartido(p.date)}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Pronóstico (favorito) — visible para todos */}
+                      <Pronostico partido={p} isSubscribed={isSubscribed} />
+
+                      {/* Detalle de goles — si está finalizado o ya empezó (aunque siga pendiente) */}
+                      {(p.estado === "Finalizado" || (p.estado === "Pendiente" && partidoYaEmpezo(p))) && (
+                      isSubscribed ? (
+                      <div className="flex flex-col gap-2 md:gap-3 md:flex-row">
                         {/* Local */}
                         <div className="flex-1 glass-card-sm p-3">
                           <h4 className="text-[#a0f000] font-semibold mb-2 text-center text-sm">
@@ -401,15 +508,17 @@ const Fixture = () => {
                           )}
                         </div>
                       </div>
-                    ) : (
-                      <div className="mt-2 glass-card-sm p-4 text-center animate-fade-in">
+                      ) : (
+                      <div className="glass-card-sm p-4 text-center">
                         <FiLock className="mx-auto text-gray-500 mb-2 w-5 h-5" />
                         <p className="text-sm text-gray-400 mb-2">Suscribite para ver el detalle de goles</p>
                         <NavLink to="/suscipcion" className="text-[#a0f000] text-sm hover:underline inline-flex items-center gap-1">
                           Ver planes <FiArrowRight className="w-3.5 h-3.5" />
                         </NavLink>
                       </div>
-                    )
+                      )
+                      )}
+                    </div>
                   )}
                 </div>
               );
@@ -441,6 +550,17 @@ const Fixture = () => {
             </NavLink>
           </div>
         </div>
+      )}
+
+      {/* Formulario de edición de partido (admin) */}
+      {showForm && editPartido && (
+        <FormularioPartido
+          setCreator={setShowForm}
+          selectedPartido={editPartido}
+          onSave={handleSavePartido}
+          initialFecha={editPartido.fecha}
+          torneoInfo={{ id: torneoId, name: torneo?.name }}
+        />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { FiMenu, FiUser, FiX, FiLogOut, FiLogIn, FiUserPlus, FiSettings, FiChevronDown } from "react-icons/fi";
-import { useSpring, animated } from "react-spring";
 import { AuthContext } from "../auth/auth.context";
 
 function Navbar() {
@@ -15,11 +15,6 @@ function Navbar() {
   const userMenuRef = useRef(null);
 
   const apiUrl = import.meta.env.VITE_API_URL;
-  const menuAnimation = useSpring({
-    transform: showMenu ? "translateX(0)" : "translateX(-100%)",
-    opacity: showMenu ? 1 : 0,
-    config: { duration: 200 },
-  });
 
   // Close user menu on outside click
   useEffect(() => {
@@ -161,7 +156,10 @@ function Navbar() {
           )}
         </button>
         {showUserMenu && (
-          <div className="absolute right-0 mt-2 w-56 glass-card p-2 shadow-2xl animate-fade-in bg-[#0d1f1f]/95">
+          <div
+            className="absolute right-0 mt-2 w-56 p-2 shadow-2xl animate-fade-in rounded-2xl border border-gray-700/40 backdrop-blur-md z-50"
+            style={{ background: 'rgba(13, 31, 31, 0.97)' }}
+          >
             <ul className="space-y-0.5">
               <li
                 onClick={() => { navigate("/perfil"); setShowUserMenu(false); }}
@@ -211,15 +209,15 @@ function Navbar() {
         )}
       </div>
 
-      {/* Menú lateral admin */}
-      {isAuthenticated && isAdmin && (
+      {/* Menú admin — en portal para escapar del backdrop-filter del nav */}
+      {isAuthenticated && isAdmin && showMenu && createPortal(
         <>
-          {showMenu && (
-            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowMenu(false)} />
-          )}
-          <animated.div
-            style={{ ...menuAnimation, background: 'rgba(13, 31, 31, 0.80)' }}
-            className="fixed left-0 top-0 z-50 flex h-full w-72 flex-col border-r border-gray-700/40 p-6 text-white shadow-2xl backdrop-blur-md"
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setShowMenu(false)} />
+          <div
+            style={{ background: 'rgba(13, 31, 31, 0.97)' }}
+            className="fixed z-50 flex flex-col text-white shadow-2xl backdrop-blur-md animate-fade-in border border-gray-700/40
+                       top-16 left-0 right-0 mx-auto w-[92%] max-w-sm max-h-[75vh] overflow-y-auto rounded-2xl p-5
+                       sm:top-0 sm:left-0 sm:right-auto sm:mx-0 sm:h-full sm:w-72 sm:max-w-none sm:max-h-none sm:rounded-none sm:border-0 sm:border-r sm:p-6"
           >
             <div className="flex items-center justify-between mb-8">
               <span className="text-lg font-bold text-[#a0f000]">Admin Panel</span>
@@ -256,8 +254,9 @@ function Navbar() {
                 </li>
               ))}
             </ul>
-          </animated.div>
-        </>
+          </div>
+        </>,
+        document.body
       )}
     </nav>
   );

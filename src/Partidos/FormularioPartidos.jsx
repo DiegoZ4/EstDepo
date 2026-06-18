@@ -14,8 +14,10 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
     // Nuevo campo para guardar el grupo del partido
     group: "",
       groupLocal: "",
-  groupVisitante: ""
-    
+  groupVisitante: "",
+    // Si la fecha/hora del partido ya está confirmada
+    fechaDeterminada: false
+
   });
   
   const [equipos, setEquipos] = useState([]);
@@ -93,9 +95,10 @@ const FormularioPartido = ({  setCreator, selectedPartido, onSave, initialFecha,
               categoriaId: data.category ? [data.category.id] : [],
               estado: data.estado || "Pendiente",
               // Si existe un grupo en el partido, lo asignamos
-                      group:           data.group           || "", 
+                      group:           data.group           || "",
         groupLocal:      data.groupLocal      || "",
-        groupVisitante:  data.groupVisitante  || ""
+        groupVisitante:  data.groupVisitante  || "",
+        fechaDeterminada: data.fechaDeterminada ?? false
             });
             if(data.groupLocal || data.groupVisitante){
               setIsInterzonal(true);
@@ -403,6 +406,34 @@ useEffect(() => {
           />
         </div>
 
+        </div>
+
+        {/* Fecha confirmada / provisional */}
+        <div className="flex items-center justify-between glass-card-sm !rounded-lg px-3 py-2">
+          <div>
+            <p className="text-sm font-medium text-gray-200">Fecha confirmada</p>
+            <p className="text-xs text-gray-500">
+              {formData.fechaDeterminada
+                ? "La fecha y hora son definitivas."
+                : "La fecha y hora son provisionales."}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setFormData((f) => ({ ...f, fechaDeterminada: !f.fechaDeterminada }))
+            }
+            className={`relative w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${
+              formData.fechaDeterminada ? "bg-[#a0f000]" : "bg-gray-600"
+            }`}
+            aria-pressed={formData.fechaDeterminada}
+          >
+            <span
+              className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${
+                formData.fechaDeterminada ? "translate-x-6" : "translate-x-0"
+              }`}
+            />
+          </button>
         </div>
 
         {/* Equipo Local */}

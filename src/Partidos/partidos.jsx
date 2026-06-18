@@ -214,7 +214,8 @@ const Partidos = () => {
       estado: partido.estado,
       group: partido.group,
       groupLocal: partido.groupLocal,
-      groupVisitante: partido.groupVisitante
+      groupVisitante: partido.groupVisitante,
+      fechaDeterminada: partido.fechaDeterminada
     };
 
     try {
