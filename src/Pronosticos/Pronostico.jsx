@@ -18,9 +18,15 @@ const Pronostico = ({ partido, isSubscribed }) => {
   const visitanteId = partido?.equipoVisitante?.id;
 
   // El partido ya no admite votos si arrancó o no está pendiente.
+  // Solo cerramos por fecha si está confirmada (fechaDeterminada); si la fecha es
+  // provisional se puede votar igual. La fecha se guarda en UTC pero representa
+  // hora argentina (UTC-3), por eso sumamos 3h para comparar con el instante real.
+  const yaEmpezoPorFecha =
+    partido?.fechaDeterminada &&
+    partido?.date &&
+    new Date(partido.date).getTime() + 3 * 60 * 60 * 1000 <= Date.now();
   const yaEmpezo =
-    (partido?.date && new Date(partido.date) <= new Date()) ||
-    (partido?.estado && partido.estado !== "Pendiente");
+    yaEmpezoPorFecha || (partido?.estado && partido.estado !== "Pendiente");
 
   const [resumen, setResumen] = useState(null);
   const [miVotoId, setMiVotoId] = useState(null);
