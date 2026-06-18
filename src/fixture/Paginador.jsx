@@ -1,3 +1,5 @@
+import { useRef, useEffect } from "react";
+
 export default function Paginador({
   current,
   max,
@@ -8,6 +10,21 @@ export default function Paginador({
   onLast
 }) {
   const fechas = Array.from({ length: max }, (_, i) => i + 1);
+
+  // Centra la fecha actual en el scroll horizontal (móvil) al cambiar de fecha.
+  const scrollRef = useRef(null);
+  const activeRef = useRef(null);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    const active = activeRef.current;
+    if (!container || !active) return;
+    const cRect = container.getBoundingClientRect();
+    const aRect = active.getBoundingClientRect();
+    const delta =
+      aRect.left - cRect.left - (container.clientWidth / 2 - active.clientWidth / 2);
+    container.scrollBy({ left: delta, behavior: "smooth" });
+  }, [current]);
 
   const navBtnClass = "px-3 py-1.5 rounded-lg glass-card-sm !rounded-lg text-gray-400 hover:text-[#a0f000] hover:border-[#a0f000]/30 disabled:opacity-30 disabled:hover:text-gray-400 transition text-sm";
 
@@ -62,11 +79,12 @@ export default function Paginador({
           </button>
         </div>
         
-        <div className="overflow-x-auto pb-2">
+        <div ref={scrollRef} className="overflow-x-auto pb-2">
           <div className="flex gap-1.5 px-4 min-w-max">
             {fechas.map((f) => (
               <button
                 key={f}
+                ref={f === current ? activeRef : null}
                 onClick={() => onSelect(f)}
                 className={`px-3 py-1.5 rounded-lg flex-shrink-0 text-sm transition-all ${
                   f === current
