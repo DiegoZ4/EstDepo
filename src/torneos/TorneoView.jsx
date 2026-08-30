@@ -1,19 +1,29 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate, NavLink } from 'react-router-dom';
+import { useParams, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../auth/auth.context';
 import { FiLock, FiArrowRight } from 'react-icons/fi';
 import Tablas from '../tablas/tablas';
 import Fixture from '../fixture/fixture';
 import Goleadores from '../Goleadores/goleadores';
+import Bracket from './Bracket';
 import AdBanner from '../components/AdBanner';
 
 function TorneoView() {
   const { torneoId, tab, categoriaId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isSubscribed } = useContext(AuthContext);
 
+  // El segmento de tab no es un :param de la ruta, así que lo sacamos del path:
+  // /torneo/:torneoId/<tab>/:categoriaId
+  const tabFromPath = location.pathname.split("/")[3];
+
   const [categories, setCategories] = useState([]);
-  const [activeTab, setActiveTab] = useState(tab || "fixture");
+  const [activeTab, setActiveTab] = useState(tabFromPath || tab || "fixture");
+
+  useEffect(() => {
+    if (tabFromPath) setActiveTab(tabFromPath);
+  }, [tabFromPath]);
   const [selectedCategoriaId, setSelectedCategoriaId] = useState(categoriaId || null);
   const [loadingTorneo, setLoadingTorneo] = useState(true);
   const [torneo, setTorneo] = useState(null);
@@ -188,7 +198,17 @@ function TorneoView() {
             <div className="inline-flex glass-card-sm !rounded-xl p-1 gap-1">
               {[
                 { key: "fixture", label: "Fixture", locked: false },
-                { key: "tabla", label: "Tabla de Posiciones", locked: !isSubscribed },
+                // En copa sin fase de grupos no hay tabla de posiciones
+                ...(torneo?.formato === "copa" && torneo?.tieneFaseGrupos === false
+                  ? []
+                  : [{
+                      key: "tabla",
+                      label: torneo?.formato === "copa" ? "Fase de grupos" : "Tabla de Posiciones",
+                      locked: !isSubscribed,
+                    }]),
+                ...(torneo?.formato === "copa"
+                  ? [{ key: "cuadro", label: "Cuadro", locked: false }]
+                  : []),
                 { key: "goleadoras", label: "Goleadores", locked: !isSubscribed },
               ].map((tabItem) => (
                 <button
@@ -218,8 +238,15 @@ function TorneoView() {
           {/* Contenido */}
           {selectedCategoriaId ? (
             <div className="animate-fade-in">
-              {(activeTab === "fixture" || !isSubscribed) && (
+              {(activeTab === "fixture" || (!isSubscribed && activeTab !== "cuadro")) && (
                 <Fixture torneoId={torneoId} categoriaId={selectedCategoriaId} />
+              )}
+              {activeTab === "cuadro" && torneo?.formato === "copa" && (
+                <Bracket
+                  torneoId={torneoId}
+                  categoriaId={selectedCategoriaId}
+                  formato={torneo?.formato}
+                />
               )}
               {activeTab === "tabla" && isSubscribed && (
                 <Tablas torneoId={torneoId} categoriaId={selectedCategoriaId} />

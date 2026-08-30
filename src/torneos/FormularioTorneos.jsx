@@ -1,5 +1,29 @@
 import React, { useState, useEffect } from "react";
 
+// Interruptor reutilizable para las opciones booleanas del formato "copa"
+const Toggle = ({ label, hint, checked, onChange }) => (
+  <div className="flex items-center justify-between glass-card-sm !rounded-lg px-3 py-2">
+    <div className="pr-3">
+      <p className="text-sm font-medium text-gray-200">{label}</p>
+      {hint && <p className="text-xs text-gray-500">{hint}</p>}
+    </div>
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className={`relative w-12 h-6 rounded-full transition-colors duration-300 flex-shrink-0 ${
+        checked ? "bg-[#a0f000]" : "bg-gray-600"
+      }`}
+      aria-pressed={checked}
+    >
+      <span
+        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ${
+          checked ? "translate-x-6" : "translate-x-0"
+        }`}
+      />
+    </button>
+  </div>
+);
+
 const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
@@ -9,7 +33,14 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
     paisId: "",
     fechas: "", // Inicializamos fechas como cadena vacía (o puedes usar 0)
     categoriesIds: [] ,// Se usa categoriesIds en lugar de categories
-    groups: []
+    groups: [],
+    // Formato del torneo: "liga" (todos contra todos) o "copa" (grupos + eliminatoria)
+    formato: "liga",
+    tieneFaseGrupos: true,
+    equiposClasificanPorGrupo: 2,
+    idaVueltaGrupos: false,
+    idaVueltaEliminatoria: false,
+    criterioDesempateLlave: "penales",
   });
   const [paises, setPaises] = useState([]);
 
@@ -77,7 +108,13 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
         paisId: selectedTorneo.pais?.id || "",
         // Se asume que en el torneo ya vienen las categorías asociadas como arreglo de números o se puede mapear:
         categoriesIds: selectedTorneo.categories ? selectedTorneo.categories.map(cat => Number(cat.id)) : [],
-        groups: selectedTorneo.groups || []
+        groups: selectedTorneo.groups || [],
+        formato: selectedTorneo.formato || "liga",
+        tieneFaseGrupos: selectedTorneo.tieneFaseGrupos ?? true,
+        equiposClasificanPorGrupo: selectedTorneo.equiposClasificanPorGrupo ?? 2,
+        idaVueltaGrupos: selectedTorneo.idaVueltaGrupos ?? false,
+        idaVueltaEliminatoria: selectedTorneo.idaVueltaEliminatoria ?? false,
+        criterioDesempateLlave: selectedTorneo.criterioDesempateLlave || "penales",
       });
     }
   }, [selectedTorneo]);
@@ -184,10 +221,103 @@ const FormularioTorneos = ({ setCreator, selectedTorneo, onSave }) => {
             </select>
           </div>
 
+          {/* Formato del torneo */}
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Formato
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: "liga", label: "Liga", hint: "Todos contra todos" },
+                { value: "copa", label: "Copa", hint: "Grupos + eliminatoria" },
+              ].map((op) => (
+                <button
+                  key={op.value}
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, formato: op.value }))}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border text-left ${
+                    formData.formato === op.value
+                      ? "bg-[#a0f000]/15 text-[#a0f000] border-[#a0f000]/40"
+                      : "bg-white/5 text-gray-400 border-gray-700/40 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  <span className="block">{op.label}</span>
+                  <span className="block text-xs opacity-70">{op.hint}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Opciones de Copa */}
+          {formData.formato === "copa" && (
+            <div className="space-y-3 rounded-lg border border-[#a0f000]/20 bg-[#a0f000]/5 p-3">
+              <Toggle
+                label="Fase de grupos"
+                hint="Si se apaga, es eliminatoria directa"
+                checked={formData.tieneFaseGrupos}
+                onChange={(v) => setFormData((prev) => ({ ...prev, tieneFaseGrupos: v }))}
+              />
+
+              {formData.tieneFaseGrupos && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                      Clasifican por grupo
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      name="equiposClasificanPorGrupo"
+                      value={formData.equiposClasificanPorGrupo}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          equiposClasificanPorGrupo: Number(e.target.value),
+                        }))
+                      }
+                      className="input-modern w-full"
+                    />
+                  </div>
+
+                  <Toggle
+                    label="Grupos ida y vuelta"
+                    hint="Fase de grupos a doble rueda"
+                    checked={formData.idaVueltaGrupos}
+                    onChange={(v) => setFormData((prev) => ({ ...prev, idaVueltaGrupos: v }))}
+                  />
+                </>
+              )}
+
+              <Toggle
+                label="Eliminatoria ida y vuelta"
+                hint="Llaves a doble partido"
+                checked={formData.idaVueltaEliminatoria}
+                onChange={(v) => setFormData((prev) => ({ ...prev, idaVueltaEliminatoria: v }))}
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                  Desempate de llave
+                </label>
+                <select
+                  name="criterioDesempateLlave"
+                  value={formData.criterioDesempateLlave}
+                  onChange={handleInputChange}
+                  className="input-modern w-full"
+                >
+                  <option value="penales">Penales</option>
+                  <option value="prorroga">Prórroga</option>
+                  <option value="gol_visitante">Gol de visitante</option>
+                  <option value="mejor_posicionado">Mejor posicionado</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           {/* Fechas */}
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">
-              Fechas
+              {formData.formato === "copa" ? "Fechas (fase de grupos)" : "Fechas"}
             </label>
             <input
               type="number"

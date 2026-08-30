@@ -85,6 +85,7 @@ const AppRoutes = () => {
         { path: "tabla/:categoriaId/", element: <TorneoView /> },
         { path: "fixture/:categoriaId/", element: <TorneoView /> },
         { path: "fixture/:categoriaId/:fechas", element: <TorneoView /> },
+        { path: "cuadro/:categoriaId", element: <TorneoView /> },
         { path: "goleadoras/:categoriaId", element: <TorneoView /> },
       ],
     },
