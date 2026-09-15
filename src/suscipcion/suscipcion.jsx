@@ -9,6 +9,20 @@ import {
 } from "../services/subscriptionService";
 import { FiCheck, FiX, FiCreditCard, FiShield, FiStar, FiMail, FiArrowLeft, FiAlertTriangle } from "react-icons/fi";
 
+// Bug de Mercado Pago (activo desde 2026-09-02): el init_point de POST /preapproval
+// viene con "&activation=true" y esa variante devuelve "Esta página no existe" en
+// mercadopago.com.ar. La misma URL sin ese parámetro abre el checkout normal.
+// https://github.com/mercadopago/sdk-nodejs/issues/480
+const limpiarInitPoint = (url) => {
+  try {
+    const u = new URL(url);
+    u.searchParams.delete("activation");
+    return u.toString();
+  } catch {
+    return url;
+  }
+};
+
 const Suscripcion = () => {
   const { isAuthenticated, refreshSubscription } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -54,7 +68,7 @@ const Suscripcion = () => {
     setError(null);
     try {
       const data = await initiateSubscription(payerEmail.trim());
-      if (data.init_point) window.location.href = data.init_point;
+      if (data.init_point) window.location.href = limpiarInitPoint(data.init_point);
       else setError("No se pudo obtener el enlace de pago.");
     } catch (err) {
       setError(err.message || "Error al iniciar la suscripción.");
